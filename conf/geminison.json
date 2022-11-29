@@ -1,0 +1,872 @@
+{
+  "unwrap_fasta":      {
+                        "descr": "Unwrap FASTA by removing sequence '\\n'",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"unwrap",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "split_fasta":      {
+                        "descr": "Split FASTA sequence",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"split",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"","type":"str"},
+                                   "term":{"tag":"-term","value":"N","type":"str"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "search_in_fasta":      {
+                        "descr": "Search term in FASTA folder or file and return sequence",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"search",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "searchTerm":{"tag":"-term","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "boolDoublon":{"tag":"-nodoublon","value":false, "type":"bool"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "check_circular":    {
+                        "descr": "Check if a sequence is circular",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"circular",
+                        "dicoArgs":{
+                                   "seqIN":{"tag":"-i","value":"","type":"str"},
+                                   "minLen":{"tag":"-minlen","value":3,"type":"int"}
+                                   },
+                        "pathTMP":false
+                       },
+  "fasta_genome_size": {
+                        "descr": "Create a table with the size (pb) of genomes",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"fastaLen",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "boolSort":{"tag":"-s","value":true, "type":"bool"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "gbk_to_fna":        {
+                        "descr": "Retrieve genome sequence in a GBK file and create a FNA",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"gbk2fna",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "gbk_to_ffn":        {
+                        "descr": "Retrieve genome sequence in a GBK file and create a FFN",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"gbk2ffn",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "syntaxic":{"tag":"-syntaxic","value":"prodigal","type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "gbk_to_faa":        {
+                        "descr": "Retrieve protein sequence in a GBK file and create a FAA",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"gbk2faa",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "syntaxic":{"tag":"-syntaxic","value":"prodigal","type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "gbk_to_annotFAA":   {
+                        "descr": "Retrieve protein sequence in a GBK file and create a FAA with annotation",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"gbk2annotfaa",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"","type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "gbk_to_all":        {
+                        "descr": "Retrieve protein sequence in a GBK file and create all",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"gbk2all",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "syntaxic":{"tag":"-syntaxic","value":"prodigal","type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "gbk_to_gff":        {
+                        "descr": "Retrieve protein sequence in a GBK file and create a GFF",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"gbk2gff",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "gff_to_table":      {
+                        "descr": "Create a annotation table from a GFF file",
+                        "tag":"sequence", "version":"1.0",
+                        "title":"gff2xlsx",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "format":{"tag":"-format","value":".xlsx", "type":"str"},
+                                   "maxWidth":{"tag":"-width","value":50, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".gff", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_fasta_dict":   {
+                        "descr": "Parse GBK files and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"fasta2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "onlyLTasHeader":{"tag":"-ltheader","value":false, "type":"bool"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_gbk_dict":     {
+                        "descr": "Parse GBK files and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"gbk2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "boolSort":{"tag":"-sort","value":true, "type":"bool"},
+                                   "boolPseudo":{"tag":"-pseudo","value":false, "type":"bool"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_gff_dict":     {
+                        "descr": "Parse GFF3 files and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"gff2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_gbk_from_fasta":{
+                        "descr": "Make a GBK file from FASTA (.ffn + .faa + .fna)",
+                        "tag":"parser", "version":"1.0",
+                        "title":"fasta2gbk",
+                        "dicoArgs":{
+                                   "pathIN1":{"tag":"-i1","value":"","type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"","type":"str"},
+                                   "pathIN3":{"tag":"-i3","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "identifier":{"tag":"-identifier","value":"", "type":"str"},
+                                   "topology":{"tag":"-topo","value":"", "type":"str"},
+                                   "division":{"tag":"-div","value":"", "type":"str"},
+                                   "taxID":{"tag":"-taxid","value":0, "type":"int"},
+                                   "pathIN4":{"tag":"-i4","value":"None", "type":"str"},
+                                   "boolProgress":{"tag":"-progress","value":true, "type":"bool"}
+                                   },
+                        "pathTMP":true
+                       },
+  "make_blast_dict":   {
+                        "descr": "Parse blast output and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"blast2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":20, "type":"int"},
+                                   "minLRthr":{"tag":"-minlr","value":50, "type":"int"},
+                                   "maxLRthr":{"tag":"-maxlr","value":50, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".xml", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_hmmscan_dict": {
+                        "descr": "Parse HMMSCAN tblout output and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"hmmscan2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "idEvalue":{"tag":"-e","value":0.01, "type":"float"},
+                                   "ext":{"tag":"-ext","value":".tblout", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_pvogs_desc_dict": {
+                        "descr": "Parse pVOGs table files and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"pvogsDescDict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"None", "type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_trnascanse_dict": {
+                        "descr": "Parse tRNAscan-SE output and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"trnascan2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".trnascanse", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_eggnog_dict": {
+                        "descr": "Parse EggNOG output and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"eggnog2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".annotations", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_interpro_dict": {
+                        "descr": "Parse InterProScan output and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"iprscan2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "idEvalue":{"tag":"-e","value":0.01, "type":"float"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".tsv", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "reformat_phanotate":{
+                        "descr": "Reformat ORF name in Phanotate output FASTA",
+                        "tag":"parser", "version":"1.0",
+                        "title":"formatPhanot",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "reformat_panacota":{
+                        "descr": "Reformat organism name in PanACoTA output files",
+                        "tag":"parser", "version":"1.0",
+                        "title":"formatPanaco",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_mmseqs_cluster_dict":{
+                        "descr": "Parse MMSEQS cluster tsv file and create a dictionnary",
+                        "tag":"parser", "version":"1.0",
+                        "title":"mmseqs2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "phanotate": {
+                        "descr": "Phanotate syntaxic annotation from phage genome files",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"phanotate",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "minLen":{"tag":"-len","value":0, "type":"int"},
+                                   "fromPhageDb":{"tag":"-bool","value":false, "type":"bool"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "balrog": {
+                        "descr": "Balrog syntaxic annotation",
+                        "tag":"annotation", "version":"0.3.2 (modified)",
+                        "title":"balrog",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "topology":{"tag":"-topo","value":"", "type":"str"},
+                                   "division":{"tag":"-div","value":"", "type":"str"},
+                                   "taxID":{"tag":"-taxid","value":0, "type":"int"},
+                                   "minLen":{"tag":"-len","value":30, "type":"int"},
+                                   "boolMmseqs":{"tag":"-mmseqs","value":true, "type":"bool"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "transeq": {
+                        "descr": "Translate gene CDS to protein (FFN>FAA)",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"transeq",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "boolOrgName":{"tag":"-orgheader","value":true, "type":"bool"},
+                                   "fromPhageDb":{"tag":"-phagedb","value":false, "type":"bool"},
+                                   "ext":{"tag":"-ext","value":".ffn", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "trnascan_se": {
+                        "descr": "Launch tRNAscan-SE to predict tRNA genes",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"trnascan",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "model":{"tag":"-model","value":"-B", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "diamond_p":    {
+                        "descr": "diamond blastP",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"diamond_p",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathDB":{"tag":"-d","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "boolSeq":{"tag":"-addseq","value":false, "type":"bool"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "interproscan":    {
+                        "descr": "Annotate protein FASTA with InterProScan",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"iprscan",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "eggnog":          {
+                        "descr": "Annotate protein FASTA with EggNOG",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"eggnog",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":20, "type":"int"},
+                                   "covThr":{"tag":"-cov","value":50, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "pvogs":           {
+                        "descr": "hmmscan against pVOGS profiles database",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"pvogs",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "recombinase":           {
+                        "descr": "hmmscan against VirFam/PFAM recombinase profiles database",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"recomb",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "defense_system":    {
+                        "descr": "Search defense systems using DefenseFinder & PADLOC",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"def_syst",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "dfmodelV":{"tag":"-dfmodel","value":"1.1.0", "type":"str"},
+                                   "plmodelV":{"tag":"-plmodel","value":"1.4.0", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "satellite_finder":    {
+                        "descr": "Search phage satellites using SatelliteFinder",
+                        "tag":"annotation", "version":"1.0",
+                        "title":"def_syst",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "model":{"tag":"-model","value":"ALL", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "viridic":          {
+                        "descr": "Phages clustering using VIRIDIC",
+                        "tag":"phage", "version":"1.0",
+                        "title":"viridic",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                      },
+  "search_terminase": {
+                        "descr": "Search terminase from FAA files",
+                        "tag":"phage", "version":"1.0",
+                        "title":"terminase",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathDMND":{"tag":"-d","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":20, "type":"int"},
+                                   "minLRthr":{"tag":"-minlr","value":50, "type":"int"},
+                                   "maxLRthr":{"tag":"-maxlr","value":50, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   }
+                       },
+  "phage_annotation": {
+                        "descr": "Phage syntaxic and functionnal annotation",
+                        "tag":"phage", "version":"1.0",
+                        "title":"phageAnnot",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "boolEMBL":{"tag":"-embl","value":false, "type":"bool"},
+                                   "enaProject":{"tag":"-project","value":"None", "type":"str"},
+                                   "pathTAXO":{"tag":"-taxo","value":"None", "type":"str"},
+                                   "idEvalue":{"tag":"-e","value":0.01, "type":"float"},
+                                   "idThr":{"tag":"-pid","value":30, "type":"int"},
+                                   "covThr":{"tag":"-cov","value":50, "type":"int"},
+                                   "idThrClust":{"tag":"-pid2","value":80, "type":"int"},
+                                   "covThrClust":{"tag":"-cov","value":80, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "phageDB": {
+                        "descr": "Make GenBank phages database",
+                        "tag":"phage", "version":"1.0",
+                        "title":"phageDB",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "checkvHQ":{"tag":"-checkv","value":75.0, "type":"float"}
+                                   },
+                        "pathTMP":true
+                       },
+  "myVIRIDIC": {
+                        "descr": "Modified version of VIRIDIC",
+                        "tag":"phage", "version":"1.0",
+                        "title":"myviridic",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "thfam":{"tag":"-thfam","value":50.0, "type":"float"},
+                                   "thgen":{"tag":"-thgen","value":70.0, "type":"float"},
+                                   "thsp":{"tag":"-thsp","value":95.0, "type":"float"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "PhiSpy": {
+                        "descr": "PhiSpy prophages prediction",
+                        "tag":"phage", "version":"1.0",
+                        "title":"phispy",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "nbAdjacent":{"tag":"-nb","value":3, "type":"int"},
+                                   "minCtgLen":{"tag":"-len","value":5000, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".gbk", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "picmi_finder_gbk": {
+                        "descr": "Search PICMI from gbk files",
+                        "tag":"phage", "version":"1.0",
+                        "title":"picmi_finder",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "prefix":{"tag":"-prefix","value":"", "type":"str"},
+                                   "maxLen":{"tag":"-len","value":50000, "type":"int"}
+                                   },
+                        "pathTMP":true
+                       },
+  "picmi_finder_databankseq": {
+                        "descr": "Search PICMI from databank SEQ files",
+                        "tag":"phage", "version":"1.0",
+                        "title":"picmi_finder",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "maxLen":{"tag":"-len","value":50000, "type":"int"}
+                                   },
+                        "pathTMP":true
+                       },
+  "mmseqs_easycluster": {
+                        "descr": "MMSEQS easycluster: sensitive clustering",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"easyclust",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":30, "type":"int"},
+                                   "maxLRthr":{"tag":"-maxlr","value":80, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "mmseqs_rbh":        {
+                        "descr": "MMSEQS easyrbh: find reciprocal best hit",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"rbh",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "reference":{"tag":"-ref","value":"None", "type":"str"},
+                                   "idThrClust":{"tag":"-pid","value":80, "type":"int"},
+                                   "covThrClust":{"tag":"-cov","value":80, "type":"int"},
+                                   "boolNucl":{"tag":"-nucl","value":false, "type":"bool"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "make_rbhcluster_dict":{
+                        "descr": "RBH organism clustering and create a dictionnary",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"rbh2dict",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"", "type":"str"},
+                                   "idThrClust":{"tag":"-pid","value":80, "type":"int"},
+                                   "covThrClust":{"tag":"-cov","value":80, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".rbh", "type":"str"},
+                                   "ext2":{"tag":"-ext2","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_group_core_align":{
+                        "descr": "Construct group core alignment from rbh clusters",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"grpCoreAlign",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"", "type":"str"},
+                                   "pathGROUP":{"tag":"-group","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "boolGene":{"tag":"-gene","value":"", "type":"bool"},
+                                   "boolProt":{"tag":"-prot","value":"", "type":"bool"},
+                                   "extN":{"tag":"-extN","value":".ffn", "type":"str"},
+                                   "extP":{"tag":"-extP","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "pan_core_group":    {
+                        "descr": "Compute pan, core, variable genome by organism group",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"grpPanCore",
+                        "dicoArgs":{
+                                   "pathJSON":{"tag":"-j","value":"", "type":"str"},
+                                   "pathDIST":{"tag":"-i","value":"", "type":"str"},
+                                   "pathGROUP":{"tag":"-group","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"stdout", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "make_vibrio_core":    {
+                        "descr": "Construct protein core from vibrio faa files",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"vibrioCore",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ref":{"tag":"-ref","value":"", "type":"str"},
+                                   "idThrClust":{"tag":"-pid","value":30, "type":"int"},
+                                   "covThrClust":{"tag":"-cov","value":80, "type":"int"},
+                                   "maxMash":{"tag":"-mash","value":0.3, "type":"float"},
+                                   "cutN":{"tag":"-cut","value":5, "type":"int"},
+                                   "maxContig":{"tag":"-maxcontig","value":1000, "type":"int"},
+                                   "maxL90":{"tag":"-l90","value":100, "type":"int"},
+                                   "persRatio":{"tag":"-persRatio","value":0.9, "type":"float"},
+                                   "minPersPart":{"tag":"-minPersPart","value":0.75, "type":"float"},
+                                   "minsize":{"tag":"-minsize","value":1.0, "type":"float"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "ppanggolin":        {
+                        "descr": "PPanGGOLiN RGP analysis",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"ppanggolin",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "maxRGP":{"tag":"-maxrgp","value":-1, "type":"int"},
+                                   "prefix":{"tag":"-prefix","value":"None", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".gbk.gz", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "gff_to_linear_geneplot": {
+                        "descr": "Create linear gene plot from GFF3 file",
+                        "tag":"plot", "version":"1.0",
+                        "title":"gff2plot",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "pathLT":{"tag":"-lt","value":"None", "type":"str"},
+                                   "length":{"tag":"-len","value":-1, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".gff", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "gff_to_linear_group_geneplot": {
+                        "descr": "Create linear gene plot from GFF3 file and merge per group",
+                        "tag":"plot", "version":"1.0",
+                        "title":"grpGff2plot",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathCLUSTER":{"tag":"-cluster","value":"", "type":"str"},
+                                   "pathGROUP":{"tag":"-group","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".gff", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "svg_dna_transform": {
+                        "descr": "Transform SVG plot from dna_features_viewer",
+                        "tag":"plot", "version":"1.0",
+                        "title":"svgTrans",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
+  "xlsx_to_heatmap":   {
+                        "descr": "Convert xlsx table to heatmap table",
+                        "tag":"plot", "version":"1.0",
+                        "title":"xlsx2heat",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "colorStart":{"tag":"-cstart","value":"FFFFFF", "type":"str"},
+                                   "colorEnd":{"tag":"-cend","value":"FF0000", "type":"str"},
+                                   "headerRow":{"tag":"-row","value":-1, "type":"int"},
+                                   "headerCol":{"tag":"-col","value":-1, "type":"int"}
+                                   },
+                        "pathTMP":false
+                       },
+  "circos_plot":   {
+                        "descr": "Circular circos plot from genbank file",
+                        "tag":"plot", "version":"1.0",
+                        "title":"circosPlot",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"None", "type":"str"},
+                                   "pident":{"tag":"-pid","value":30, "type":"int"},
+                                   "cov":{"tag":"-cov","value":80, "type":"int"}
+                                   },
+                        "pathTMP":true
+                       },
+  "circos_align":   {
+                        "descr": "Circular circos plot for alignment",
+                        "tag":"plot", "version":"1.0",
+                        "title":"circosAlign",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "mash_matrix": {
+                        "descr": "Mash distance matrix",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"mash2matrix",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"","type":"str"},
+                                   "sketchSize":{"tag":"-sketch","value":10000, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "fastani_db": {
+                        "descr": "Create fastANI JSON database",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"fastaniDB",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"", "type":"str"},
+                                   "fragLen":{"tag":"-fragLen","value":3000, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "best_gene_tree_topology": {
+                        "descr": "Construct tree and search best group topology",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"bestTopo",
+                        "dicoArgs":{
+                                   "pathIN1":{"tag":"-i","value":"","type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"","type":"str"},
+                                   "pathIN3":{"tag":"-i3","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "outgroup":{"tag":"-outgrp","value":"", "type":"str"},
+                                   "idThrClust":{"tag":"-pid","value":80, "type":"int"},
+                                   "covThrClust":{"tag":"-cov","value":80, "type":"int"},
+                                   "ext1":{"tag":"-ext1","value":".ffn", "type":"str"},
+                                   "ext2":{"tag":"-ext2","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "specific_kmers": {
+                        "descr": "Search kmers specific to a organism group",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"speKmers",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathIN2":{"tag":"-i2","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "kmerLen":{"tag":"-len","value":25, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".fna", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "core_prot_tree": {
+                        "descr": "Make core proteins tree",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"CoreProtTree",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":30, "type":"int"},
+                                   "covThr":{"tag":"-cov","value":80, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "genes_tree": {
+                        "descr": "Make individual and core genes tree",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"genesTree",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":30, "type":"int"},
+                                   "covThr":{"tag":"-cov","value":80, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".ffn", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "protein_similarity_matrix": {
+                        "descr": "Create similarity matrix for one protein",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"prtSimMatrix",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "locusTag":{"tag":"-lt","value":"", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":30, "type":"int"},
+                                   "covThr":{"tag":"-cov","value":80, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "panacota_flexible_tree": {
+                        "descr": "Make flexible genes tree form PanACoTA results",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"panac2flextree",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "filterOrg":{"tag":"-filter","value":"None", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "snippy": {
+                        "descr": "Call pairwise SNPs using Snippy",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"snippy",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".gbk", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "wgrr_matrix": {
+                        "descr": "wGRR distance matrix ",
+                        "tag":"phylo", "version":"1.0",
+                        "title":"wgrr",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "dl_genbank_bacteria": {
+                        "descr": "Download all bacteria Genbank files",
+                        "tag":"download", "version":"1.0",
+                        "title":"gbk_dl",
+                        "dicoArgs":{
+                                   "section":{"tag":"-section","value":"","type":"str"},
+                                   "taxonomyID":{"tag":"-tax","value":"","type":"int"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "chunkSize":{"tag":"-chunk","value":100, "type":"int"}
+                                   },
+                        "pathTMP":true
+                       },
+ "phage_assembly":   {
+                        "descr": "Trim FASTQ & de novo assembly using spades (-careful)",
+                        "tag":"assembly", "version":"1.0",
+                        "title":"phageAss",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"}
+                                   },
+                        "pathTMP":true
+                      },
+  "filter_phage_assembly": {
+                        "descr": "Filter phage assembly contigs",
+                        "tag":"assembly", "version":"1.0",
+                        "title":"phageAssFilt",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "minLen":{"tag":"-minlen","value":100, "type":"int"},
+                                   "minCov":{"tag":"-mincov","value":2, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".fasta", "type":"str"}
+                                   },
+                        "pathTMP":true
+                      }
+}
