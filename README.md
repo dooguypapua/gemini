@@ -1,201 +1,169 @@
-![eklipse logo](doc/eklipseHeader.png)
+![gemini logo](conf/gemini_icon.png)
 
 
-<b>eKLIPse is a sensitive and specific tool allowing the detection and quantification of large mtDNA rearrangements.</b><br/>
-Based on soft-clipping it provides the precise breakpoint positions and the cumulated percentage of mtDNA rearrangements at a given gene location with a high detection sensitivity.<br/>
-Both single and paired-end (mtDNA, WES, WGS) data are accepted.<br/>
-eKLIPse requires two types of input, the BAM or SAM alignment files (with header) and the corresponding mitochondrial genome (GenBank format).<br/>
-<b>Alignment must contains soft-clipping information (see your aligner options).</b><br/>
-eKLIPSE is available either as a script to be integrated in a pipeline, or as user friendly graphical interface.<br/>
+<b>Collection of function and main wrapper for various in silico analysis.</b><br/>
+<br/>
 ```diff
-- Like others CNV tools, eKLIPse performance will depend on your sequencing and mapping steps.
+┌─┐  ┌─┐  ┌┬┐  ┬  ┌┐┌  ┬
+│ ┬  ├┤   │││  │  │││  │
+└─┘  └─┘  ┴ ┴  ┴  ┘└┘  ┴
+
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '\n'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")
+# Search term in FASTA folder or file and return sequence
+def search_in_fasta('-i'pathIN, '-term'searchTerm, '-o'pathOUT, '-nodoublon'boolDoublon=False, '-ext'ext=".faa")
+# Check if a sequence is circular
+def check_circular('-i'seqIN, '-minlen'minLen=3)
+# Create a table with the size (pb) of genomes
+def fasta_genome_size('-i'pathIN, '-o'pathOUT, '-s'boolSort=True, '-ext'ext=".fna")
+# Retrieve genome sequence in a GBK file and create a FNA
+def gbk_to_fna('-i'pathIN, '-o'pathOUT)
+# Retrieve genome sequence in a GBK file and create a FFN
+def gbk_to_ffn('-i'pathIN, '-o'pathOUT, '-syntaxic'syntaxic="prodigal")
+# Retrieve protein sequence in a GBK file and create a FAA
+def gbk_to_faa('-i'pathIN, '-o'pathOUT, '-syntaxic'syntaxic="prodigal")
+# Retrieve protein sequence in a GBK file and create a FAA with annotation
+def gbk_to_annotFAA('-i'pathIN, '-o'pathOUT)
+# Retrieve protein sequence in a GBK file and create all
+def gbk_to_all('-i'pathIN, '-o'pathOUT, '-syntaxic'syntaxic="prodigal")
+# Retrieve protein sequence in a GBK file and create a GFF
+def gbk_to_gff('-i'pathIN, '-o'pathOUT)
+# Create a annotation table from a GFF file
+def gff_to_table('-i'pathIN, '-o'pathOUT, '-format'format=".xlsx", '-width'maxWidth=50, '-ext'ext=".gff")
+
+""" PARSER functions """
+# Parse GBK files and create a dictionnary
+def make_fasta_dict('-i'pathIN, '-ltheader'onlyLTasHeader=False, '-j'pathJSON="None")
+# Parse GBK files and create a dictionnary
+def make_gbk_dict('-i'pathIN, '-j'pathJSON="None", '-sort'boolSort=True, '-pseudo'boolPseudo=False)
+# Parse GFF3 files and create a dictionnary
+def make_gff_dict('-i'pathIN, '-j'pathJSON="None", '-ext'ext=".fna")
+# Make a GBK file from FASTA (.ffn + .faa + .fna)
+def make_gbk_from_fasta('-i1'pathIN1, '-i2'pathIN2, '-i3'pathIN3, '-o'pathOUT, '-identifier'identifier, '-topo'topology, '-div'division, '-taxid'taxID=0, '-i4'pathIN4="None", '-progress'boolProgress=True)
+# Parse blast output and create a dictionnary
+def make_blast_dict('-i'pathIN, '-j'pathJSON="None", '-pid'idThr=20, '-minlr'minLRthr=50, '-maxlr'maxLRthr=50, '-ext'ext=".xml")
+# Parse HMMSCAN tblout output and create a dictionnary
+def make_hmmscan_dict('-i'pathIN, '-j'pathJSON="None", '-e'idEvalue=0.01, '-ext'ext=".tblout")
+# Parse pVOGs table files and create a dictionnary
+def make_pvogs_desc_dict('-i'pathIN="None", '-j'pathJSON="None")
+# Parse tRNAscan-SE output and create a dictionnary
+def make_trnascanse_dict('-i'pathIN, '-j'pathJSON="None", '-ext'ext=".trnascanse")
+# Parse EggNOG output and create a dictionnary
+def make_eggnog_dict('-i'pathIN, '-j'pathJSON="None", '-ext'ext=".annotations")
+# Parse InterProScan output and create a dictionnary
+def make_interpro_dict('-i'pathIN, '-e'idEvalue=0.01, '-j'pathJSON="None", '-ext'ext=".tsv")
+# Reformat ORF name in Phanotate output FASTA
+def reformat_phanotate('-i'pathIN)
+# Reformat organism name in PanACoTA output files
+def reformat_panacota('-i'pathIN)
+# Parse MMSEQS cluster tsv file and create a dictionnary
+def make_mmseqs_cluster_dict('-i'pathIN, '-j'pathJSON="None")
+
+""" ANNOTATION functions """
+# Phanotate syntaxic annotation from phage genome files
+def phanotate('-i'pathIN, '-o'pathOUT, '-len'minLen=0, '-bool'fromPhageDb=False, '-ext'ext=".fna")
+# Balrog syntaxic annotation
+def balrog('-i'pathIN, '-o'pathOUT, '-topo'topology, '-div'division, '-taxid'taxID=0, '-len'minLen=30, '-mmseqs'boolMmseqs=True, '-ext'ext=".fna")
+# Translate gene CDS to protein (FFN>FAA)
+def transeq('-i'pathIN, '-o'pathOUT, '-orgheader'boolOrgName=True, '-phagedb'fromPhageDb=False, '-ext'ext=".ffn")
+# Launch tRNAscan-SE to predict tRNA genes
+def trnascan_se('-i'pathIN, '-o'pathOUT, '-model'model="-B", '-ext'ext=".fna")
+# diamond blastP
+def diamond_p('-i'pathIN, '-d'pathDB, '-o'pathOUT, '-addseq'boolSeq=False, '-ext'ext=".faa")
+# Annotate protein FASTA with InterProScan
+def interproscan('-i'pathIN, '-o'pathOUT, '-ext'ext=".faa")
+# Annotate protein FASTA with EggNOG
+def eggnog('-i'pathIN, '-o'pathOUT, '-pid'idThr=20, '-cov'covThr=50, '-ext'ext=".faa")
+# hmmscan against pVOGS profiles database
+def pvogs('-i'pathIN, '-o'pathOUT, '-ext'ext=".faa")
+# hmmscan against VirFam/PFAM recombinase profiles database
+def recombinase('-i'pathIN, '-o'pathOUT, '-ext'ext=".faa")
+# Search defense systems using DefenseFinder & PADLOC
+def defense_system('-i'pathIN, '-o'pathOUT, '-dfmodel'dfmodelV="1.1.0", '-plmodel'plmodelV="1.4.0", '-ext'ext=".faa")
+# Search phage satellites using SatelliteFinder
+def satellite_finder('-i'pathIN, '-o'pathOUT, '-model'model="ALL", '-ext'ext=".faa")
+
+""" CLUSTER functions """
+# MMSEQS easycluster: sensitive clustering
+def mmseqs_easycluster('-i'pathIN, '-o'pathOUT, '-pid'idThr=30, '-maxlr'maxLRthr=80, '-ext'ext=".faa")
+# MMSEQS easyrbh: find reciprocal best hit
+def mmseqs_rbh('-i'pathIN, '-o'pathOUT, '-ref'reference="None", '-pid'idThrClust=80, '-cov'covThrClust=80, '-nucl'boolNucl=False, '-ext'ext=".faa")
+# RBH organism clustering and create a dictionnary
+def make_rbhcluster_dict('-i'pathIN, '-i2'pathIN2, '-j'pathJSON, '-pid'idThrClust=80, '-cov'covThrClust=80, '-ext'ext=".rbh", '-ext2'ext2=".faa")
+# Construct group core alignment from rbh clusters
+def make_group_core_align('-i'pathIN, '-j'pathJSON, '-group'pathGROUP, '-o'pathOUT, '-gene'boolGene, '-prot'boolProt, '-extN'extN=".ffn", '-extP'extP=".faa")
+# Compute pan, core, variable genome by organism group
+def pan_core_group('-j'pathJSON, '-i'pathDIST, '-group'pathGROUP, '-o'pathOUT="stdout")
+# Construct protein core from vibrio faa files
+def make_vibrio_core('-i'pathIN, '-i2'pathIN2, '-o'pathOUT, '-ref'ref, '-pid'idThrClust=30, '-cov'covThrClust=80, '-mash'maxMash=0.3, '-cut'cutN=5, '-maxcontig'maxContig=1000, '-l90'maxL90=100,
+'-persRatio'persRatio=0.9, '-minPersPart'minPersPart=0.75, '-minsize'minsize=1.0, '-ext'ext=".faa")
+# PPanGGOLiN RGP analysis
+def ppanggolin('-i'pathIN, '-i2'pathIN2, '-o'pathOUT, '-maxrgp'maxRGP=-1, '-prefix'prefix="None", '-ext'ext=".gbk.gz")
+
+""" PHAGE functions """
+# Phages clustering using VIRIDIC
+def viridic('-i'pathIN, '-o'pathOUT, '-ext'ext=".fna")
+# Search terminase from FAA files
+def search_terminase('-i'pathIN, '-d'pathDMND, '-o'pathOUT, '-j'pathJSON="None", '-pid'idThr=20, '-minlr'minLRthr=50, '-maxlr'maxLRthr=50, '-ext'ext=".faa")
+# Phage syntaxic and functionnal annotation
+def phage_annotation('-i'pathIN, '-o'pathOUT, '-embl'boolEMBL=False, '-project'enaProject="None", '-taxo'pathTAXO="None", '-e'idEvalue=0.01, '-pid'idThr=30, '-cov'covThr=50, '-pid2'idThrClust=80,
+'-cov'covThrClust=80, '-ext'ext=".fna")
+# Make GenBank phages database
+def phageDB('-i'pathIN, '-o'pathOUT, '-checkv'checkvHQ=75.0)
+# Modified version of VIRIDIC
+def myVIRIDIC('-i'pathIN, '-o'pathOUT, '-thfam'thfam=50.0, '-thgen'thgen=70.0, '-thsp'thsp=95.0, '-ext'ext=".fna")
+# PhiSpy prophages prediction
+def PhiSpy('-i'pathIN, '-o'pathOUT, '-nb'nbAdjacent=3, '-len'minCtgLen=5000, '-ext'ext=".gbk")
+# Search PICMI from gbk files
+def picmi_finder_gbk('-i'pathIN, '-o'pathOUT, '-prefix'prefix, '-len'maxLen=50000)
+# Search PICMI from databank SEQ files
+def picmi_finder_databankseq('-i'pathIN, '-o'pathOUT, '-len'maxLen=50000)
+
+""" PHYLO functions """
+# Mash distance matrix
+def mash_matrix('-i'pathIN, '-o'pathOUT, '-sketch'sketchSize=10000, '-ext'ext=".fna")
+# Create fastANI JSON database
+def fastani_db('-i'pathIN, '-i2'pathIN2, '-j'pathJSON, '-fragLen'fragLen=3000, '-ext'ext=".fna")
+# Construct tree and search best group topology
+def best_gene_tree_topology('-i'pathIN1, '-i2'pathIN2, '-i3'pathIN3, '-o'pathOUT, '-outgrp'outgroup, '-pid'idThrClust=80, '-cov'covThrClust=80, '-ext1'ext1=".ffn", '-ext2'ext2=".faa")
+# Search kmers specific to a organism group
+def specific_kmers('-i'pathIN, '-i2'pathIN2, '-o'pathOUT, '-len'kmerLen=25, '-ext'ext=".fna")
+# Make core proteins tree
+def core_prot_tree('-i'pathIN, '-o'pathOUT, '-pid'idThr=30, '-cov'covThr=80, '-ext'ext=".faa")
+# Make individual and core genes tree
+def genes_tree('-i'pathIN, '-o'pathOUT, '-pid'idThr=30, '-cov'covThr=80, '-ext'ext=".ffn")
+# Create similarity matrix for one protein
+def protein_similarity_matrix('-i'pathIN, '-o'pathOUT, '-lt'locusTag, '-pid'idThr=30, '-cov'covThr=80, '-ext'ext=".faa")
+# Make flexible genes tree form PanACoTA results
+def panacota_flexible_tree('-i'pathIN, '-o'pathOUT, '-filter'filterOrg="None")
+# Call pairwise SNPs using Snippy
+def snippy('-i'pathIN, '-o'pathOUT, '-ext'ext=".gbk")
+# wGRR distance matrix
+def wgrr_matrix('-i'pathIN, '-o'pathOUT, '-ext'ext=".faa")
+
+""" PLOT functions """
+# Create linear gene plot from GFF3 file
+def gff_to_linear_geneplot('-i'pathIN, '-o'pathOUT, '-lt'pathLT="None", '-len'length=-1, '-ext'ext=".gff")
+# Create linear gene plot from GFF3 file and merge per group
+def gff_to_linear_group_geneplot('-i'pathIN, '-cluster'pathCLUSTER, '-group'pathGROUP, '-o'pathOUT, '-ext'ext=".gff")
+# Transform SVG plot from dna_features_viewer
+def svg_dna_transform('-i'pathIN, '-o'pathOUT)
+# Convert xlsx table to heatmap table
+def xlsx_to_heatmap('-i'pathIN, '-o'pathOUT, '-cstart'colorStart="FFFFFF", '-cend'colorEnd="FF0000", '-row'headerRow=-1, '-col'headerCol=-1)
+# Circular circos plot from genbank file
+def circos_plot('-i'pathIN, '-o'pathOUT, '-i2'pathIN2="None", '-pid'pident=30, '-cov'cov=80)
+# Circular circos plot for alignment
+def circos_align('-i'pathIN, '-o'pathOUT)
+
+""" DOWNLOAD functions """
+# Download all bacteria Genbank files
+def dl_genbank_bacteria('-section'section, '-tax'taxonomyID, '-o'pathOUT, '-chunk'chunkSize=100)
 ```
 
 ---------------------------------------
-
-## Graphical User Interface (Qt)
-
-#### Windows Deployment (portable)
-- download lastest version 080620 [here](https://163.172.45.124/owncloud/index.php/s/7I4KFUe2iyyX9ZE/download).<br/>
-- unzip ZIP file.<br/>
-- launch 'eKLIPse.exe'
-
-```diff
-- Space not allowed in executable and input/output path
-```
-##
-
-#### Linux Installation
-- install required tools (see Requirements section)
-- download lastest version [here](https://163.172.45.124/owncloud/index.php/s/utlrdhe72lqymxR/download)).<br/>
-- unzip Qt_eKLIPse_unix_v1-0.zip
-- cd Qt_eKLIPse_unix_v1-0.zip
-- chmod a+x eKLIPse
-- ./eKLIPse
-##
-
-#### Running
-##### Start
-![eklipse GUI](doc/eklipse_home.png){ width=30% }<br/>
-To start analysis, simply click "START".<br/>
-(you can change the colors by clicking on the bottom right colors)<br/>
-##### Launch Analysis
-![eklipse GUI](doc/eklipse_select.png)<br/>
-1 - To select your alignment files, click "ADD". If required you can change alignment title by selecting corresponding cell.<br/>
-2 - Select your reference genome. If you choose "Other", browse to your own Genbank file by clicking on the folder icon.<br/>
-3 - To change "results directory", click on the folder icon.<br/>
-4 - To modify "Advanced parameters" click on the expand icon. Please refers to "Parameters" section for further information.<br/>
-5 - Launch analysis by clicking "START"<br/>
-##### Analysis in progress
-![eklipse GUI](doc/eklipse_waiting.png)<br/>
-eKLIPse analysis detailed progress can be followed on this window.<br/>
-##### Results
-![eklipse GUI](doc/eklipse_results.png)<br/>
-Once the analysis is complete, the program automatically opens the result folder.
-##
-
-#### Testing
-Two reduced alignment files are provided with the archive file.<br/>
-Click "TEST" on the "Launch Analysis" windows before clicking "START".
-<br/><br/>
-
----------------------------------------
-
-## Command Line Interface
-
-#### Docker
-A docker image is also available. Follow building instruction [here](https://docs.docker.com/get-started/part2/#build-the-app)
-##
-
-#### Linux
-
-##### Requirements
-Please install the following modules & tools:<br/>
-- python 2.7<br/>
-- [biopython](https://github.com/biopython/biopython)<br/>
-- [tqdm](https://github.com/tqdm/tqdm)<br/>
-- [samtools](https://github.com/samtools/samtools)<br/>
-- [blastn & makeblastdb](http://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/) (>=2.3.0+)<br/>
-- [circos](http://circos.ca/software/download/)<br/>
-
-
-##### Testing
-
-```markdown
-python eKLIPse.py --test
-
-(*add "-samtools", "-blastn", "-makeblastdb" and "-circos" options if not in $PATH)
-```
-
-
-##### Running
-
-```markdown
-python eKLIPse.py -in <INPUT file path> -ref <GBK file path> [OPTIONS]
-
-[OPTIONS]
--out          <str>  : Output directory path                  [current]
--tmp          <str>  : Temporary directory path               [/tmp]
--scsize       <int>  : Soft-clipping minimal length           [25]
--mapsize      <int>  : Upstream mapping length                [20]
--downcov      <int>  : Downsampling read number               [500000] (0=disable)
--minq         <int>  : Read quality threshold                 [20]
--minlen       <int>  : Read length threshold                  [100]
--shift        <int>  : Breakpoint sliding-window size         [5]
--minblast     <int>  : Minimal number of BLAST per breakpoint [1]
--bilateral    <bool> : Filter unidirectional BLAST            [True]
--mitosize     <int>  : Remove deleted mtDNA less than         [1000]
--id           <int>  : BLAST %identity threshold              [80]
--cov          <int>  : BLAST %coverage threshold              [70]
--gapopen      <int>  : BLAST cost to open a gap               [0:proton, 5:illumina]
--gapext       <int>  : BLAST cost to extend a gap             [2]
--thread       <int>  : Thread number                          [2]
--samtools     <str>  : samtools bin path                      [$PATH]
--blastn       <str>  : BLASTN bin path                        [$PATH]
--makeblastdb  <str>  : makeblastdb bin path                   [$PATH]
--circos       <str>  : circos bin path                        [$PATH]
---test               : eKLIPse test
---nocolor            : Disable output colors
-```
-
----------------------------------------
-
-## Parameters
-
-##### Input file (-in)
-eKLIPse accepts alignments in BAM or SAM format (require header) for both single and paired-end sequencing data.<br/>
-The input file is a simple tabulated text file as follow:<br/>
-<table><tbody><tr><td>path_bam</td><td>title1</td></tr><tr><td>path_bam2</td><td>title2</td></tr></tbody></table>
-##
-
-##### mtDNA reference (-ref)
-eKLIPse accepts any mtDNA reference genome in Genbank format.<br/>
-rCRS (NC_012920.1.gb), CRS (J01415.2.gb) and *Mus musculus* (NC_005089.1.gb) are provided in "/data"
-##
-
-##### Downsampling (-downcov)
-In order to reduce the execution time, a downsampling option is available.<br/>
-For singles deletions with low mutant load or multiple deletions, we advise to not downsample "-downcov 0".<br/>
-The obtained read number should match to a sufficient mitochondrial genome coverage.
-##
-
-##### Sequencing & Alignment (-minq / -minlen)
-According to your sequencing technology and library, you can adjust the minimum read length value (-minlen).<br/>
-You can adjust minimum read quality (-minq), for example to consider multiple hits for a same read which reduce the minq.
-##
-
-##### Soft-clipping (-minq / -minlen)
-For short read data, we advise to reduce minimal soft-clipping length (-scsize) and upstream mapping length (-mapsize).<br/>
-For example, with 100bp reads, you could use "-scsize 15" and "-mapsize 10".<br/>
-Breakpoint sliding-window size could be modify if you expect a high number of homopolymers.
-##
-
-##### BLASTn (-id / -cov / -gapopen / -gapext )
-BLASTn thresholds are mostly sequencing technology dependent.<br/>
-Then according to your sequencing quality you could increase or decrease identity and coverage thresholds (-id / -cov).<br/>
-Illumina is known to generate fewer errors and can therefore be more stringent on gap thresholds (-gapopen / -gapext).<br/>
-For example, with illumina reads, you could use "-gapopen 5" and "-gapext 2".
-##
-
-##### Filtering (-minblast / -bilateral / -mitosize)
-According to your sequencing depth, quality and required stringency, you could modify filters.<br/>
-Increasing the minimum number of BLAST per breakpoint increase the specificity but decrease the sensitivity (-minblast)<br/>
-By default, eKLIPse filter out deleted mtDNA with a length under 1000bp.<br/>
-But for example, if you're looking for sublimons you could reduce this length to 100bp.<br/>
-eKLIPse is based on the search of bidirectional BLAST linking 5' and 3' breakpoints.<br/>
-It is therefore not recommended to disable this filter ("-bilateral False").<br/>
-
-
----------------------------------------
-
-
-## Outputs
-
-#### eKLIPse_deletions.csv
-File containing all predicted deletions (bkp=breakpoint).<table style='font-size:80%'><tr><td>Title</td><td>5'bkp</td><td>3'bkp</td><td>Freq</td><td>Freq for</td><td>Freq rev</td><td>5' Blast</td><td>3' Blast</td><td>5' Depth</td><td>3' Depth</td><td>Repetition</td></tr><tr><td>file1</td><td>7753</td><td>14601</td><td>3,46</td><td>0,38</td><td>6,55</td><td>2</td><td>23</td><td>1393</td><td>412</td><td>7754-GA-7755 | 14601-GA-14602</td></tr><tr><td>file2</td><td>7981</td><td>14955</td><td>7,40</td><td>4,28</td><td>10,51</td><td>2408</td><td>2506</td><td>7080</td><td>2544</td><td>7982-CT-7983 | 14955-CT-14956</td></tr><tr><td>file3</td><td>460</td><td>5243</td><td>7,24</td><td>13,72</td><td>0,76</td><td>7</td><td>1</td><td>72</td><td>197</td><td>458-CT-459 | 5242-CT-5243</td></tr></table>
-##
-
-#### eKLIPse_genes.csv
-File summarizing cumulated deletions per mtDNA gene.<table style='font-size:80%'><tr><td>Gene</td><td>Start</td><td>End</td><td>Type</td><td>file3</td><td>file4</td><td>file5</td></tr><tr><td>MT-TF</td><td>577</td><td>647</td><td>trna</td><td>0,38</td><td>0,82</td><td>14,03</td></tr><tr><td>MT-RNR1</td><td>648</td><td>1601</td><td>rrna</td><td>2,27</td><td>14,42</td><td>14,03</td></tr><tr><td>MT-TV</td><td>1602</td><td>1670</td><td>trna</td><td>2,27</td><td>14,42</td><td>14,03</td></tr><tr><td>MT-RNR2</td><td>1671</td><td>3229</td><td>rrna</td><td>2,27</td><td>14,78</td><td>14,03</td></tr><tr><td>MT-TL1</td><td>3230</td><td>3304</td><td>trna</td><td>2,27</td><td>14,78</td><td>14,03</td></tr><tr><td>MT-ND1</td><td>3307</td><td>4262</td><td>protein</td><td>2,27</td><td>15,05</td><td>14,03</td></tr></table>
-##
-
-#### circos plot
-One plot is created per input alignment. An example is shown below.<br/><br/>
-![eklipse circos legend](doc/eKLIPse_fig2.png)
-##
-
-### Contact
-dooguy@tuta.io
-
-
-### License
-eKLIPse is available under the GNU Affero General Public License v3.0.
-
-
-### Reference
-Please cite (submitted article)
-
-eKLIPse: A sensitive tool for the detection and quantification of mitochondrial DNA deletions from next generation sequencing data.
 
 
 
