@@ -165,7 +165,7 @@ def dl_genbank_bacteria('-section'section, '-tax'taxonomyID, '-o'pathOUT, '-chun
 
 ---------------------------------------
 
-##### python3 requirements
+#### python3 requirements
 - ast<br/>
 - biopython<br/>
 - cairosvg<br/>
