@@ -1,9 +1,4 @@
 ![gemini logo](conf/gemini_icon.png)
-<span style="color:blue">
-┌─┐  ┌─┐  ┌┬┐  ┬  ┌┐┌  ┬
-│ ┬  ├┤   │││  │  │││  │
-└─┘  └─┘  ┴ ┴  ┴  ┘└┘  ┴
-</span>
 
 <b>Collection of function and main wrapper for various in silico analysis.</b><br/>
 <br/>
@@ -11,7 +6,9 @@
 ┌─┐  ┌─┐  ┌┬┐  ┬  ┌┐┌  ┬
 │ ┬  ├┤   │││  │  │││  │
 └─┘  └─┘  ┴ ┴  ┴  ┘└┘  ┴
+```
 
+```python
 """ SEQUENCE functions """
 # Unwrap FASTA by removing sequence '\n'
 def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
