@@ -932,7 +932,7 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
         for gene in dicoCluster[clusterNum]:
             orgName = dicoLTtoOrg[gene.split(" ")[0]]
             setOrg.add(orgName)
-        if len(setOrg) == len(lstFiles) == len(dicoCluster[clusterNum]): # to avoid paralogous or split gene
+        if len(setOrg) == len(lstFiles) == len(dicoCluster[clusterNum]):  # to avoid paralogous or split gene
             dicoCore[len(dicoCore)] = dicoCluster[clusterNum]
     printcolor("⏩ Found "+str(len(dicoCore))+" core genes"+"\n")
     # ***** ALIGN CORE GENES ***** #

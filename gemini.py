@@ -55,11 +55,10 @@ if __name__ == "__main__":
         slurmBool, cpu, memMax, memMin = get_sys_info()
         if "--cpu" in sys.argv:
             cpu = sys.argv[sys.argv.index("--cpu")+1]
-        # Specific environment import
+        # Specific slurm library
         if slurmBool is True:
-            sys.path.append('/home/umr8227/gv/dgoudenege/script/python_lib/')
-            sys.path.append('/home/umr8227/gv/dgoudenege/.local/lib/python3.9/site-packages/')
-            sys.path.append('/shared/software/miniconda/envs/python-pytorch-tensorflow-3.9-1.11.0-2.6.2/lib/python3.9/site-packages/')
+            for lib in geminiset.slurmLib:
+                sys.path.append(lib)
         # Display execution infos
         printcolor("⌛ "+str(datetime.fromtimestamp(startTime).strftime("%H:%M:%S [%d-%m-%y]"))+"\n")
         printcolor("➰ SLURM: "+str(slurmBool)+"\n")

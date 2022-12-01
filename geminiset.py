@@ -21,3 +21,6 @@ cpu = ""
 memMax = ""
 memMin = ""
 pathTMP = ""
+slurmLib = ["/home/umr8227/gv/dgoudenege/script/python_lib/",
+            "/home/umr8227/gv/dgoudenege/.local/lib/python3.9/site-packages/",
+            "/shared/software/miniconda/envs/python-pytorch-tensorflow-3.9-1.11.0-2.6.2/lib/python3.9/site-packages/"]

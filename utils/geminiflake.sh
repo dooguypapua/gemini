@@ -1,5 +1,4 @@
-
-gemini_path="/mnt/c/Users/dgoudenege/Dev_prog/gemini"
+gemini_path=$(dirname $0 | sed s/"utils"/""/) #"/mnt/c/Users/dgoudenege/Dev_prog/gemini"
 files=( $(find ${gemini_path}/*.py -type f | awk '{ print length, $0 }' | sort -n -s | cut -d' ' -f2-) )
 longest_filename=$((${#files[-1]}-${#gemini_path}))
 unvalid_file_count=0
