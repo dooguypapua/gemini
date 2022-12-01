@@ -30,8 +30,7 @@ def gbk_to_all('-i'pathIN, '-o'pathOUT, '-syntaxic'syntaxic="prodigal")
 def gbk_to_gff('-i'pathIN, '-o'pathOUT)
 # Create a annotation table from a GFF file
 def gff_to_table('-i'pathIN, '-o'pathOUT, '-format'format=".xlsx", '-width'maxWidth=50, '-ext'ext=".gff")
-```
-```rb
+
 """ PARSER functions """
 # Parse GBK files and create a dictionnary
 def make_fasta_dict('-i'pathIN, '-ltheader'onlyLTasHeader=False, '-j'pathJSON="None")
