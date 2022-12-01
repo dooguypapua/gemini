@@ -1,12 +1,4 @@
-![gemini logo](conf/gemini_icon.png)
-
-<b>Collection of function and main wrapper for various in silico analysis.</b><br/>
-
-```diff
-┌─┐  ┌─┐  ┌┬┐  ┬  ┌┐┌  ┬
-│ ┬  ├┤   │││  │  │││  │
-└─┘  └─┘  ┴ ┴  ┴  ┘└┘  ┴
-```
+<p style="text-align: center;">![gemini logo](conf/gemini_icon.png)</p>
 
 ```python
 """ SEQUENCE functions """
