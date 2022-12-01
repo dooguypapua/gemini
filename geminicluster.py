@@ -792,7 +792,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
         for prot in lstCoreProt:
             ltRef = prot.split("|")[0]
             pathALIGN = pathDirFASTAOUT+"/"+ltRef+".align"
-            pathTMP = "/mnt/c/Users/dgoudenege/Desktop/MSA/"+ltRef+".fasta"
+            pathTMP = geminiset.pathTMP+"/"+ltRef+".fasta"
             TMP = open(pathTMP, 'w')
             dicoAlign = make_fasta_dict(pathALIGN)
             pbar.set_description_str(ltRef+" ".rjust(maxpathSize-len(ltRef)))

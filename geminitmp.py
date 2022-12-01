@@ -58,292 +58,284 @@ geminiset.pathTMP = temp
 
 
 
+# # dicoHost={"413E50-1":"chaga","402E50-1":"chaga","409E50-1":"chaga","521E56-1":"chaga","384E50-1":"chaga","405E50-1":"chaga","464E53-1":"chaga","468E53-1":"chaga","177E37-1":"chaga","131E34-1":"chaga","121E34-1":"chaga","456E52-1":"chaga","416E50-1":"chaga","284E43-1":"chaga","237E40-1":"chaga","22O28-1":"chaga","434O48-1":"chaga","282E43-1":"chaga","417E50-1":"chaga","448O51-1":"chaga","217E38-1":"chaga","455E52-1":"chaga","466E53-1":"chaga","191E37-1":"chaga","115E34-1":"chaga","511E55-1":"chaga","120E34-1":"chaga","495E54-1":"chaga","496E54-1":"chaga","277E43-1":"chaga","193E37-1":"chaga","249E41-1":"chaga","382E49-1":"chaga","141O35-1":"chaga","141E35-1":"chaga","230E39-1":"chaga","137E35-1":"chaga","393E50-1":"chaga","489E54-1":"chaga","424E50-1":"chaga","501E54-1":"chaga","381E49-1":"chaga","242E40-1":"chaga","275E43-1":"chaga","142E35-1":"chaga","168E36-1":"chaga","236O40-1":"chaga","199E37-1":"chaga","150E35-1":"chaga","24E30-2":"crass","66E30-1":"crass","24E35-2":"crass","64E30-1":"crass","44E38-2":"crass","36E38-1":"crass","41E34-2":"crass","75E35-1":"crass","44E38-1":"crass","34E29-1":"crass","70E35-5a":"crass","234P7b":"crass","70E35-2":"crass","294E48-1":"crass","70E38-1":"crass","70E37-6":"crass","70E37-1":"crass","70E35-6":"crass","234P1":"crass","11E33-1":"crass","82E32-1":"crass","82E32-3":"crass","38E33-6a":"crass","82E33-2":"crass","82E32-2":"crass","19E33-1":"crass","219E41-1":"crass","219E41-2":"crass","234P8":"crass","431E48-2":"crass","431E46-1":"crass","431E45-1":"crass","207E29-1":"crass","91E28-1a":"crass","98E28-6a":"crass","18E29-1":"crass","12E28-1":"crass","264E42-1":"crass","51E28-1":"crass","51E28-4":"crass","340E47-2":"crass","5P1a":"crass","69E27-1":"crass","23E28-1":"crass","184E37-3a":"crass","184E37-1":"crass","104E43-1":"crass","103E44-1":"crass","14E30-1":"crass","14E30-2":"crass","207E48-1":"crass","144E46-1":"crass","252E42-2":"crass","268E42-1":"crass","6E35-1a":"crass","15E36-1":"crass","172P1":"crass"}
+# # dicoLtTOorg = {}
+# # for file in os.listdir("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/FAA_phages"):
+# #     if ".faa" in file:
+# #         dicoTMP = make_fasta_dict("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/FAA_phages/"+file)
+# #         for key in dicoTMP:
+# #             # dicoLtTOorg[key.split("|")[0]] = file.replace("Vibrio_phage_","").replace(".faa","")
+# #             print(key.split("|")[0]+";"+dicoHost[file.replace("Vibrio_phage_","").replace(".faa","")])
+# # exit()
+
+# # dicoPairwise = {}
+# # for file in os.listdir("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/family_rbh_25_50"):
+# #     pathRBH = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/family_rbh_25_50/"+file
+# #     lstLines = read_file(pathRBH)
+# #     for line in lstLines:
+# #         splitLine = line.split("\t")
+# #         ref = splitLine[0].split("|")[0]
+# #         target = splitLine[1]
+# #         targetOrg = dicoLtTOorg[target.split("|")[0]]
+# #         pident = float(splitLine[2])
+# #         if ref not in dicoPairwise: dicoPairwise[ref] = {}
+# #         if targetOrg not in dicoPairwise[ref] or pident>dicoPairwise[ref][targetOrg]: dicoPairwise[ref][targetOrg] = pident
+# #     dicoMeanPerHost = {}
+# #     for ltRef in dicoPairwise:
+# #         lst_pident_crass = []
+# #         lst_pident_chaga = []
+# #         for targetOrg in dicoPairwise[ltRef]:
+# #             if targetOrg in ["91E28-1a","18E29-1","12E28-1","98E28-6a","207E29-1"]: lst_pident_crass.append(dicoPairwise[ltRef][targetOrg])
+# #             elif targetOrg in ["115E34-1","455E52-1","217E38-1","120E34-1","511E55-1","191E37-1","466E53-1"]: lst_pident_chaga.append(dicoPairwise[ltRef][targetOrg])
+# #             # if dicoHost[targetOrg] == "crass": lst_pident_crass.append(dicoPairwise[ltRef][targetOrg])
+# #             # else: lst_pident_chaga.append(dicoPairwise[ltRef][targetOrg])
+# #         # if len(lst_pident_crass)==4:
+# #         print(ltRef+";"+str(len(lst_pident_crass))+";"+str(np.mean(lst_pident_crass))+";"+str(len(lst_pident_chaga))+";"+str(np.mean(lst_pident_chaga)))
+# # exit()
+
+
 # dicoHost={"413E50-1":"chaga","402E50-1":"chaga","409E50-1":"chaga","521E56-1":"chaga","384E50-1":"chaga","405E50-1":"chaga","464E53-1":"chaga","468E53-1":"chaga","177E37-1":"chaga","131E34-1":"chaga","121E34-1":"chaga","456E52-1":"chaga","416E50-1":"chaga","284E43-1":"chaga","237E40-1":"chaga","22O28-1":"chaga","434O48-1":"chaga","282E43-1":"chaga","417E50-1":"chaga","448O51-1":"chaga","217E38-1":"chaga","455E52-1":"chaga","466E53-1":"chaga","191E37-1":"chaga","115E34-1":"chaga","511E55-1":"chaga","120E34-1":"chaga","495E54-1":"chaga","496E54-1":"chaga","277E43-1":"chaga","193E37-1":"chaga","249E41-1":"chaga","382E49-1":"chaga","141O35-1":"chaga","141E35-1":"chaga","230E39-1":"chaga","137E35-1":"chaga","393E50-1":"chaga","489E54-1":"chaga","424E50-1":"chaga","501E54-1":"chaga","381E49-1":"chaga","242E40-1":"chaga","275E43-1":"chaga","142E35-1":"chaga","168E36-1":"chaga","236O40-1":"chaga","199E37-1":"chaga","150E35-1":"chaga","24E30-2":"crass","66E30-1":"crass","24E35-2":"crass","64E30-1":"crass","44E38-2":"crass","36E38-1":"crass","41E34-2":"crass","75E35-1":"crass","44E38-1":"crass","34E29-1":"crass","70E35-5a":"crass","234P7b":"crass","70E35-2":"crass","294E48-1":"crass","70E38-1":"crass","70E37-6":"crass","70E37-1":"crass","70E35-6":"crass","234P1":"crass","11E33-1":"crass","82E32-1":"crass","82E32-3":"crass","38E33-6a":"crass","82E33-2":"crass","82E32-2":"crass","19E33-1":"crass","219E41-1":"crass","219E41-2":"crass","234P8":"crass","431E48-2":"crass","431E46-1":"crass","431E45-1":"crass","207E29-1":"crass","91E28-1a":"crass","98E28-6a":"crass","18E29-1":"crass","12E28-1":"crass","264E42-1":"crass","51E28-1":"crass","51E28-4":"crass","340E47-2":"crass","5P1a":"crass","69E27-1":"crass","23E28-1":"crass","184E37-3a":"crass","184E37-1":"crass","104E43-1":"crass","103E44-1":"crass","14E30-1":"crass","14E30-2":"crass","207E48-1":"crass","144E46-1":"crass","252E42-2":"crass","268E42-1":"crass","6E35-1a":"crass","15E36-1":"crass","172P1":"crass"}
-# dicoLtTOorg = {}
-# for file in os.listdir("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/FAA_phages"):
-#     if ".faa" in file:
-#         dicoTMP = make_fasta_dict("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/FAA_phages/"+file)
+# dicoAnnot={"cluster0001":"large_terminase","cluster0002":"putative_baseplate_wedge_protein","cluster0004":"unkwown","cluster0005":"baseplate_J_protein","cluster0007":"unkwown","cluster0008":"neck_protein","cluster0009":"unkwown","cluster0011":"putative_tail_sheath_protein","cluster0012":"DNA_helicase","cluster0014":"putative_gp55_tail-fiber","cluster0015":"nucleic_acid-binding","cluster0016":"unkwown","cluster0017":"unkwown","cluster0018":"putative_baseplate_assembly_protein","cluster0019":"minor_capsid_protein","cluster0021":"baseplate_protein_J-like_protein","cluster0023":"unkwown","cluster0027":"DNA_helicase","cluster0029":"DNA_primase-helicase","cluster0030":"unkwown","cluster0031":"unkwown","cluster0032":"tail_assembly_chaperone","cluster0035":"unkwown","cluster0036":"head","cluster0037":"unkwown","cluster0039":"putative_structural_protein","cluster0040":"putative_lytic_transglycosylase","cluster0041":"putative_head_protein","cluster0042":"unkwown","cluster0043":"major_capsid_protein","cluster0044":"portal","cluster0045":"unkwown","cluster0048":"DNA_nuclease","cluster0051":"tail-completion_protein","cluster0053":"putative_tail_tube_protein","cluster0055":"unkwown","cluster0057":"head_completion_adaptor","cluster0058":"unkwown","cluster0059":"head-closure_protein","cluster0060":"unkwown","cluster0061":"unkwown","cluster0063":"unkwown","cluster0064":"metallo-dependent_phosphatase-like_protein"}
+# dicoLT = {}
+# cpt = 0
+# typeseq="faa"
+# dicoSeq = {}
+# for file in os.listdir("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/"+typeseq.upper()+"_phages"):
+#     if typeseq in file:
+#         dicoTMP = make_fasta_dict("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/"+typeseq.upper()+"_phages/"+file)
 #         for key in dicoTMP:
-#             # dicoLtTOorg[key.split("|")[0]] = file.replace("Vibrio_phage_","").replace(".faa","")
-#             print(key.split("|")[0]+";"+dicoHost[file.replace("Vibrio_phage_","").replace(".faa","")])
+#             dicoSeq[key.split("|")[0]] = dicoTMP[key]
+# # dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/all_phages_rbh_25_50/all_phages_rbh_25_50.json")
+# # dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/all_phages_rbh_25_80.json")
+# dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/family_rbh_25_80.json")
+# for clusterNum in dicoCluster:
+#     setCrass = set()
+#     setChaga = set()
+#     for prot in dicoCluster[clusterNum]: # "VP495E541_p0026|-1 [Vibrio_phage_495E54-1]",
+#         orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
+#         if orgName=="115E34-1":  dicoLT[clusterNum] = prot.split("|")[0]
+#         if orgName in ["91E28-1a","18E29-1","12E28-1","98E28-6a","207E29-1"]: setCrass.add(orgName)
+#         elif orgName in ["115E34-1","455E52-1","217E38-1","120E34-1","511E55-1","191E37-1","466E53-1"]: setChaga.add(orgName)
+#     if len(setCrass) == 5 and len(setChaga) == 7: #> 1:
+#     # if len(setCrass)+len(setChaga)>1:
+#         # print(clusterNum)
+#         cpt += 1
+#         pathFASTA = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+clusterNum+".fasta"
+#         pathALIGN = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+clusterNum+"_famsa.fasta"
+#         if not os.path.isfile(pathFASTA):
+#             OUT = open(pathFASTA,'w')
+#             for prot in dicoCluster[clusterNum]:
+#                 orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
+#                 lt = prot.split("|")[0]
+#                 OUT.write(">"+orgName+"|"+lt+"\n"+dicoSeq[lt]+"\n")
+#             OUT.close()
+#         pathTREE = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+clusterNum
+#         # famsa
+#         if not os.path.isfile(pathALIGN):
+#             os.system("famsa "+pathFASTA+" "+pathALIGN+" 2>/dev/null")
+
+#         # # pairwise identity
+#         # dicoALIGN = make_fasta_dict(pathALIGN)
+#         # lst_pident_crass = []
+#         # lst_pident_chaga = []
+#         # lst_pident_both = []
+#         # lstLT= []
+#         # for orgName1 in dicoALIGN:
+#         #     lstLT.append(orgName1.split("|")[1])
+#         #     for orgName2 in dicoALIGN:
+#         #         if orgName1 != orgName2:
+#         #             nbMatch = 0
+#         #             for i in range(len(dicoALIGN[orgName1])):
+#         #                 if dicoALIGN[orgName1][i] == dicoALIGN[orgName2][i]: nbMatch += 1
+#         #             pident = (nbMatch*100) / len(dicoALIGN[orgName1])
+#         #             if dicoHost[orgName1.split("|")[0]] == dicoHost[orgName2.split("|")[0]]:
+#         #                 if dicoHost[orgName1.split("|")[0]] == "chaga": lst_pident_chaga.append(pident)
+#         #                 else: lst_pident_crass.append(pident)
+#         #             else: lst_pident_both.append(pident)
+#         # if len(lst_pident_crass)==0: min_crass = -1
+#         # else: min_crass = min(lst_pident_crass)
+#         # if len(lst_pident_chaga)==0: min_chaga = -1
+#         # else: min_chaga = min(lst_pident_chaga)
+#         # if len(lst_pident_both)==0: max_both = -1
+#         # else: max_both = max(lst_pident_both)
+#         # print(clusterNum+";"+str(len(setCrass))+";"+str(len(setChaga))+";"+str(min_crass)+";"+str(min_chaga)+";"+str(max_both)+";"+",".join(lstLT))
+
+
+#         # iqtree
+#         if not os.path.isfile(pathTREE+".nwk"):
+#             if typeseq == "faa": os.system("iqtree2 -s "+pathALIGN+" -T 12 --mem 25GB -m LG -B 1000 --seqtype AA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1")
+#             else: os.system("iqtree2 -s "+pathALIGN+" -T 12 --mem 25GB -m GTR -B 1000 --seqtype DNA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1")
+#             os.system("rm -f "+pathTREE+".splits.nex "+pathTREE+".log "+pathTREE+".mldist "+pathTREE+".bionj "+pathTREE+".ckp.gz "+pathTREE+".contree "+pathTREE+".iqtree")
+#             shutil.move(pathTREE+".treefile",pathTREE+".nwk")
+#         # RENDERING tree
+#         tree = Tree(pathTREE+".nwk")
+#         for node in tree.traverse("postorder"):
+#             # Do some analysis on node
+#             node.name = node.name.split("|")[0]
+#         ts = TreeStyle()
+#         ts.show_branch_support = True
+#         for n in tree.traverse():
+#             nstyle = NodeStyle()
+#             nstyle["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
+#             nstyle["hz_line_type"] = 0
+#             # if n.support != 1.0:
+#             #     nstyle["vt_line_width"] = n.support/20
+#             #     nstyle["hz_line_width"] = n.support/20    
+#             #     nstyle["size"] = 0
+#             try: host = dicoHost[n.name]
+#             except KeyError: n.set_style(nstyle) ; continue
+#             if host == "crass":
+#                 if n.name in ["91E28-1a","18E29-1","12E28-1","98E28-6a","207E29-1"]: nstyle["fgcolor"] = "#ff5599"
+#                 else: nstyle["fgcolor"] = "#ffd5f6"
+#             elif host == "chaga":
+#                 if n.name in ["115E34-1","455E52-1","217E38-1","120E34-1","511E55-1","191E37-1","466E53-1"]: nstyle["fgcolor"] = "#37c871"
+#                 else: nstyle["fgcolor"] = "#d7f4e3"
+#             # nstyle["shape"] = "sphere"
+#             nstyle["size"] = 10
+#             n.set_style(nstyle)
+#         ts.show_leaf_name = True
+#         ts.show_branch_support = True
+#         ts.title.add_face(TextFace(dicoLT[clusterNum], fsize=12), column=0)
+#         # tree.show(tree_style=ts)
+#         tree.render("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+dicoLT[clusterNum]+".svg", tree_style=ts)
+#         # tree.render("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+dicoLT[clusterNum]+".png", units="mm", tree_style=ts)
+#         # input("*****")
+# # print(cpt)
+# exit()
+# nstyle["shape"] = "sphere"
+# nstyle["size"] = 10
+# nstyle["fgcolor"] = "darkred"
+
+# # ***** PLOT SIMILARITY MATRIX ***** #
+# dicoSimMA = load_json("/mnt/c/Users/dgoudenege/Taf/Vibrio_chagasii/VIRIDIC/viridic.json")
+# df = pd.DataFrame(dicoSimMA)
+# # cg = sns.clustermap(df, cmap = 'crest', figsize = (50, 50), tree_kws = {'linewidths': 2.5}, dendrogram_ratio = 0.15, annot_kws = {"size": 35 / np.sqrt(len(df))}, cbar_kws = {'label': 'similarity %'})
+# cmap = sns.color_palette("light:#d40000", as_cmap=True)
+# cg = sns.clustermap(df, cmap=cmap, figsize=(50, 50), tree_kws={'linewidths': 2.5}, dendrogram_ratio=0.15, annot_kws={"size": 35 / np.sqrt(len(df))}, cbar_kws={'label': 'similarity %'}, linewidths=0.0, rasterized=True)
+# # Retrieve ordered ticks label
+# newColums = df.columns[cg.dendrogram_col.reordered_ind]
+# newIndexs = df.index[cg.dendrogram_row.reordered_ind]
+# newData = df.loc[newIndexs, newColums]
+# orderedOrg = list(newData.keys())
+# # Plot clustered heatmap
+# cg.ax_cbar.tick_params(labelsize=40)
+# cg.ax_cbar.yaxis.label.set_size(50)
+# plt.savefig("/tmp/matrix.png", dpi=300)
+# plt.savefig("/tmp/matrix.svg")
+# # ***** WRITE SIMILARITY MATRIX ***** #
+# pathOUTmatrix = "/tmp/matrix.tsv"
+# OUT = open(pathOUTmatrix, 'w')
+# header = "Organism"
+# for orgName in orderedOrg:
+#     header += "\t"+orgName
+# OUT.write(header+"\n")
+# for orgName1 in orderedOrg:
+#     line = orgName1
+#     for orgName2 in orderedOrg:
+#         line += "\t"+str(dicoSimMA[orgName1][orgName2]).replace(".", ",")
+#     OUT.write(line+"\n")
+# OUT.close()
+
+
 # exit()
 
-# dicoPairwise = {}
-# for file in os.listdir("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/family_rbh_25_50"):
-#     pathRBH = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/family_rbh_25_50/"+file
-#     lstLines = read_file(pathRBH)
-#     for line in lstLines:
-#         splitLine = line.split("\t")
-#         ref = splitLine[0].split("|")[0]
-#         target = splitLine[1]
-#         targetOrg = dicoLtTOorg[target.split("|")[0]]
-#         pident = float(splitLine[2])
-#         if ref not in dicoPairwise: dicoPairwise[ref] = {}
-#         if targetOrg not in dicoPairwise[ref] or pident>dicoPairwise[ref][targetOrg]: dicoPairwise[ref][targetOrg] = pident
-#     dicoMeanPerHost = {}
-#     for ltRef in dicoPairwise:
-#         lst_pident_crass = []
-#         lst_pident_chaga = []
-#         for targetOrg in dicoPairwise[ltRef]:
-#             if targetOrg in ["91E28-1a","18E29-1","12E28-1","98E28-6a","207E29-1"]: lst_pident_crass.append(dicoPairwise[ltRef][targetOrg])
-#             elif targetOrg in ["115E34-1","455E52-1","217E38-1","120E34-1","511E55-1","191E37-1","466E53-1"]: lst_pident_chaga.append(dicoPairwise[ltRef][targetOrg])
-#             # if dicoHost[targetOrg] == "crass": lst_pident_crass.append(dicoPairwise[ltRef][targetOrg])
-#             # else: lst_pident_chaga.append(dicoPairwise[ltRef][targetOrg])
-#         # if len(lst_pident_crass)==4:
-#         print(ltRef+";"+str(len(lst_pident_crass))+";"+str(np.mean(lst_pident_crass))+";"+str(len(lst_pident_chaga))+";"+str(np.mean(lst_pident_chaga)))
+# dicoANNOT = {"cluster0001":"STRUCT","cluster0002":"STRUCT","cluster0003":"UNK","cluster0004":"UNK","cluster0005":"STRUCT","cluster0006":"UNK","cluster0007":"UNK","cluster0008":"STRUCT","cluster0009":"UNK","cluster0010":"MT","cluster0011":"STRUCT","cluster0012":"DNA","cluster0013":"UNK","cluster0014":"STRUCT","cluster0015":"OTHERS","cluster0016":"UNK","cluster0017":"UNK","cluster0018":"STRUCT","cluster0019":"STRUCT","cluster0020":"UNK","cluster0021":"STRUCT","cluster0022":"UNK","cluster0023":"UNK","cluster0024":"UNK","cluster0025":"DNA","cluster0026":"UNK","cluster0027":"DNA","cluster0028":"UNK","cluster0029":"DNA","cluster0030":"UNK","cluster0031":"UNK","cluster0032":"STRUCT","cluster0033":"UNK","cluster0034":"UNK","cluster0035":"UNK","cluster0036":"STRUCT","cluster0037":"UNK","cluster0038":"UNK","cluster0039":"STRUCT","cluster0040":"OTHERS","cluster0041":"STRUCT","cluster0042":"UNK","cluster0043":"STRUCT","cluster0044":"STRUCT","cluster0045":"UNK","cluster0046":"STRUCT","cluster0047":"UNK","cluster0048":"DNA","cluster0049":"UNK","cluster0050":"UNK","cluster0051":"STRUCT","cluster0052":"DNA","cluster0053":"STRUCT","cluster0054":"UNK","cluster0055":"UNK","cluster0056":"STRUCT","cluster0057":"STRUCT","cluster0058":"UNK","cluster0059":"STRUCT","cluster0060":"UNK","cluster0061":"UNK","cluster0062":"UNK","cluster0063":"UNK","cluster0064":"OTHERS","cluster0065":"UNK","cluster0066":"UNK","cluster0067":"UNK","cluster0068":"UNK","cluster0069":"UNK","cluster0070":"UNK","cluster0071":"UNK","cluster0072":"UNK","cluster0073":"MT","cluster0074":"UNK","cluster0075":"UNK","cluster0076":"UNK","cluster0077":"UNK","cluster0078":"OTHERS","cluster0079":"STRUCT","cluster0080":"UNK","cluster0081":"DNA","cluster0082":"UNK","cluster0083":"STRUCT","cluster0084":"UNK","cluster0085":"UNK","cluster0086":"UNK","cluster0087":"UNK","cluster0088":"UNK","cluster0089":"UNK","cluster0090":"UNK","cluster0091":"UNK","cluster0092":"UNK","cluster0093":"UNK","cluster0094":"STRUCT","cluster0095":"UNK","cluster0096":"OTHERS","cluster0097":"UNK","cluster0098":"UNK","cluster0099":"UNK","cluster0100":"UNK","cluster0101":"STRUCT","cluster0102":"UNK","cluster0103":"OTHERS","cluster0104":"UNK","cluster0105":"UNK","cluster0106":"UNK","cluster0107":"DNA","cluster0108":"UNK","cluster0109":"UNK","cluster0110":"UNK","cluster0111":"UNK","cluster0112":"UNK","cluster0113":"UNK","cluster0114":"UNK","cluster0115":"OTHERS","cluster0116":"UNK","cluster0117":"UNK","cluster0118":"UNK","cluster0119":"UNK","cluster0120":"UNK","cluster0121":"UNK","cluster0122":"UNK","cluster0123":"OTHERS","cluster0124":"UNK","cluster0125":"UNK","cluster0126":"UNK","cluster0127":"UNK","cluster0128":"DNA","cluster0129":"UNK","cluster0130":"UNK","cluster0131":"UNK","cluster0132":"UNK","cluster0133":"UNK","cluster0134":"STRUCT","cluster0135":"UNK","cluster0136":"UNK","cluster0137":"UNK","cluster0138":"STRUCT","cluster0139":"UNK","cluster0140":"DNA","cluster0141":"UNK","cluster0142":"UNK","cluster0143":"MT","cluster0144":"UNK","cluster0145":"UNK","cluster0146":"UNK","cluster0147":"UNK","cluster0148":"UNK","cluster0149":"UNK","cluster0150":"UNK","cluster0151":"DNA","cluster0152":"DNA","cluster0153":"UNK","cluster0154":"DNA","cluster0155":"UNK","cluster0156":"UNK","cluster0157":"UNK","cluster0158":"UNK","cluster0159":"UNK","cluster0160":"UNK","cluster0161":"UNK","cluster0162":"UNK","cluster0163":"UNK","cluster0164":"UNK","cluster0165":"UNK","cluster0166":"UNK","cluster0167":"UNK","cluster0168":"UNK","cluster0169":"UNK","cluster0170":"UNK","cluster0171":"UNK","cluster0172":"UNK","cluster0173":"UNK","cluster0174":"UNK","cluster0175":"UNK","cluster0176":"UNK","cluster0177":"UNK","cluster0178":"STRUCT","cluster0179":"STRUCT","cluster0180":"STRUCT","cluster0181":"UNK","cluster0182":"UNK","cluster0183":"UNK","cluster0184":"UNK","cluster0185":"OTHERS","cluster0186":"UNK","cluster0187":"UNK","cluster0188":"UNK","cluster0189":"UNK","cluster0190":"UNK","cluster0191":"UNK","cluster0192":"UNK","cluster0193":"UNK","cluster0194":"UNK","cluster0195":"UNK","cluster0196":"UNK","cluster0197":"MT","cluster0198":"UNK","cluster0199":"UNK","cluster0200":"UNK","cluster0201":"DNA","cluster0202":"UNK","cluster0203":"UNK","cluster0204":"UNK","cluster0205":"UNK","cluster0206":"UNK","cluster0207":"UNK","cluster0208":"UNK","cluster0209":"UNK","cluster0210":"MT","cluster0211":"UNK","cluster0212":"UNK","cluster0213":"UNK","cluster0214":"UNK","cluster0215":"UNK","cluster0216":"UNK","cluster0217":"UNK","cluster0218":"UNK","cluster0219":"UNK","cluster0220":"UNK","cluster0221":"UNK","cluster0222":"UNK","cluster0223":"DNA","cluster0224":"UNK","cluster0225":"UNK","cluster0226":"UNK","cluster0227":"UNK","cluster0228":"UNK","cluster0229":"UNK","cluster0230":"UNK","cluster0231":"UNK","cluster0232":"UNK","cluster0233":"UNK","cluster0234":"UNK","cluster0235":"UNK","cluster0236":"UNK","cluster0237":"UNK","cluster0238":"UNK","cluster0239":"STRUCT","cluster0240":"UNK","cluster0241":"OTHERS","cluster0242":"UNK","cluster0243":"UNK","cluster0244":"UNK","cluster0245":"UNK","cluster0246":"UNK","cluster0247":"UNK","cluster0248":"OTHERS","cluster0249":"UNK","cluster0250":"UNK","cluster0251":"UNK","cluster0252":"UNK","cluster0253":"UNK"}
+# dicoCOUNTANNOT = {}
+# dicoColorCluster = {}
+# for clusterNum in dicoANNOT:
+#     annot = dicoANNOT[clusterNum]
+#     try: dicoCOUNTANNOT[annot] += 1
+#     except: dicoCOUNTANNOT[annot] = 1
+# for annot in dicoCOUNTANNOT:
+#     if annot == "DNA":  gradient = linear_gradient("#00aad4", finish_hex="#d5f6ff", n=dicoCOUNTANNOT[annot])[0]
+#     elif annot == "MT": gradient = linear_gradient("#ff0000", finish_hex="#ffd5d5", n=dicoCOUNTANNOT[annot])[0]
+#     elif annot == "STRUCT": gradient = linear_gradient("#a05a2c", finish_hex="#e9c6af", n=dicoCOUNTANNOT[annot])[0]
+#     elif annot == "OTHERS": gradient = linear_gradient("#2ca05a", finish_hex="#d7f4e3", n=dicoCOUNTANNOT[annot])[0]
+#     elif annot == "UNK": gradient = linear_gradient("#cccccc", finish_hex="#cccccc", n=dicoCOUNTANNOT[annot])[0]
+#     random.shuffle(gradient)
+#     cpt = 0
+#     for clusterNum in dicoANNOT:
+#         if dicoANNOT[clusterNum] == annot:
+#             dicoColorCluster[clusterNum] = gradient[cpt]
+#             cpt += 1
+
+# dicoProt = {}
+# pathDir = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d"
+# for faa in os.listdir(pathDir):
+#     if ".faa" not in faa: continue
+#     dicoFAA = make_fasta_dict("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d/"+faa)
+#     for key in dicoFAA: dicoProt[key.split('|')[0]] = dicoFAA[key]
+
+# dicoColor = {}
+# dicoBorder = {}
+# setCore = set()
+# setLTGenus13 = set()
+# dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d/rbh_25_50.json")
+# for clusterNum in dicoCluster:
+#     setAll = set()
+#     setGenus13 = set()
+#     setOthers = set()
+#     for prot in dicoCluster[clusterNum]:
+#         orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
+#         setAll.add(orgName)
+#         if orgName in ["91E28-1a","18E29-1","12E28-1","98E28-6a"]:
+#             setGenus13.add(orgName)
+#         else:
+#             setOthers.add(orgName)
+#     if len(setAll) == 1: genocomp = "single"
+#     else:
+#         if len(setAll) == 12: genocomp = "core"
+#         else: genocomp = "variable"
+
+#     for prot in dicoCluster[clusterNum]:
+#         lt = prot.split("|")[0]
+#         orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
+#         dicoColor[lt] = dicoColorCluster[clusterNum]
+#         if genocomp == "core": dicoBorder[lt] = 5
+#         else: dicoBorder[lt] = 0
+
+# pathDir = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d"
+# for gff in os.listdir(pathDir):
+#     if ".gff" not in gff: continue
+#     orgName = gff.replace(".gff", "")
+#     pathPNG = "/tmp/"+orgName+".png"
+#     pathSVG = "/tmp/"+orgName+".svg"
+#     features = []
+#     # ***** PARSE GFF ***** #
+#     dicoGFF = make_gff_dict(pathIN=pathDir+"/"+gff, ext=".gff")
+#     startRegion = 0
+#     endRegion = 0
+#     # ***** BROWSE GENES ***** #
+#     for geneType in dicoGFF[orgName]:
+#         if geneType != 'length':
+#             for geneEntry in dicoGFF[orgName][geneType]:
+#                 if geneType == "CDS":
+#                     color = "#2a7fff"
+#                 elif geneType == "tRNA":
+#                     color = "#37c8ab"
+#                 else:
+#                     continue
+#                 if 'locus_tag' in geneEntry['attributes']:
+#                     lt = geneEntry['attributes']['locus_tag']
+#                     if lt in dicoColor:
+#                         geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=dicoColor[lt], linewidth=dicoBorder[lt])                  
+#                     else:
+#                         geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=dicoBorder[lt])
+#                     features.append(geneFeature)
+#     # ***** PLOT GENES ***** #
+#     seqLen = 55000 # dicoGFF[orgName]['length']
+#     record = GraphicRecord(sequence_length=seqLen+int(seqLen/10), features=features, first_index=startRegion-100)
+#     ax, _ = record.plot(figure_width=50)
+#     # ax.figure.savefig(pathPNG, dpi=300)
+#     ax.figure.savefig(pathSVG)
+#     plt.close('all')
+
+
+# os.system("svg_stack.py --direction=v --margin=1 /tmp/Vibrio_phage_115E34-1.svg /tmp/Vibrio_phage_91E28-1a.svg /tmp/Vibrio_phage_18E29-1.svg /tmp/Vibrio_phage_12E28-1.svg /tmp/Vibrio_phage_98E28-6a.svg /tmp/Vibrio_phage_455E52-1.svg /tmp/Vibrio_phage_217E38-1.svg /tmp/Vibrio_phage_120E34-1.svg /tmp/Vibrio_phage_511E55-1.svg /tmp/Vibrio_phage_207E29-1.svg /tmp/Vibrio_phage_191E37-1.svg /tmp/Vibrio_phage_466E53-1.svg > /mnt/c/Users/dgoudenege/Desktop/merge.svg")
+# import cairosvg ; cairosvg.svg2png(url="/mnt/c/Users/dgoudenege/Desktop/merge.svg", write_to="/mnt/c/Users/dgoudenege/Desktop/merge.png") 
+# os.system("rm -f /mnt/c/Users/dgoudenege/Desktop/Vibrio_phage*.svg")
+
 # exit()
-
-
-dicoHost={"413E50-1":"chaga","402E50-1":"chaga","409E50-1":"chaga","521E56-1":"chaga","384E50-1":"chaga","405E50-1":"chaga","464E53-1":"chaga","468E53-1":"chaga","177E37-1":"chaga","131E34-1":"chaga","121E34-1":"chaga","456E52-1":"chaga","416E50-1":"chaga","284E43-1":"chaga","237E40-1":"chaga","22O28-1":"chaga","434O48-1":"chaga","282E43-1":"chaga","417E50-1":"chaga","448O51-1":"chaga","217E38-1":"chaga","455E52-1":"chaga","466E53-1":"chaga","191E37-1":"chaga","115E34-1":"chaga","511E55-1":"chaga","120E34-1":"chaga","495E54-1":"chaga","496E54-1":"chaga","277E43-1":"chaga","193E37-1":"chaga","249E41-1":"chaga","382E49-1":"chaga","141O35-1":"chaga","141E35-1":"chaga","230E39-1":"chaga","137E35-1":"chaga","393E50-1":"chaga","489E54-1":"chaga","424E50-1":"chaga","501E54-1":"chaga","381E49-1":"chaga","242E40-1":"chaga","275E43-1":"chaga","142E35-1":"chaga","168E36-1":"chaga","236O40-1":"chaga","199E37-1":"chaga","150E35-1":"chaga","24E30-2":"crass","66E30-1":"crass","24E35-2":"crass","64E30-1":"crass","44E38-2":"crass","36E38-1":"crass","41E34-2":"crass","75E35-1":"crass","44E38-1":"crass","34E29-1":"crass","70E35-5a":"crass","234P7b":"crass","70E35-2":"crass","294E48-1":"crass","70E38-1":"crass","70E37-6":"crass","70E37-1":"crass","70E35-6":"crass","234P1":"crass","11E33-1":"crass","82E32-1":"crass","82E32-3":"crass","38E33-6a":"crass","82E33-2":"crass","82E32-2":"crass","19E33-1":"crass","219E41-1":"crass","219E41-2":"crass","234P8":"crass","431E48-2":"crass","431E46-1":"crass","431E45-1":"crass","207E29-1":"crass","91E28-1a":"crass","98E28-6a":"crass","18E29-1":"crass","12E28-1":"crass","264E42-1":"crass","51E28-1":"crass","51E28-4":"crass","340E47-2":"crass","5P1a":"crass","69E27-1":"crass","23E28-1":"crass","184E37-3a":"crass","184E37-1":"crass","104E43-1":"crass","103E44-1":"crass","14E30-1":"crass","14E30-2":"crass","207E48-1":"crass","144E46-1":"crass","252E42-2":"crass","268E42-1":"crass","6E35-1a":"crass","15E36-1":"crass","172P1":"crass"}
-dicoAnnot={"cluster0001":"large_terminase","cluster0002":"putative_baseplate_wedge_protein","cluster0004":"unkwown","cluster0005":"baseplate_J_protein","cluster0007":"unkwown","cluster0008":"neck_protein","cluster0009":"unkwown","cluster0011":"putative_tail_sheath_protein","cluster0012":"DNA_helicase","cluster0014":"putative_gp55_tail-fiber","cluster0015":"nucleic_acid-binding","cluster0016":"unkwown","cluster0017":"unkwown","cluster0018":"putative_baseplate_assembly_protein","cluster0019":"minor_capsid_protein","cluster0021":"baseplate_protein_J-like_protein","cluster0023":"unkwown","cluster0027":"DNA_helicase","cluster0029":"DNA_primase-helicase","cluster0030":"unkwown","cluster0031":"unkwown","cluster0032":"tail_assembly_chaperone","cluster0035":"unkwown","cluster0036":"head","cluster0037":"unkwown","cluster0039":"putative_structural_protein","cluster0040":"putative_lytic_transglycosylase","cluster0041":"putative_head_protein","cluster0042":"unkwown","cluster0043":"major_capsid_protein","cluster0044":"portal","cluster0045":"unkwown","cluster0048":"DNA_nuclease","cluster0051":"tail-completion_protein","cluster0053":"putative_tail_tube_protein","cluster0055":"unkwown","cluster0057":"head_completion_adaptor","cluster0058":"unkwown","cluster0059":"head-closure_protein","cluster0060":"unkwown","cluster0061":"unkwown","cluster0063":"unkwown","cluster0064":"metallo-dependent_phosphatase-like_protein"}
-dicoLT = {}
-cpt = 0
-typeseq="faa"
-dicoSeq = {}
-for file in os.listdir("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/"+typeseq.upper()+"_phages"):
-    if typeseq in file:
-        dicoTMP = make_fasta_dict("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/"+typeseq.upper()+"_phages/"+file)
-        for key in dicoTMP:
-            dicoSeq[key.split("|")[0]] = dicoTMP[key]
-# dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/all_phages_rbh_25_50/all_phages_rbh_25_50.json")
-# dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/all_phages_rbh_25_80.json")
-dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/family_rbh_25_80.json")
-for clusterNum in dicoCluster:
-    setCrass = set()
-    setChaga = set()
-    for prot in dicoCluster[clusterNum]: # "VP495E541_p0026|-1 [Vibrio_phage_495E54-1]",
-        orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
-        if orgName=="115E34-1":  dicoLT[clusterNum] = prot.split("|")[0]
-        if orgName in ["91E28-1a","18E29-1","12E28-1","98E28-6a","207E29-1"]: setCrass.add(orgName)
-        elif orgName in ["115E34-1","455E52-1","217E38-1","120E34-1","511E55-1","191E37-1","466E53-1"]: setChaga.add(orgName)
-    if len(setCrass) == 5 and len(setChaga) == 7: #> 1:
-    # if len(setCrass)+len(setChaga)>1:
-        # print(clusterNum)
-        cpt += 1
-        pathFASTA = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+clusterNum+".fasta"
-        pathALIGN = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+clusterNum+"_famsa.fasta"
-        if not os.path.isfile(pathFASTA):
-            OUT = open(pathFASTA,'w')
-            for prot in dicoCluster[clusterNum]:
-                orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
-                lt = prot.split("|")[0]
-                OUT.write(">"+orgName+"|"+lt+"\n"+dicoSeq[lt]+"\n")
-            OUT.close()
-        pathTREE = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+clusterNum
-        # famsa
-        if not os.path.isfile(pathALIGN):
-            os.system("famsa "+pathFASTA+" "+pathALIGN+" 2>/dev/null")
-
-        # # pairwise identity
-        # dicoALIGN = make_fasta_dict(pathALIGN)
-        # lst_pident_crass = []
-        # lst_pident_chaga = []
-        # lst_pident_both = []
-        # lstLT= []
-        # for orgName1 in dicoALIGN:
-        #     lstLT.append(orgName1.split("|")[1])
-        #     for orgName2 in dicoALIGN:
-        #         if orgName1 != orgName2:
-        #             nbMatch = 0
-        #             for i in range(len(dicoALIGN[orgName1])):
-        #                 if dicoALIGN[orgName1][i] == dicoALIGN[orgName2][i]: nbMatch += 1
-        #             pident = (nbMatch*100) / len(dicoALIGN[orgName1])
-        #             if dicoHost[orgName1.split("|")[0]] == dicoHost[orgName2.split("|")[0]]:
-        #                 if dicoHost[orgName1.split("|")[0]] == "chaga": lst_pident_chaga.append(pident)
-        #                 else: lst_pident_crass.append(pident)
-        #             else: lst_pident_both.append(pident)
-        # if len(lst_pident_crass)==0: min_crass = -1
-        # else: min_crass = min(lst_pident_crass)
-        # if len(lst_pident_chaga)==0: min_chaga = -1
-        # else: min_chaga = min(lst_pident_chaga)
-        # if len(lst_pident_both)==0: max_both = -1
-        # else: max_both = max(lst_pident_both)
-        # print(clusterNum+";"+str(len(setCrass))+";"+str(len(setChaga))+";"+str(min_crass)+";"+str(min_chaga)+";"+str(max_both)+";"+",".join(lstLT))
-
-
-        # iqtree
-        if not os.path.isfile(pathTREE+".nwk"):
-            if typeseq == "faa": os.system("iqtree2 -s "+pathALIGN+" -T 12 --mem 25GB -m LG -B 1000 --seqtype AA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1")
-            else: os.system("iqtree2 -s "+pathALIGN+" -T 12 --mem 25GB -m GTR -B 1000 --seqtype DNA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1")
-            os.system("rm -f "+pathTREE+".splits.nex "+pathTREE+".log "+pathTREE+".mldist "+pathTREE+".bionj "+pathTREE+".ckp.gz "+pathTREE+".contree "+pathTREE+".iqtree")
-            shutil.move(pathTREE+".treefile",pathTREE+".nwk")
-        # RENDERING tree
-        tree = Tree(pathTREE+".nwk")
-        for node in tree.traverse("postorder"):
-            # Do some analysis on node
-            node.name = node.name.split("|")[0]
-        ts = TreeStyle()
-        ts.show_branch_support = True
-        for n in tree.traverse():
-            nstyle = NodeStyle()
-            nstyle["vt_line_type"] = 0 # 0 solid, 1 dashed, 2 dotted
-            nstyle["hz_line_type"] = 0
-            # if n.support != 1.0:
-            #     nstyle["vt_line_width"] = n.support/20
-            #     nstyle["hz_line_width"] = n.support/20    
-            #     nstyle["size"] = 0
-            try: host = dicoHost[n.name]
-            except KeyError: n.set_style(nstyle) ; continue
-            if host == "crass":
-                if n.name in ["91E28-1a","18E29-1","12E28-1","98E28-6a","207E29-1"]: nstyle["fgcolor"] = "#ff5599"
-                else: nstyle["fgcolor"] = "#ffd5f6"
-            elif host == "chaga":
-                if n.name in ["115E34-1","455E52-1","217E38-1","120E34-1","511E55-1","191E37-1","466E53-1"]: nstyle["fgcolor"] = "#37c871"
-                else: nstyle["fgcolor"] = "#d7f4e3"
-            # nstyle["shape"] = "sphere"
-            nstyle["size"] = 10
-            n.set_style(nstyle)
-        ts.show_leaf_name = True
-        ts.show_branch_support = True
-        ts.title.add_face(TextFace(dicoLT[clusterNum], fsize=12), column=0)
-        # tree.show(tree_style=ts)
-        tree.render("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+dicoLT[clusterNum]+".svg", tree_style=ts)
-        # tree.render("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/individual_tree/"+dicoLT[clusterNum]+".png", units="mm", tree_style=ts)
-        # input("*****")
-# print(cpt)
-exit()
-nstyle["shape"] = "sphere"
-nstyle["size"] = 10
-nstyle["fgcolor"] = "darkred"
-
-# ***** PLOT SIMILARITY MATRIX ***** #
-dicoSimMA = load_json("/mnt/c/Users/dgoudenege/Taf/Vibrio_chagasii/VIRIDIC/viridic.json")
-df = pd.DataFrame(dicoSimMA)
-# cg = sns.clustermap(df, cmap = 'crest', figsize = (50, 50), tree_kws = {'linewidths': 2.5}, dendrogram_ratio = 0.15, annot_kws = {"size": 35 / np.sqrt(len(df))}, cbar_kws = {'label': 'similarity %'})
-cmap = sns.color_palette("light:#d40000", as_cmap=True)
-cg = sns.clustermap(df, cmap=cmap, figsize=(50, 50), tree_kws={'linewidths': 2.5}, dendrogram_ratio=0.15, annot_kws={"size": 35 / np.sqrt(len(df))}, cbar_kws={'label': 'similarity %'}, linewidths=0.0, rasterized=True)
-# Retrieve ordered ticks label
-newColums = df.columns[cg.dendrogram_col.reordered_ind]
-newIndexs = df.index[cg.dendrogram_row.reordered_ind]
-newData = df.loc[newIndexs, newColums]
-orderedOrg = list(newData.keys())
-# Plot clustered heatmap
-cg.ax_cbar.tick_params(labelsize=40)
-cg.ax_cbar.yaxis.label.set_size(50)
-plt.savefig("/tmp/matrix.png", dpi=300)
-plt.savefig("/tmp/matrix.svg")
-# ***** WRITE SIMILARITY MATRIX ***** #
-pathOUTmatrix = "/tmp/matrix.tsv"
-OUT = open(pathOUTmatrix, 'w')
-header = "Organism"
-for orgName in orderedOrg:
-    header += "\t"+orgName
-OUT.write(header+"\n")
-for orgName1 in orderedOrg:
-    line = orgName1
-    for orgName2 in orderedOrg:
-        line += "\t"+str(dicoSimMA[orgName1][orgName2]).replace(".", ",")
-    OUT.write(line+"\n")
-OUT.close()
-
-
-exit()
-
-dicoANNOT = {"cluster0001":"STRUCT","cluster0002":"STRUCT","cluster0003":"UNK","cluster0004":"UNK","cluster0005":"STRUCT","cluster0006":"UNK","cluster0007":"UNK","cluster0008":"STRUCT","cluster0009":"UNK","cluster0010":"MT","cluster0011":"STRUCT","cluster0012":"DNA","cluster0013":"UNK","cluster0014":"STRUCT","cluster0015":"OTHERS","cluster0016":"UNK","cluster0017":"UNK","cluster0018":"STRUCT","cluster0019":"STRUCT","cluster0020":"UNK","cluster0021":"STRUCT","cluster0022":"UNK","cluster0023":"UNK","cluster0024":"UNK","cluster0025":"DNA","cluster0026":"UNK","cluster0027":"DNA","cluster0028":"UNK","cluster0029":"DNA","cluster0030":"UNK","cluster0031":"UNK","cluster0032":"STRUCT","cluster0033":"UNK","cluster0034":"UNK","cluster0035":"UNK","cluster0036":"STRUCT","cluster0037":"UNK","cluster0038":"UNK","cluster0039":"STRUCT","cluster0040":"OTHERS","cluster0041":"STRUCT","cluster0042":"UNK","cluster0043":"STRUCT","cluster0044":"STRUCT","cluster0045":"UNK","cluster0046":"STRUCT","cluster0047":"UNK","cluster0048":"DNA","cluster0049":"UNK","cluster0050":"UNK","cluster0051":"STRUCT","cluster0052":"DNA","cluster0053":"STRUCT","cluster0054":"UNK","cluster0055":"UNK","cluster0056":"STRUCT","cluster0057":"STRUCT","cluster0058":"UNK","cluster0059":"STRUCT","cluster0060":"UNK","cluster0061":"UNK","cluster0062":"UNK","cluster0063":"UNK","cluster0064":"OTHERS","cluster0065":"UNK","cluster0066":"UNK","cluster0067":"UNK","cluster0068":"UNK","cluster0069":"UNK","cluster0070":"UNK","cluster0071":"UNK","cluster0072":"UNK","cluster0073":"MT","cluster0074":"UNK","cluster0075":"UNK","cluster0076":"UNK","cluster0077":"UNK","cluster0078":"OTHERS","cluster0079":"STRUCT","cluster0080":"UNK","cluster0081":"DNA","cluster0082":"UNK","cluster0083":"STRUCT","cluster0084":"UNK","cluster0085":"UNK","cluster0086":"UNK","cluster0087":"UNK","cluster0088":"UNK","cluster0089":"UNK","cluster0090":"UNK","cluster0091":"UNK","cluster0092":"UNK","cluster0093":"UNK","cluster0094":"STRUCT","cluster0095":"UNK","cluster0096":"OTHERS","cluster0097":"UNK","cluster0098":"UNK","cluster0099":"UNK","cluster0100":"UNK","cluster0101":"STRUCT","cluster0102":"UNK","cluster0103":"OTHERS","cluster0104":"UNK","cluster0105":"UNK","cluster0106":"UNK","cluster0107":"DNA","cluster0108":"UNK","cluster0109":"UNK","cluster0110":"UNK","cluster0111":"UNK","cluster0112":"UNK","cluster0113":"UNK","cluster0114":"UNK","cluster0115":"OTHERS","cluster0116":"UNK","cluster0117":"UNK","cluster0118":"UNK","cluster0119":"UNK","cluster0120":"UNK","cluster0121":"UNK","cluster0122":"UNK","cluster0123":"OTHERS","cluster0124":"UNK","cluster0125":"UNK","cluster0126":"UNK","cluster0127":"UNK","cluster0128":"DNA","cluster0129":"UNK","cluster0130":"UNK","cluster0131":"UNK","cluster0132":"UNK","cluster0133":"UNK","cluster0134":"STRUCT","cluster0135":"UNK","cluster0136":"UNK","cluster0137":"UNK","cluster0138":"STRUCT","cluster0139":"UNK","cluster0140":"DNA","cluster0141":"UNK","cluster0142":"UNK","cluster0143":"MT","cluster0144":"UNK","cluster0145":"UNK","cluster0146":"UNK","cluster0147":"UNK","cluster0148":"UNK","cluster0149":"UNK","cluster0150":"UNK","cluster0151":"DNA","cluster0152":"DNA","cluster0153":"UNK","cluster0154":"DNA","cluster0155":"UNK","cluster0156":"UNK","cluster0157":"UNK","cluster0158":"UNK","cluster0159":"UNK","cluster0160":"UNK","cluster0161":"UNK","cluster0162":"UNK","cluster0163":"UNK","cluster0164":"UNK","cluster0165":"UNK","cluster0166":"UNK","cluster0167":"UNK","cluster0168":"UNK","cluster0169":"UNK","cluster0170":"UNK","cluster0171":"UNK","cluster0172":"UNK","cluster0173":"UNK","cluster0174":"UNK","cluster0175":"UNK","cluster0176":"UNK","cluster0177":"UNK","cluster0178":"STRUCT","cluster0179":"STRUCT","cluster0180":"STRUCT","cluster0181":"UNK","cluster0182":"UNK","cluster0183":"UNK","cluster0184":"UNK","cluster0185":"OTHERS","cluster0186":"UNK","cluster0187":"UNK","cluster0188":"UNK","cluster0189":"UNK","cluster0190":"UNK","cluster0191":"UNK","cluster0192":"UNK","cluster0193":"UNK","cluster0194":"UNK","cluster0195":"UNK","cluster0196":"UNK","cluster0197":"MT","cluster0198":"UNK","cluster0199":"UNK","cluster0200":"UNK","cluster0201":"DNA","cluster0202":"UNK","cluster0203":"UNK","cluster0204":"UNK","cluster0205":"UNK","cluster0206":"UNK","cluster0207":"UNK","cluster0208":"UNK","cluster0209":"UNK","cluster0210":"MT","cluster0211":"UNK","cluster0212":"UNK","cluster0213":"UNK","cluster0214":"UNK","cluster0215":"UNK","cluster0216":"UNK","cluster0217":"UNK","cluster0218":"UNK","cluster0219":"UNK","cluster0220":"UNK","cluster0221":"UNK","cluster0222":"UNK","cluster0223":"DNA","cluster0224":"UNK","cluster0225":"UNK","cluster0226":"UNK","cluster0227":"UNK","cluster0228":"UNK","cluster0229":"UNK","cluster0230":"UNK","cluster0231":"UNK","cluster0232":"UNK","cluster0233":"UNK","cluster0234":"UNK","cluster0235":"UNK","cluster0236":"UNK","cluster0237":"UNK","cluster0238":"UNK","cluster0239":"STRUCT","cluster0240":"UNK","cluster0241":"OTHERS","cluster0242":"UNK","cluster0243":"UNK","cluster0244":"UNK","cluster0245":"UNK","cluster0246":"UNK","cluster0247":"UNK","cluster0248":"OTHERS","cluster0249":"UNK","cluster0250":"UNK","cluster0251":"UNK","cluster0252":"UNK","cluster0253":"UNK"}
-dicoCOUNTANNOT = {}
-dicoColorCluster = {}
-for clusterNum in dicoANNOT:
-    annot = dicoANNOT[clusterNum]
-    try: dicoCOUNTANNOT[annot] += 1
-    except: dicoCOUNTANNOT[annot] = 1
-for annot in dicoCOUNTANNOT:
-    if annot == "DNA":  gradient = linear_gradient("#00aad4", finish_hex="#d5f6ff", n=dicoCOUNTANNOT[annot])[0]
-    elif annot == "MT": gradient = linear_gradient("#ff0000", finish_hex="#ffd5d5", n=dicoCOUNTANNOT[annot])[0]
-    elif annot == "STRUCT": gradient = linear_gradient("#a05a2c", finish_hex="#e9c6af", n=dicoCOUNTANNOT[annot])[0]
-    elif annot == "OTHERS": gradient = linear_gradient("#2ca05a", finish_hex="#d7f4e3", n=dicoCOUNTANNOT[annot])[0]
-    elif annot == "UNK": gradient = linear_gradient("#cccccc", finish_hex="#cccccc", n=dicoCOUNTANNOT[annot])[0]
-    random.shuffle(gradient)
-    cpt = 0
-    for clusterNum in dicoANNOT:
-        if dicoANNOT[clusterNum] == annot:
-            dicoColorCluster[clusterNum] = gradient[cpt]
-            cpt += 1
-
-dicoProt = {}
-pathDir = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d"
-for faa in os.listdir(pathDir):
-    if ".faa" not in faa: continue
-    dicoFAA = make_fasta_dict("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d/"+faa)
-    for key in dicoFAA: dicoProt[key.split('|')[0]] = dicoFAA[key]
-
-dicoColor = {}
-dicoBorder = {}
-setCore = set()
-setLTGenus13 = set()
-dicoCluster = load_json("/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d/rbh_25_50.json")
-for clusterNum in dicoCluster:
-    setAll = set()
-    setGenus13 = set()
-    setOthers = set()
-    for prot in dicoCluster[clusterNum]:
-        orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
-        setAll.add(orgName)
-        if orgName in ["91E28-1a","18E29-1","12E28-1","98E28-6a"]:
-            setGenus13.add(orgName)
-        else:
-            setOthers.add(orgName)
-    if len(setAll) == 1: genocomp = "single"
-    else:
-        if len(setAll) == 12: genocomp = "core"
-        else: genocomp = "variable"
-
-    for prot in dicoCluster[clusterNum]:
-        lt = prot.split("|")[0]
-        orgName = prot.split("[")[1].replace("Vibrio_phage_","").replace("]","")
-        dicoColor[lt] = dicoColorCluster[clusterNum]
-        if genocomp == "core": dicoBorder[lt] = 5
-        else: dicoBorder[lt] = 0
-
-pathDir = "/mnt/c/Users/dgoudenege/Desktop/reviewing_chaga/phage_family_fig4d"
-for gff in os.listdir(pathDir):
-    if ".gff" not in gff: continue
-    orgName = gff.replace(".gff", "")
-    pathPNG = "/tmp/"+orgName+".png"
-    pathSVG = "/tmp/"+orgName+".svg"
-    features = []
-    # ***** PARSE GFF ***** #
-    dicoGFF = make_gff_dict(pathIN=pathDir+"/"+gff, ext=".gff")
-    startRegion = 0
-    endRegion = 0
-    # ***** BROWSE GENES ***** #
-    for geneType in dicoGFF[orgName]:
-        if geneType != 'length':
-            for geneEntry in dicoGFF[orgName][geneType]:
-                if geneType == "CDS":
-                    color = "#2a7fff"
-                elif geneType == "tRNA":
-                    color = "#37c8ab"
-                else:
-                    continue
-                if 'locus_tag' in geneEntry['attributes']:
-                    lt = geneEntry['attributes']['locus_tag']
-                    if lt in dicoColor:
-                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=dicoColor[lt], linewidth=dicoBorder[lt])                  
-                    else:
-                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=dicoBorder[lt])
-                    features.append(geneFeature)
-    # ***** PLOT GENES ***** #
-    seqLen = 55000 # dicoGFF[orgName]['length']
-    record = GraphicRecord(sequence_length=seqLen+int(seqLen/10), features=features, first_index=startRegion-100)
-    ax, _ = record.plot(figure_width=50)
-    # ax.figure.savefig(pathPNG, dpi=300)
-    ax.figure.savefig(pathSVG)
-    plt.close('all')
-
-
-os.system("svg_stack.py --direction=v --margin=1 /tmp/Vibrio_phage_115E34-1.svg /tmp/Vibrio_phage_91E28-1a.svg /tmp/Vibrio_phage_18E29-1.svg /tmp/Vibrio_phage_12E28-1.svg /tmp/Vibrio_phage_98E28-6a.svg /tmp/Vibrio_phage_455E52-1.svg /tmp/Vibrio_phage_217E38-1.svg /tmp/Vibrio_phage_120E34-1.svg /tmp/Vibrio_phage_511E55-1.svg /tmp/Vibrio_phage_207E29-1.svg /tmp/Vibrio_phage_191E37-1.svg /tmp/Vibrio_phage_466E53-1.svg > /mnt/c/Users/dgoudenege/Desktop/merge.svg")
-import cairosvg ; cairosvg.svg2png(url="/mnt/c/Users/dgoudenege/Desktop/merge.svg", write_to="/mnt/c/Users/dgoudenege/Desktop/merge.png") 
-os.system("rm -f /mnt/c/Users/dgoudenege/Desktop/Vibrio_phage*.svg")
-
-exit()
-
-
-
-
-
-
-
-
 
 
 
@@ -386,21 +378,24 @@ for line in lstLines:
         dicoResults[query]['PICMIstart'] = sstart
 
 dicoColor = {"barcode01":"#006400","barcode02":"#b03060","barcode03":"#ff4500","barcode04":"#ffff00","barcode05":"#deb887","barcode06":"#00ff00","barcode08":"#00ffff","barcode10":"#ff00ff","barcode12":"#6495ed"}
-features = []
-for query in dicoResults:
-    color = dicoColor[query.split("_____")[1]]
-    completePICMIsize = len(dicoFASTA[query])-(6110-dicoResults[query]['PICMIstart'])-(dicoResults[query]['PICMIend'])
-    completePICMIcount = int(round((completePICMIsize/6110),1))
-    seqModifReadAlign = seqPICMI[dicoResults[query]['PICMIstart']-1:]+completePICMIcount*seqPICMI+seqPICMI[:dicoResults[query]['PICMIend']]
-    # seqModifReadAlign = "-"*(dicoResults[query]['PICMIstart']-1)+seqPICMI[dicoResults[query]['PICMIstart']-1:]+completePICMIcount*seqPICMI+seqPICMI[:dicoResults[query]['PICMIend']]
-    # seqModifReadAlign += "-"*(60947-len(seqModifReadAlign))
-    # print(">"+query+"\n"+seqModifReadAlign)
-    features.append(GraphicFeature(start=dicoResults[query]['PICMIstart'], end=dicoResults[query]['PICMIstart']+len(seqModifReadAlign), strand=1, color="blue", linewidth=0))
-record = GraphicRecord(sequence_length=80000, features=features)
-ax, _ = record.plot(figure_width=50)
-# ax.figure.savefig("/tmp/temp.png", dpi=300)
-ax.figure.savefig("/tmp/reads.svg")
-plt.close('all')
+
+for barcode in dicoColor:
+    features = []
+    for query in dicoResults:
+        if query.split("_____")[1]==barcode:
+            color = dicoColor[query.split("_____")[1]]
+            completePICMIsize = len(dicoFASTA[query])-(6110-dicoResults[query]['PICMIstart'])-(dicoResults[query]['PICMIend'])
+            completePICMIcount = int(round((completePICMIsize/6110),1))
+            seqModifReadAlign = seqPICMI[dicoResults[query]['PICMIstart']-1:]+completePICMIcount*seqPICMI+seqPICMI[:dicoResults[query]['PICMIend']]
+            # seqModifReadAlign = "-"*(dicoResults[query]['PICMIstart']-1)+seqPICMI[dicoResults[query]['PICMIstart']-1:]+completePICMIcount*seqPICMI+seqPICMI[:dicoResults[query]['PICMIend']]
+            # seqModifReadAlign += "-"*(60947-len(seqModifReadAlign))
+            # print(">"+query+"\n"+seqModifReadAlign)
+            features.append(GraphicFeature(start=dicoResults[query]['PICMIstart'], end=dicoResults[query]['PICMIstart']+len(seqModifReadAlign), strand=1, color="blue", linewidth=0))
+    record = GraphicRecord(sequence_length=80000, features=features)
+    ax, _ = record.plot(figure_width=50)
+    # ax.figure.savefig("/tmp/temp.png", dpi=300)
+    ax.figure.savefig("/tmp/"+barcode+".svg")
+    plt.close('all')
 
 exit()
 
