@@ -1,4 +1,4 @@
-![gemini logo](conf/gemini_icon.png){ style="display: block; margin: 0 auto" }
+![gemini logo](conf/gemini_icon.png)
 
 ```python
 """ SEQUENCE functions """
