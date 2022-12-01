@@ -1,5 +1,7 @@
 ![gemini logo](conf/gemini_icon.png)
 
+---------------------------------------
+
 ```console
 python gemini.py --help
 ```
@@ -162,25 +164,14 @@ def dl_genbank_bacteria('-section'section, '-tax'taxonomyID, '-o'pathOUT, '-chun
 
 ---------------------------------------
 
-#### python3 requirements
-- ast<br/>
-- biopython<br/>
-- cairosvg<br/>
-- dna_features_viewer<br/>
-- ete3<br/>
-- matplotlib<br/>
-- numpy<br/>
-- openpyxl<br/>
-- pandas<br/>
-- psutil<br/>
-- requests<br/>
-- rich<br/>
-- scipy<br/>
-- seaborn<br/>
-- svgpathtools<br/>
-- tabulate<br/>
-- torch<br/>
-- tqdm<br/>
-- xlsxwriter<br/>
-- yaspin<br/>
+#### Configuration
 
+##### Install required packages with PIP
+pip install -r requirements.txt
+
+##### Edit default gemini variables
+nano geminiset.py
+
+##### Edit required data and tools locations
+nano conf\geminipath.txt
+(nano conf\geminipathslurm.txt)
