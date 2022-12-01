@@ -1,7 +1,7 @@
 ![gemini logo](conf/gemini_icon.png)
 
 <b>Collection of function and main wrapper for various in silico analysis.</b><br/>
-<br/>
+
 ```diff
 ┌─┐  ┌─┐  ┌┬┐  ┬  ┌┐┌  ┬
 │ ┬  ├┤   │││  │  │││  │
