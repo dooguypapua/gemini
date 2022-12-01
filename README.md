@@ -4,10 +4,11 @@
 <b>Collection of function and main wrapper for various in silico analysis.</b><br/>
 <br/>
 ```diff
+<span style="color:blue">
 ┌─┐  ┌─┐  ┌┬┐  ┬  ┌┐┌  ┬
 │ ┬  ├┤   │││  │  │││  │
 └─┘  └─┘  ┴ ┴  ┴  ┘└┘  ┴
-
+</span>
 """ SEQUENCE functions """
 # Unwrap FASTA by removing sequence '\n'
 def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
