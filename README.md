@@ -1,6 +1,4 @@
-<p style="text-align: center;">
-![gemini logo](conf/gemini_icon.png)
-</p>
+![gemini logo](conf/gemini_icon.png){ style="display: block; margin: 0 auto" }
 
 ```python
 """ SEQUENCE functions """
