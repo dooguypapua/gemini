@@ -1,7 +1,5 @@
 ![gemini logo](conf/gemini_icon.png)
 
----------------------------------------
-
 ```console
 python gemini.py --help
 ```
