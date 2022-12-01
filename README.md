@@ -183,3 +183,1004 @@ def dl_genbank_bacteria('-section'section, '-tax'taxonomyID, '-o'pathOUT, '-chun
 - tqdm<br/>
 - xlsxwriter<br/>
 - yaspin<br/>
+
+```Cucumber
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")Cucumber
+```
+```abap
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")abap
+```
+```ada
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")ada
+```
+```ahk
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")ahk
+```
+```apacheconf
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")apacheconf
+```
+```applescript
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")applescript
+```
+```as
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")as
+```
+```as3
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")as3
+```
+```asy
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")asy
+```
+```bash
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")bash
+```
+```bat
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")bat
+```
+```befunge
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")befunge
+```
+```blitzmax
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")blitzmax
+```
+```boo
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")boo
+```
+```brainfuck
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")brainfuck
+```
+```c
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")c
+```
+```cfm
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")cfm
+```
+```cheetah
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")cheetah
+```
+```cl
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")cl
+```
+```clojure
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")clojure
+```
+```cmake
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")cmake
+```
+```coffeescript
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")coffeescript
+```
+```console
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")console
+```
+```control
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")control
+```
+```cpp
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")cpp
+```
+```csharp
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")csharp
+```
+```css
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")css
+```
+```cython
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")cython
+```
+```d
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")d
+```
+```delphi
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")delphi
+```
+```diff
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")diff
+```
+```dpatch
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")dpatch
+```
+```duel
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")duel
+```
+```dylan
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")dylan
+```
+```erb
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")erb
+```
+```erl
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")erl
+```
+```erlang
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")erlang
+```
+```evoque
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")evoque
+```
+```factor
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")factor
+```
+```felix
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")felix
+```
+```fortran
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")fortran
+```
+```gas
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")gas
+```
+```genshi
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")genshi
+```
+```glsl
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")glsl
+```
+```gnuplot
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")gnuplot
+```
+```go
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")go
+```
+```groff
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")groff
+```
+```haml
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")haml
+```
+```haskell
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")haskell
+```
+```html
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")html
+```
+```hx
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")hx
+```
+```hybris
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")hybris
+```
+```ini
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")ini
+```
+```io
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")io
+```
+```ioke
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")ioke
+```
+```irc
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")irc
+```
+```jade
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")jade
+```
+```java
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")java
+```
+```js
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")js
+```
+```jsp
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")jsp
+```
+```lhs
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")lhs
+```
+```llvm
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")llvm
+```
+```logtalk
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")logtalk
+```
+```lua
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")lua
+```
+```make
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")make
+```
+```mako
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")mako
+```
+```maql
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")maql
+```
+```mason
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")mason
+```
+```markdown
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")markdown
+```
+```modelica
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")modelica
+```
+```modula2
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")modula2
+```
+```moocode
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")moocode
+```
+```mupad
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")mupad
+```
+```mxml
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")mxml
+```
+```myghty
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")myghty
+```
+```nasm
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")nasm
+```
+```newspeak
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")newspeak
+```
+```objdump
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")objdump
+```
+```objectivec
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")objectivec
+```
+```objectivej
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")objectivej
+```
+```ocaml
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")ocaml
+```
+```ooc
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")ooc
+```
+```perl
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")perl
+```
+```php
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")php
+```
+```postscript
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")postscript
+```
+```pot
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")pot
+```
+```pov
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")pov
+```
+```prolog
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")prolog
+```
+```properties
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")properties
+```
+```protobuf
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")protobuf
+```
+```py3tb
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")py3tb
+```
+```pytb
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")pytb
+```
+```python
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")python
+```
+```rb
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")rb
+```
+```rconsole
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")rconsole
+```
+```rebol
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")rebol
+```
+```redcode
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")redcode
+```
+```rhtml
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")rhtml
+```
+```rst
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")rst
+```
+```sass
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")sass
+```
+```scala
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")scala
+```
+```scaml
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")scaml
+```
+```scheme
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")scheme
+```
+```scss
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")scss
+```
+```smalltalk
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")smalltalk
+```
+```smarty
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")smarty
+```
+```sourceslist
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")sourceslist
+```
+```splus
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")splus
+```
+```sql
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")sql
+```
+```sqlite3
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")sqlite3
+```
+```squidconf
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")squidconf
+```
+```ssp
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")ssp
+```
+```tcl
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")tcl
+```
+```tcsh
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")tcsh
+```
+```tex
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")tex
+```
+```text
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")text
+```
+```v
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")v
+```
+```vala
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")vala
+```
+```vbnet
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")vbnet
+```
+```velocity
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")velocity
+```
+```vim
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")vim
+```
+```xml
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")xml
+```
+```xquery
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")xquery
+```
+```xslt
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")xslt
+```
+```yaml
+""" SEQUENCE functions """
+# Unwrap FASTA by removing sequence '
+'
+def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
+# Split FASTA sequence
+def split_fasta('-i'pathIN, '-o'pathOUT, '-term'term="N", '-ext'ext=".fna")yaml
+```
