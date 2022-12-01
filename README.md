@@ -1,8 +1,10 @@
 ![gemini logo](conf/gemini_icon.png)
 
-```python
+```bash
 python gemini.py --help
+```
 
+```python
 """ SEQUENCE functions """
 # Unwrap FASTA by removing sequence '\n'
 def unwrap_fasta('-i'pathIN, '-ext'ext=".fna")
