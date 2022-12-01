@@ -165,11 +165,17 @@ def dl_genbank_bacteria('-section'section, '-tax'taxonomyID, '-o'pathOUT, '-chun
 #### Configuration
 
 ##### Install required packages with PIP
+```diff
 pip install -r requirements.txt
+```
 
 ##### Edit default gemini variables
+```diff
 nano geminiset.py
+```
 
 ##### Edit required data and tools locations
+```diff
 nano conf\geminipath.txt
-(nano conf\geminipathslurm.txt)
+nano conf\geminipathslurm.txt
+```
