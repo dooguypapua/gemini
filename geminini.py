@@ -88,18 +88,20 @@ def dump_json(dico, pathJSON, indent=4):
 
 
 # ***** FileReader ***** #
-def read_file(file_path: str, excludeFirstKr: str = "#") -> []:
+def read_file(file_path: str, excludeFirstKr: str = "#", yaspinBool: bool = True) -> []:
     if not os.path.isfile(file_path):
         printcolor("File not found \""+file_path+"\"\n", 1, "212;64;89", "None", True)
         exit_gemini()
-    spinner = yaspin(Spinners.simpleDotsScrolling, text="reading", side="right")
-    spinner.start()
+    if yaspinBool:
+        spinner = yaspin(Spinners.simpleDotsScrolling, text="reading", side="right")
+        spinner.start()
     lstLines = []
     with open(file_path) as f:
         for line in f:
             if line[0] != excludeFirstKr:
                 lstLines.append(line[:-1])
-    spinner.stop()
+    if yaspinBool:
+        spinner.stop()
     return lstLines
 
 

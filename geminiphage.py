@@ -1105,7 +1105,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     # Check missing comparison
     setAllOrg = set()
     for file in lstFiles:
-        orgName = os.path.basename(file).replace(ext, "").replace("."+ext, "")
+        orgName = os.path.basename(file).replace("_genomic.fna.gz", "").replace(ext, "").replace("."+ext, "")
         setAllOrg.add(orgName)
     nbMissingComp = 0
     setMissingOrg = set()
