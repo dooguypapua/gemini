@@ -18,3 +18,4 @@ torch
 tqdm
 xlsxwriter
 yaspin
+sqlitedict

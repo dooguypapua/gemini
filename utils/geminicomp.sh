@@ -125,7 +125,7 @@ _geminicomplementation()
                 options="-i -o -checkv"
                 ;;
                 myVIRIDIC)
-                options="-i -o -thfam -thgen -thsp -ext"
+                options="-i -o -thfam -thgen -thsp -db -ext"
                 ;;
                 PhiSpy)
                 options="-i -o -nb -len -ext"
@@ -215,7 +215,7 @@ _geminicomplementation()
                 COMPREPLY=($(compgen -W ".annotations .faa .faa.gz .fasta .fasta.gz .ffn .ffn.gz .fna .fna.gz .gbk .gbk.gz .gff .rbh .tblout .trnascanse .tsv .xml .xlsx .xls" -- ${cur}))
                 ;;
                 # BOOLEAN
-                -mmseqs | -ltheader | -nodoublon | -sort | -orgheader | -phagedb | -nucl | -gene | -prot | -embl | -addseq | -progress)
+                -mmseqs | -ltheader | -nodoublon | -db | -sort | -orgheader | -phagedb | -nucl | -gene | -prot | -embl | -addseq | -progress)
                 COMPREPLY=($(compgen -W "true false" -- ${cur}))
                 ;;                
                 # INTEGER

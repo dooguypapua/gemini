@@ -24,6 +24,10 @@ import pprint
 import subprocess
 import threading
 import itertools
+import pickle
+import sqlite3
+import blosc2
+
 # import time
 import glob
 import torch
@@ -107,10 +111,9 @@ def read_file(file_path: str, excludeFirstKr: str = "#", yaspinBool: bool = True
 
 # ***** Concatenate files ***** #
 def cat_lstfiles(lstFiles, pathOUT):
-    cmdCat = "cat"
-    for pathFAA in lstFiles:
-        cmdCat += " "+pathFAA
-    os.system(cmdCat+" > "+pathOUT)
+    os.system("cp "+lstFiles[0]+" "+pathOUT)
+    for i in range(1, len(lstFiles), 1):
+        os.system("cat "+lstFiles[i]+" >> "+pathOUT)
 
 
 # ***** Instanciate internal gemini dico ***** #
@@ -340,6 +343,14 @@ def longest_common_substring(x: str, y: str) -> (int, int, int):
     # returning the maximum of all the subproblems
     return max(digonal_computation(), key=itemgetter(0), default=(0, 0, 0))
 
+
+# ***** sqlitedict ***** #
+def my_encode(obj):
+    return sqlite3.Binary(blosc2.compress2(pickle.dumps(obj, pickle.HIGHEST_PROTOCOL)))
+
+
+def my_decode(obj):
+    return pickle.loads(blosc2.decompress2(bytes(obj)))
 
 '''
 -------------------------------------------------------------------------------------------------------

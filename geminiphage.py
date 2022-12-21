@@ -18,6 +18,7 @@ import sys
 import re
 import shutil
 import filecmp
+import gzip
 import geminiset
 import pandas as pd
 import numpy as np
@@ -31,8 +32,9 @@ from yaspin import yaspin
 from yaspin.spinners import Spinners
 from Bio.Seq import Seq
 from dna_features_viewer import GraphicFeature, GraphicRecord
-from geminini import path_converter, get_input_files, printcolor, get_gemini_path, get_sys_info, fct_checker
-from geminini import dump_json, load_json, reverse_complement, launch_threads, title, exit_gemini, longest_common_substring
+from sqlitedict import SqliteDict
+from geminini import path_converter, get_input_files, printcolor, get_gemini_path, get_sys_info, fct_checker, my_encode, my_decode
+from geminini import dump_json, load_json, reverse_complement, launch_threads, title, exit_gemini, longest_common_substring, cat_lstfiles
 from geminiparse import unwrap_fasta, make_blast_dict, make_fasta_dict, make_hmmscan_dict, make_gff_dict
 from geminiparse import make_trnascanse_dict, make_interpro_dict, make_eggnog_dict, make_gbk_from_fasta
 from geminiparse import blastdict_to_annotsort, hmmscandict_to_dictlt, gbk_to_faa, make_gbk_dict, gbk_to_gff
@@ -1042,7 +1044,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
 
 
 @fct_checker
-def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.0, thsp: float = 95.0, ext: str = ".fna") -> Tuple[str, str, float, float, float, str]:
+def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.0, thsp: float = 95.0, boolFromDB: bool = False, ext: str = ".fna") -> Tuple[str, str, float, float, float, bool, str]:
     '''
      ------------------------------------------------------------
     |                         myVIRIDIC                          |
@@ -1058,7 +1060,25 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     |    ext     : extension of input files (default=.fna)       |
      ------------------------------------------------------------
     '''
-    lstFiles, maxpathSize = get_input_files(pathIN, "myVIRIDIC", [ext])
+    setAllOrg = set()
+    if boolFromDB:
+        printcolor("♊ Read input from DB"+"\n")
+        lstFiles = []
+        maxpathSize = 15
+        lst_genome = os.listdir(pathIN)
+        pbar = tqdm(total=len(lst_genome), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        for folder in lst_genome:
+            if os.path.isfile(pathIN+"/"+folder+"/"+folder+"_genomic.fna.gz"):
+                lstFiles.append(pathIN+"/"+folder+"/"+folder+"_genomic.fna.gz")
+                setAllOrg.add(folder)
+            pbar.update(1)
+            title("Read db", pbar)
+        pbar.close()
+    else:
+        lstFiles, maxpathSize = get_input_files(pathIN, "myVIRIDIC", [ext])
+        for file in lstFiles:
+            orgName = os.path.basename(file).replace("_genomic.fna.gz", "").replace(ext, "").replace("."+ext, "")
+            setAllOrg.add(orgName)
     if len(lstFiles) == 0:
         printcolor("[ERROR: myVIRIDIC]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
@@ -1069,7 +1089,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     # Gemini variables
     dicoGeminiPath = get_gemini_path()
     slurmBool, cpu, memMax, memMin = get_sys_info()
-    pathVIRIDICgeminiR = os.path.dirname(os.path.abspath(__file__))+"/geminiVIRIDIC.R"
+    pathVIRIDICgeminiR = os.path.dirname(os.path.abspath(__file__))+"/utils/geminiVIRIDIC.R"
     # ***** OUTPUT *****#
     pathDIRVIRIDICJSON = pathOUT+"/viridic_json"
     os.makedirs(pathDIRVIRIDICJSON, exist_ok=True)
@@ -1086,77 +1106,110 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     os.makedirs(pathTMPVIRIDIC, exist_ok=True)
     pathTMPLOG = pathTMP+"/LOG"
     os.makedirs(pathTMPLOG, exist_ok=True)
-    # ***** CHECK JSON FILES ***** #
-    lstVIRIDICJSON = []
-    for JSON in os.listdir(pathDIRVIRIDICJSON):
-        pathVIRIDICJSON = pathDIRVIRIDICJSON+"/"+JSON
-        if os.path.getsize(pathVIRIDICJSON) != 0:
-            lstVIRIDICJSON.append(JSON)
-    dicoSimMA = {}
-    if len(lstVIRIDICJSON) == 0:
-        printcolor("⏩ Any simMA JSON found"+"\n")
-    else:
-        printcolor("♊ Load simMA JSON"+"\n")
-        for JSON in lstVIRIDICJSON:
+    # ***** DIRECT LOAD existing sqliteDict dicoViridic ***** #
+    pathSQLITEVIRIDIC = pathOUT+"/dicoViridic.sqlite"
+    if os.path.isfile(pathSQLITEVIRIDIC):
+        printcolor("♊ Load VIRIDIC sqlite"+"\n")
+    # ***** OR CREATE with JSON FILES ***** #
+    if not os.path.isfile(pathSQLITEVIRIDIC):
+        printcolor("♊ Init VIRIDIC sqlite"+"\n")
+        lstVIRIDICJSON = []
+        for JSON in os.listdir(pathDIRVIRIDICJSON):
             pathVIRIDICJSON = pathDIRVIRIDICJSON+"/"+JSON
-            dicoSimMA[JSON.replace(".json", "")] = load_json(pathVIRIDICJSON)
+            if os.path.getsize(pathVIRIDICJSON) != 0:
+                lstVIRIDICJSON.append(JSON)
+        if len(lstVIRIDICJSON) == 0:
+            printcolor("⏩ Any VIRIDIC JSON found"+"\n")
+        else:
+            printcolor("⏩ Load VIRIDIC JSON"+"\n")
+            pbar = tqdm(total=len(lstVIRIDICJSON), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+            for JSON in lstVIRIDICJSON:
+                pathVIRIDICJSON = pathDIRVIRIDICJSON+"/"+JSON
+                orgName = JSON.replace(".json", "")
+                # Load table for current orgName, commit and close
+                sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName, encode=my_encode, decode=my_decode, outer_stack=False)
+                sqldicoViridic = load_json(pathVIRIDICJSON)
+                sqldicoViridic.commit()
+                sqldicoViridic.close()
+                pbar.update()
+                title("loadviridicjson", pbar)
+            pbar.close()
     # ***** CHECK MISSING COMPARISONS ***** #
     printcolor("♊ Check comparisons"+"\n")
-    # Check missing comparison
-    setAllOrg = set()
-    for file in lstFiles:
-        orgName = os.path.basename(file).replace("_genomic.fna.gz", "").replace(ext, "").replace("."+ext, "")
-        setAllOrg.add(orgName)
     nbMissingComp = 0
-    setMissingOrg = set()
-    dicoMissingComp = {}
+    setAllMissingOrg = set()
     nbTotComp = len(setAllOrg) * (len(setAllOrg)-1)
+    pbar = tqdm(total=len(setAllOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    # Load sqlitedict without table name and check available table
+    sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, encode=my_encode, decode=my_decode, outer_stack=False)
+    sqldicoViridicTables = sqldicoViridic.get_tablenames(pathSQLITEVIRIDIC)
+    # Load sqlitedict for missing comparisons
+    sqldicoMissingComp = SqliteDict(pathTMP+"/dicoMissingComp.sqlite", encode=my_encode, decode=my_decode, outer_stack=False)
     for orgName1 in setAllOrg:
-        if orgName1 not in dicoSimMA:
-            dicoSimMA[orgName1] = {}
-        for orgName2 in setAllOrg:
-            if orgName1 != orgName2 and orgName2 not in dicoSimMA[orgName1]:
-                nbMissingComp += 1
-                setMissingOrg.update([orgName1, orgName2])
-                try:
-                    dicoMissingComp[orgName1].add(orgName2)
-                except KeyError:
-                    dicoMissingComp[orgName1] = set([orgName2])
+        sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
+        setOrgDone = set(sqldicoViridic.keys())
+        setOrgMissing = setAllOrg-setOrgDone
+        if len(setOrgMissing) != 0:
+            nbMissingComp += len(setOrgMissing)-1
+            setAllMissingOrg.update([orgName1], setOrgMissing)
+            sqldicoMissingComp[orgName1] = setOrgMissing
+        sqldicoViridic.commit()
+        sqldicoViridic.close()
+        pbar.update()
+        title("checkprevious", pbar)
+    pbar.close()
+    sqldicoMissingComp.commit()
+    # Display missing
     if nbMissingComp == 0:
         printcolor("⏩ Completed: "+str(nbTotComp)+" distances"+"\n")
     else:
         printcolor("⏩ Missing: "+str(nbMissingComp)+"/"+str(nbTotComp)+" distances"+"\n")
-    if len(setMissingOrg) > 0:
+    # ***** LAUNCH WORKFLOW ***** #
+    if len(setAllMissingOrg) > 0:
         # ***** REFORMAT INPUT FASTA ***** # (only organism name in header and merge contigs with 100N)
         printcolor("♊ Reformat FASTA"+"\n")
-        pbar = tqdm(total=len(setMissingOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
-        ALLFASTA = open(pathTMPFASTA+"/all.fasta", 'w')
-        for orgName in setMissingOrg:
-            pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
-            pathInitialFASTA = pathIN+"/"+orgName+ext
+        pbar = tqdm(total=len(setAllMissingOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        for orgName in setAllMissingOrg:
+            if boolFromDB:
+                pbar.set_description_str(orgName[:15])
+                pathInitialFASTA = pathIN+"/"+orgName+"/"+orgName+"_genomic.fna.gz"
+            else:
+                pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
+                pathInitialFASTA = pathIN+"/"+orgName+ext
             pathReformatFASTA = pathTMPFASTA+"/"+orgName+".fasta"
+            seqs = []
+            with gzip.open(pathInitialFASTA,'rt') as fasta:
+                prev_seq = []
+                for line in fasta:
+                    if line.startswith(">"):
+                        seqs.append("".join(prev_seq))
+                        prev_seq = []
+                    else:
+                        prev_seq.append(line.rstrip())
+            seqs.append("".join(prev_seq))
             REFORMAT = open(pathReformatFASTA, 'w')
-            dicoFNA = make_fasta_dict(pathInitialFASTA)
-            REFORMAT.write(">"+orgName+"\n"+("N"*100).join(list(dicoFNA.values()))+"\n")
-            ALLFASTA.write(">"+orgName+"\n"+("N"*100).join(list(dicoFNA.values()))+"\n")
+            REFORMAT.write(">"+orgName+"\n"+("N"*100).join(seqs)[100:]+"\n")
             REFORMAT.close()
             pbar.update(1)
             title("Reformat", pbar)
-        ALLFASTA.close()
         pbar.close()
-        # ***** MAKE BLASTDB ***** #
-        spinner = yaspin(Spinners.aesthetic, text="♊ Make BLASTDB", side="right")
-        spinner.start()
-        title("blastDB", None)
-        cmdMAKEDB = dicoGeminiPath['makeblastdb']+" -dbtype nucl -logfile "+pathTMPLOG+"/makeblastdb.log -in "+pathTMPFASTA+"/all.fasta"
-        os.system(cmdMAKEDB)
-        spinner.stop()
-        printcolor("♊ Make BLASTDB"+"\n")
         # ***** LAUNCH MISSING BLASTN ***** #
         printcolor("♊ Launch blastN"+"\n")
-        pbar = tqdm(total=len(dicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
-        for orgName1 in dicoMissingComp:
-            pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+        pbar = tqdm(total=len(setAllMissingOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        for orgName1 in sqldicoMissingComp:
+            if boolFromDB:
+                pbar.set_description_str(orgName1[:15])
+            else:
+                pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+            # Make blastDB
+            lstFilesToDB = [pathTMPFASTA+"/"+orgName1+".fasta"]
+            pathDBblast = pathTMPFASTA+"/"+orgName1+".blastdb"
+            for orgName2 in sqldicoMissingComp[orgName1]:
+                lstFilesToDB.append(pathTMPFASTA+"/"+orgName2+".fasta")
+            cat_lstfiles(lstFilesToDB, pathDBblast)
+            cmdMAKEDB = dicoGeminiPath['makeblastdb']+" -dbtype nucl -logfile "+pathTMPLOG+"/makeblastdb.log -in "+pathDBblast
+            os.system(cmdMAKEDB)
+            # Launch blastN
             lstPathOUT = []
             pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out"
             # Check if blastN results already available
@@ -1166,18 +1219,18 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             else:
                 setOrgDone = set()
             # Launch blastn
-            if len(dicoMissingComp[orgName1]-setOrgDone) != 0:
+            if len(sqldicoMissingComp[orgName1]-setOrgDone) != 0:
                 pathFASTA = pathTMPFASTA+"/"+orgName1+".fasta"
                 pathBLASTOUT = pathTMPBLASTCOMPOUT+"/"+orgName1+".out"
                 pathLOG = pathTMPLOG+"/"+orgName1+".log"
                 lstPathOUT.append(pathBLASTOUT)
-                cmdBLASTN = dicoGeminiPath['blastn']+" -query "+pathFASTA+" -db "+pathTMPFASTA+"/all.fasta -out "+pathBLASTOUT + \
+                cmdBLASTN = dicoGeminiPath['blastn']+" -query "+pathFASTA+" -db "+pathDBblast+" -out "+pathBLASTOUT + \
                     " -outfmt \"6 qseqid sseqid evalue bitscore qlen slen qstart qend sstart send qseq sseq nident gaps\"" + \
                     " -evalue 1 -max_target_seqs 10000 -word_size 7 -reward 2 -penalty -3 -gapopen 5 -gapextend 2" + \
                     " -num_threads "+str(cpu)+" >> "+pathLOG+" 2>&1"
                 os.system(cmdBLASTN)
-                setOrgDone.update(dicoMissingComp[orgName1])
-                # Add to final blastN results files
+                setOrgDone.update(sqldicoMissingComp[orgName1])
+                # Add to final blastN results files (removing duplicate)
                 pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out"
                 if os.path.isfile(pathMERGEOUT):
                     os.system("awk '!x[$0]++' "+pathMERGEOUT+" "+pathBLASTOUT+" > "+pathTMPBLASTCOMPOUT+"/temp_merge.out")
@@ -1191,15 +1244,18 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
         pbar.close()
         # ***** LAUNCH VIRIDIC ***** #
         printcolor("♊ Launch VIRIDIC"+"\n")
-        dicoIntergSim = {}
-        pbar = tqdm(total=len(dicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
-        for orgName1 in dicoMissingComp:
-            pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
-            pathJSONINTERGSIM = pathDIRINTERGSIM+"/"+orgName1+".json"
-            if not os.path.isfile(pathJSONINTERGSIM) or os.path.getsize(pathJSONINTERGSIM) == 0:
-                dicoIntergSim[orgName1] = {}
+        pbar = tqdm(total=len(sqldicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        for orgName1 in sqldicoMissingComp:
+            if boolFromDB:
+                pbar.set_description_str(orgName1[:15])
             else:
-                dicoIntergSim[orgName1] = load_json(pathJSONINTERGSIM)
+                pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+            # Create a sqlitedict table with orgName1
+            sqldicoIntergSim = SqliteDict(pathTMP+"/dicoIntergSim.sqlite", tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
+            # Load previous results
+            pathJSONINTERGSIM = pathDIRINTERGSIM+"/"+orgName1+".json"
+            if os.path.isfile(pathJSONINTERGSIM) and os.path.getsize(pathJSONINTERGSIM) != 0:
+                sqldicoIntergSim = load_json(pathJSONINTERGSIM)
             # Reduce total blastn results to missing results
             pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out"
             pathREDUCEOUT = pathTMP+"/reduce_blastn.out"
@@ -1209,7 +1265,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             TMPREDUCEOUT = open(pathREDUCEOUT, 'w')
             for line in lstLines:
                 orgName2 = line.split("\t")[1]
-                if orgName2 in dicoMissingComp[orgName1] and orgName2 not in dicoIntergSim[orgName1]:
+                if orgName2 in sqldicoMissingComp[orgName1] and orgName2 not in sqldicoIntergSim:
                     TMPREDUCEOUT.write(line+"\n")
             TMPREDUCEOUT.close()
             # Launch VIRIDIC
@@ -1227,37 +1283,53 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                     orgName2 = splitLine[1]
                     # ATTENTION : if not use reciprocal blast, viridic must be sum of both comparison
                     intergSim = float(splitLine[9])
-                    dicoIntergSim[orgName1][orgName2] = intergSim
+                    sqldicoIntergSim[orgName2] = intergSim
             # Add missing comparision due to zero distance
-            for orgName2 in dicoMissingComp[orgName1]:
-                if orgName2 not in dicoIntergSim[orgName1]:
-                    dicoIntergSim[orgName1][orgName2] = 0.0
-            dump_json(dicoIntergSim[orgName1], pathJSONINTERGSIM)
+            for orgName2 in sqldicoMissingComp[orgName1]:
+                if orgName2 not in sqldicoIntergSim:
+                    sqldicoIntergSim[orgName2] = 0.0
+            # Save JSON and commit/close current sqldict table
+            dump_json(dict(sqldicoIntergSim), pathJSONINTERGSIM)
+            sqldicoIntergSim.commit()
+            sqldicoIntergSim.close()
             pbar.update(1)
             title("VIRIDIC", pbar)
         pbar.close()
         # ***** Compute similarity matrix *****#
         printcolor("♊ Compute simMA"+"\n")
-        pbar = tqdm(total=len(dicoIntergSim), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
-        for orgName1 in dicoMissingComp:
-            pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
-            dicoSimMA[orgName1][orgName1] = 100.0
-            for orgName2 in dicoIntergSim[orgName1]:
-                dicoSimMA[orgName1][orgName2] = dicoIntergSim[orgName1][orgName2] + dicoIntergSim[orgName2][orgName1]
-            # Dump JSON
+        pbar = tqdm(total=len(sqldicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        for orgName1 in sqldicoMissingComp:
+            if boolFromDB:
+                pbar.set_description_str(orgName1[:15])
+            else:
+                pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+            sqldicoIntergSim1 = SqliteDict(pathTMP+"/dicoIntergSim.sqlite", tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
+            sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
+            for orgName2 in sqldicoIntergSim1:
+                sqldicoIntergSim2 = SqliteDict(pathTMP+"/dicoIntergSim.sqlite", tablename=orgName2, encode=my_encode, decode=my_decode, outer_stack=False)
+                sqldicoViridic[orgName2] = sqldicoIntergSim1[orgName2] + sqldicoIntergSim2[orgName1]
+                sqldicoIntergSim2.close()
+            sqldicoViridic[orgName1] = 100.0
+            sqldicoIntergSim1.close()
+            # Dump JSON and commit/close sqlitedict
             pathVIRIDICJSON = pathDIRVIRIDICJSON+"/"+orgName1+".json"
-            dump_json(dicoSimMA[orgName1], pathVIRIDICJSON)
+            dump_json(dict(sqldicoViridic), pathVIRIDICJSON)
+            sqldicoViridic.commit()
+            sqldicoViridic.close()
             pbar.update(1)
             title("sim-MA", pbar)
         pbar.close()
+    exit()
     # ***** FAMILY, GENUS and SPECIES assignment ***** #
     printcolor("♊ Genus/Specie assignment"+"\n")
     dicoTaxo = {'family': {}, 'genus': {}, 'specie': {}}
-    for orgName1 in dicoSimMA:
-        for orgName2 in dicoSimMA:
+    for orgName1 in sqldicoViridic:
+        for orgName2 in sqldicoViridic:
             for orderTuple in [("family", thfam), ("genus", thgen), ("specie", thsp)]:
                 # Genus
-                if dicoSimMA[orgName1][orgName2] >= orderTuple[1]:
+                print(orgName1,orgName2)
+                print(sqldicoViridic[orgName1].keys())
+                if sqldicoViridic[orgName1][orgName2] >= orderTuple[1]:
                     findOrder = False
                     for orderNum in dicoTaxo[orderTuple[0]]:
                         if orgName1 in dicoTaxo[orderTuple[0]][orderNum] or orgName2 in dicoTaxo[orderTuple[0]][orderNum]:
@@ -1274,7 +1346,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     OUT = open(pathOUTclusters, 'w')
     OUT.write("Organism\tFamily\tGenus\tSpecie\n")
     dicoAssign = {}
-    for orgName in dicoSimMA:
+    for orgName in sqldicoViridic:
         dicoAssign[orgName] = {}
         line = orgName
         for order in ["family", "genus", "specie"]:
@@ -1290,7 +1362,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     spinner = yaspin(Spinners.aesthetic, text="♊ Plot similarity matrix", side="right")
     spinner.start()
     title("Plotting", None)
-    df = pd.DataFrame(dicoSimMA)
+    df = pd.DataFrame(sqldicoViridic)
     # cg = sns.clustermap(df, cmap = 'crest', figsize = (50, 50), tree_kws = {'linewidths': 2.5}, dendrogram_ratio = 0.15, annot_kws = {"size": 35 / np.sqrt(len(df))}, cbar_kws = {'label': 'similarity %'})
     cmap = sns.color_palette("light:#d40000", as_cmap=True)
     cg = sns.clustermap(df, cmap=cmap, figsize=(50, 50), tree_kws={'linewidths': 2.5}, dendrogram_ratio=0.15, annot_kws={"size": 35 / np.sqrt(len(df))}, cbar_kws={'label': 'similarity %'}, linewidths=0.0, rasterized=True)
@@ -1317,10 +1389,13 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     for orgName1 in orderedOrg:
         line = orgName1+"\t"+str(dicoAssign[orgName1]['genus'])+"\t"+str(dicoAssign[orgName1]['specie'])
         for orgName2 in orderedOrg:
-            line += "\t"+str(dicoSimMA[orgName1][orgName2]).replace(".", ",")
+            line += "\t"+str(sqldicoViridic[orgName1][orgName2]).replace(".", ",")
         OUT.write(line+"\n")
     OUT.close()
-
+    # ***** CLOSE sqliteDict ***** #
+    sqldicoViridic.close()
+    sqldicoMissingComp.close()
+    sqldicoIntergSim.close()
 
 @fct_checker
 def PhiSpy(pathIN: str, pathOUT: str, nbAdjacent: int = 3, minCtgLen: int = 5000, boolPvogs: bool = False, ext: str = ".gbk") -> Tuple[str, str, int, int, bool, str]:
