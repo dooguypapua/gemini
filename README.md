@@ -111,7 +111,7 @@ def phage_annotation('-i'pathIN, '-o'pathOUT, '-embl'boolEMBL=False, '-project'e
 # Make GenBank phages database
 def phageDB('-i'pathIN, '-o'pathOUT, '-checkv'checkvHQ=75.0)
 # Modified version of VIRIDIC
-def myVIRIDIC('-i'pathIN, '-o'pathOUT, '-thfam'thfam=50.0, '-thgen'thgen=70.0, '-thsp'thsp=95.0, '-ext'ext=".fna")
+def myVIRIDIC('-i'pathIN, '-o'pathOUT, '-thfam'thfam=50.0, '-thgen'thgen=70.0, '-thsp'thsp=95.0, '-db'boolFromDB=False, '-ext'ext=".fna")
 # PhiSpy prophages prediction
 def PhiSpy('-i'pathIN, '-o'pathOUT, '-nb'nbAdjacent=3, '-len'minCtgLen=5000, '-ext'ext=".gbk")
 # Search PICMI from gbk files
