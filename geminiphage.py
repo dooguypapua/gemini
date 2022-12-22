@@ -1106,8 +1106,11 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     os.makedirs(pathTMPVIRIDIC, exist_ok=True)
     pathTMPLOG = pathTMP+"/LOG"
     os.makedirs(pathTMPLOG, exist_ok=True)
-    # ***** DIRECT LOAD existing sqliteDict dicoViridic ***** #
+    # SqliteDict
     pathSQLITEVIRIDIC = pathOUT+"/dicoViridic.sqlite"
+    pathSQLITEMISSCOMP = pathTMP+"/dicoMissingComp.sqlite"
+    pathSQLITEINTERGSIM = pathTMP+"/dicoIntergSim.sqlite"
+    # ***** DIRECT LOAD existing sqliteDict dicoViridic ***** #
     if os.path.isfile(pathSQLITEVIRIDIC):
         printcolor("♊ Load VIRIDIC sqlite"+"\n")
     # ***** OR CREATE with JSON FILES ***** #
@@ -1144,7 +1147,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, encode=my_encode, decode=my_decode, outer_stack=False)
     sqldicoViridicTables = sqldicoViridic.get_tablenames(pathSQLITEVIRIDIC)
     # Load sqlitedict for missing comparisons
-    sqldicoMissingComp = SqliteDict(pathTMP+"/dicoMissingComp.sqlite", encode=my_encode, decode=my_decode, outer_stack=False)
+    sqldicoMissingComp = SqliteDict(pathSQLITEMISSCOMP, encode=my_encode, decode=my_decode, outer_stack=False)
     for orgName1 in setAllOrg:
         sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
         setOrgDone = set(sqldicoViridic.keys())
@@ -1251,7 +1254,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             else:
                 pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
             # Create a sqlitedict table with orgName1
-            sqldicoIntergSim = SqliteDict(pathTMP+"/dicoIntergSim.sqlite", tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
+            sqldicoIntergSim = SqliteDict(pathSQLITEINTERGSIM, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
             # Load previous results
             pathJSONINTERGSIM = pathDIRINTERGSIM+"/"+orgName1+".json"
             if os.path.isfile(pathJSONINTERGSIM) and os.path.getsize(pathJSONINTERGSIM) != 0:
@@ -1303,10 +1306,10 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                 pbar.set_description_str(orgName1[:15])
             else:
                 pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
-            sqldicoIntergSim1 = SqliteDict(pathTMP+"/dicoIntergSim.sqlite", tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
+            sqldicoIntergSim1 = SqliteDict(pathSQLITEINTERGSIM, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
             sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
             for orgName2 in sqldicoIntergSim1:
-                sqldicoIntergSim2 = SqliteDict(pathTMP+"/dicoIntergSim.sqlite", tablename=orgName2, encode=my_encode, decode=my_decode, outer_stack=False)
+                sqldicoIntergSim2 = SqliteDict(pathSQLITEINTERGSIM, tablename=orgName2, encode=my_encode, decode=my_decode, outer_stack=False)
                 sqldicoViridic[orgName2] = sqldicoIntergSim1[orgName2] + sqldicoIntergSim2[orgName1]
                 sqldicoIntergSim2.close()
             sqldicoViridic[orgName1] = 100.0
@@ -1319,17 +1322,19 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             pbar.update(1)
             title("sim-MA", pbar)
         pbar.close()
-    exit()
     # ***** FAMILY, GENUS and SPECIES assignment ***** #
     printcolor("♊ Genus/Specie assignment"+"\n")
     dicoTaxo = {'family': {}, 'genus': {}, 'specie': {}}
-    for orgName1 in sqldicoViridic:
-        for orgName2 in sqldicoViridic:
+    pbar = tqdm(total=len(setAllOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    for orgName1 in setAllOrg:
+        if boolFromDB:
+            pbar.set_description_str(orgName1[:15])
+        else:
+            pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+        sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
+        for orgName2 in setAllOrg:
             for orderTuple in [("family", thfam), ("genus", thgen), ("specie", thsp)]:
-                # Genus
-                print(orgName1,orgName2)
-                print(sqldicoViridic[orgName1].keys())
-                if sqldicoViridic[orgName1][orgName2] >= orderTuple[1]:
+                if sqldicoViridic[orgName2] >= orderTuple[1]:
                     findOrder = False
                     for orderNum in dicoTaxo[orderTuple[0]]:
                         if orgName1 in dicoTaxo[orderTuple[0]][orderNum] or orgName2 in dicoTaxo[orderTuple[0]][orderNum]:
@@ -1338,6 +1343,10 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                             break
                     if findOrder is False:
                         dicoTaxo[orderTuple[0]][len(dicoTaxo[orderTuple[0]])+1] = set({orgName1, orgName2})
+        sqldicoViridic.close()
+        pbar.update(1)
+        title("assign", pbar)
+    pbar.close()
     for order in ["family", "genus", "specie"]:
         printcolor("⏩ Found "+str(len(dicoTaxo[order]))+" "+order+"\n")
     # ***** MAKE CLUSTERS TABLE ***** #
@@ -1346,7 +1355,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     OUT = open(pathOUTclusters, 'w')
     OUT.write("Organism\tFamily\tGenus\tSpecie\n")
     dicoAssign = {}
-    for orgName in sqldicoViridic:
+    for orgName in setAllOrg:
         dicoAssign[orgName] = {}
         line = orgName
         for order in ["family", "genus", "specie"]:
@@ -1362,8 +1371,13 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     spinner = yaspin(Spinners.aesthetic, text="♊ Plot similarity matrix", side="right")
     spinner.start()
     title("Plotting", None)
-    df = pd.DataFrame(sqldicoViridic)
-    # cg = sns.clustermap(df, cmap = 'crest', figsize = (50, 50), tree_kws = {'linewidths': 2.5}, dendrogram_ratio = 0.15, annot_kws = {"size": 35 / np.sqrt(len(df))}, cbar_kws = {'label': 'similarity %'})
+    # Convert individual VIRIDIC sqlitedict to one dataframe
+    lstsqldicoViridic = []
+    for orgName in setAllOrg:
+        sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName, encode=my_encode, decode=my_decode, outer_stack=False)
+        lstsqldicoViridic.append(dict(sqldicoViridic))
+        sqldicoViridic.close()
+    df = pd.DataFrame.from_dict(lstsqldicoViridic)
     cmap = sns.color_palette("light:#d40000", as_cmap=True)
     cg = sns.clustermap(df, cmap=cmap, figsize=(50, 50), tree_kws={'linewidths': 2.5}, dendrogram_ratio=0.15, annot_kws={"size": 35 / np.sqrt(len(df))}, cbar_kws={'label': 'similarity %'}, linewidths=0.0, rasterized=True)
     # Retrieve ordered ticks label
@@ -1387,15 +1401,14 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
         header += "\t"+orgName
     OUT.write(header+"\n")
     for orgName1 in orderedOrg:
+        sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
         line = orgName1+"\t"+str(dicoAssign[orgName1]['genus'])+"\t"+str(dicoAssign[orgName1]['specie'])
         for orgName2 in orderedOrg:
-            line += "\t"+str(sqldicoViridic[orgName1][orgName2]).replace(".", ",")
+            line += "\t"+str(sqldicoViridic[orgName2]).replace(".", ",")
         OUT.write(line+"\n")
+        sqldicoViridic.close()
     OUT.close()
-    # ***** CLOSE sqliteDict ***** #
-    sqldicoViridic.close()
-    sqldicoMissingComp.close()
-    sqldicoIntergSim.close()
+
 
 @fct_checker
 def PhiSpy(pathIN: str, pathOUT: str, nbAdjacent: int = 3, minCtgLen: int = 5000, boolPvogs: bool = False, ext: str = ".gbk") -> Tuple[str, str, int, int, bool, str]:
