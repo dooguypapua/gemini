@@ -1093,7 +1093,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     # ***** OUTPUT *****#
     pathDIRVIRIDICJSON = pathOUT+"/viridic_json"
     os.makedirs(pathDIRVIRIDICJSON, exist_ok=True)
-    pathDIRBLASTN = pathOUT+"/blastn_out"
+    pathDIRBLASTN = pathOUT+"/viridic_blastn"
     os.makedirs(pathDIRBLASTN, exist_ok=True)
     pathDIRINTERGSIM = pathOUT+"/viridic_sim"
     os.makedirs(pathDIRINTERGSIM, exist_ok=True)
@@ -1107,7 +1107,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     pathTMPLOG = pathTMP+"/LOG"
     os.makedirs(pathTMPLOG, exist_ok=True)
     # SqliteDict
-    pathSQLITEVIRIDIC = pathOUT+"/dicoViridic.sqlite"
+    pathSQLITEVIRIDIC = pathOUT+"/viridic_dict.sqlite"
     pathSQLITEMISSCOMP = pathTMP+"/dicoMissingComp.sqlite"
     pathSQLITEINTERGSIM = pathTMP+"/dicoIntergSim.sqlite"
     # ***** DIRECT LOAD existing sqliteDict dicoViridic ***** #
@@ -1214,9 +1214,8 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             os.system(cmdMAKEDB)
             # Launch blastN
             lstPathOUT = []
-            pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out"
             # Check if blastN results already available
-            pathJSONorgDone = pathDIRBLASTN+"/"+orgName1+".json"
+            pathJSONorgDone = pathDIRBLASTN+"/"+orgName1+".json.gz"
             if os.path.isfile(pathJSONorgDone):
                 setOrgDone = set(load_json(pathJSONorgDone))
             else:
@@ -1234,12 +1233,11 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                 os.system(cmdBLASTN)
                 setOrgDone.update(sqldicoMissingComp[orgName1])
                 # Add to final blastN results files (removing duplicate)
-                pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out"
+                pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out.gz"
                 if os.path.isfile(pathMERGEOUT):
-                    os.system("awk '!x[$0]++' "+pathMERGEOUT+" "+pathBLASTOUT+" > "+pathTMPBLASTCOMPOUT+"/temp_merge.out")
-                    shutil.move(pathTMPBLASTCOMPOUT+"/temp_merge.out", pathMERGEOUT)
+                    os.system("awk '!x[$0]++' "+pathMERGEOUT+" "+pathBLASTOUT+" | gzip > "+pathMERGEOUT)
                 else:
-                    shutil.move(pathBLASTOUT, pathMERGEOUT)
+                    os.system("gzip -c "+pathBLASTOUT+" > "+pathMERGEOUT)
                 # Dump setOrgDone
                 dump_json(list(setOrgDone), pathJSONorgDone)
             pbar.update(1)
@@ -1256,20 +1254,18 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             # Create a sqlitedict table with orgName1
             sqldicoIntergSim = SqliteDict(pathSQLITEINTERGSIM, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
             # Load previous results
-            pathJSONINTERGSIM = pathDIRINTERGSIM+"/"+orgName1+".json"
+            pathJSONINTERGSIM = pathDIRINTERGSIM+"/"+orgName1+".json.gz"
             if os.path.isfile(pathJSONINTERGSIM) and os.path.getsize(pathJSONINTERGSIM) != 0:
                 sqldicoIntergSim = load_json(pathJSONINTERGSIM)
             # Reduce total blastn results to missing results
-            pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out"
+            pathMERGEOUT = pathDIRBLASTN+"/"+orgName1+".out.gz"
             pathREDUCEOUT = pathTMP+"/reduce_blastn.out"
-            MERGEOUT = open(pathMERGEOUT, 'r')
-            lstLines = MERGEOUT.read().split("\n")[:-1]
-            MERGEOUT.close()
             TMPREDUCEOUT = open(pathREDUCEOUT, 'w')
-            for line in lstLines:
-                orgName2 = line.split("\t")[1]
-                if orgName2 in sqldicoMissingComp[orgName1] and orgName2 not in sqldicoIntergSim:
-                    TMPREDUCEOUT.write(line+"\n")
+            with gzip.open(pathMERGEOUT, 'rt') as f:
+                for line in f:
+                    orgName2 = line.split("\t")[1]
+                    if orgName2 in sqldicoMissingComp[orgName1] and orgName2 not in sqldicoIntergSim:
+                        TMPREDUCEOUT.write(line)
             TMPREDUCEOUT.close()
             # Launch VIRIDIC
             if os.path.getsize(pathREDUCEOUT) != 0:
@@ -1277,16 +1273,16 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                 pathLOG = pathTMPLOG+"/"+orgName1+".log"
                 cmdVIRIDIC = dicoGeminiPath['rscript']+" "+pathVIRIDICgeminiR+" blastres="+pathREDUCEOUT+" out="+pathVIRIDICOUT+" >> "+pathLOG+" 2>&1"
                 os.system(cmdVIRIDIC)
+                os.system("gzip "+pathVIRIDICOUT)
                 # Parse VIRIDIC output
-                IN = open(pathVIRIDICOUT, 'r')
-                lstLines = IN.read().replace("\"", "").split("\n")
-                IN.close()
-                for line in lstLines[1: -1]:
-                    splitLine = line.split("\t")
-                    orgName2 = splitLine[1]
-                    # ATTENTION : if not use reciprocal blast, viridic must be sum of both comparison
-                    intergSim = float(splitLine[9])
-                    sqldicoIntergSim[orgName2] = intergSim
+                with gzip.open(pathVIRIDICOUT+".gz", 'rt') as f:
+                    lines = f.readlines()
+                    for line in lines[1:-1]:
+                        splitLine = line.replace("\"", "").split("\t")
+                        orgName2 = splitLine[1]
+                        # ATTENTION : if not use reciprocal blast, viridic must be sum of both comparison
+                        intergSim = float(splitLine[9])
+                        sqldicoIntergSim[orgName2] = intergSim
             # Add missing comparision due to zero distance
             for orgName2 in sqldicoMissingComp[orgName1]:
                 if orgName2 not in sqldicoIntergSim:
@@ -1315,7 +1311,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             sqldicoViridic[orgName1] = 100.0
             sqldicoIntergSim1.close()
             # Dump JSON and commit/close sqlitedict
-            pathVIRIDICJSON = pathDIRVIRIDICJSON+"/"+orgName1+".json"
+            pathVIRIDICJSON = pathDIRVIRIDICJSON+"/"+orgName1+".json.gz"
             dump_json(dict(sqldicoViridic), pathVIRIDICJSON)
             sqldicoViridic.commit()
             sqldicoViridic.close()

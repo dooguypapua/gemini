@@ -27,7 +27,7 @@ import itertools
 import pickle
 import sqlite3
 import blosc2
-
+import gzip
 # import time
 import glob
 import torch
@@ -71,8 +71,12 @@ def exit_gemini():
 # ***** Load JSON file ***** #
 def load_json(pathJSON):
     try:
-        with open(pathJSON, 'r') as json_file:
-            dico = json.load(json_file)
+        if pathJSON.endswith(".gz"):
+            with gzip.open(pathJSON, "r") as json_file:
+                dico = json.load(json_file)
+        else:       
+            with open(pathJSON, 'r') as json_file:
+                dico = json.load(json_file)
         return dico
     except (UnicodeDecodeError, AttributeError):
         printcolor("[ERROR: load_json]\nUnable to load json file \""+pathJSON+"\"\n", 1, "212;64;89", "None", True)
@@ -82,8 +86,12 @@ def load_json(pathJSON):
 # ***** Dump JSON file ***** #
 def dump_json(dico, pathJSON, indent=4):
     try:
-        with open(pathJSON, "w") as outfile:
-            json.dump(dico, outfile, indent=indent)
+        if pathJSON.endswith(".gz"):
+            with gzip.open(pathJSON, "wt") as outfile:
+                json.dump(dico, outfile, indent=indent)
+        else:       
+            with open(pathJSON, 'w') as outfile:
+                json.dump(dico, outfile, indent=indent)
     except (UnicodeDecodeError, AttributeError):
         if os.path.isfile(pathJSON):
             os.remove(pathJSON)
