@@ -1145,7 +1145,6 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     pbar = tqdm(total=len(setAllOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     # Load sqlitedict without table name and check available table
     sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, encode=my_encode, decode=my_decode, outer_stack=False)
-    sqldicoViridicTables = sqldicoViridic.get_tablenames(pathSQLITEVIRIDIC)
     # Load sqlitedict for missing comparisons
     sqldicoMissingComp = SqliteDict(pathSQLITEMISSCOMP, encode=my_encode, decode=my_decode, outer_stack=False)
     for orgName1 in setAllOrg:
@@ -1181,7 +1180,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                 pathInitialFASTA = pathIN+"/"+orgName+ext
             pathReformatFASTA = pathTMPFASTA+"/"+orgName+".fasta"
             seqs = []
-            with gzip.open(pathInitialFASTA,'rt') as fasta:
+            with gzip.open(pathInitialFASTA, 'rt') as fasta:
                 prev_seq = []
                 for line in fasta:
                     if line.startswith(">"):

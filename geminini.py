@@ -74,7 +74,7 @@ def load_json(pathJSON):
         if pathJSON.endswith(".gz"):
             with gzip.open(pathJSON, "r") as json_file:
                 dico = json.load(json_file)
-        else:       
+        else:
             with open(pathJSON, 'r') as json_file:
                 dico = json.load(json_file)
         return dico
@@ -89,7 +89,7 @@ def dump_json(dico, pathJSON, indent=4):
         if pathJSON.endswith(".gz"):
             with gzip.open(pathJSON, "wt") as outfile:
                 json.dump(dico, outfile, indent=indent)
-        else:       
+        else:
             with open(pathJSON, 'w') as outfile:
                 json.dump(dico, outfile, indent=indent)
     except (UnicodeDecodeError, AttributeError):
@@ -359,6 +359,7 @@ def my_encode(obj):
 
 def my_decode(obj):
     return pickle.loads(blosc2.decompress2(bytes(obj)))
+
 
 '''
 -------------------------------------------------------------------------------------------------------
