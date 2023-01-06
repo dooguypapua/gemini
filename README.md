@@ -103,15 +103,13 @@ def ppanggolin('-i'pathIN, '-i2'pathIN2, '-o'pathOUT, '-maxrgp'maxRGP=-1, '-pref
 """ PHAGE functions """
 # Phages clustering using VIRIDIC
 def viridic('-i'pathIN, '-o'pathOUT, '-ext'ext=".fna")
-# Search terminase from FAA files
-def search_terminase('-i'pathIN, '-d'pathDMND, '-o'pathOUT, '-j'pathJSON="None", '-pid'idThr=20, '-minlr'minLRthr=50, '-maxlr'maxLRthr=50, '-ext'ext=".faa")
 # Phage syntaxic and functionnal annotation
 def phage_annotation('-i'pathIN, '-o'pathOUT, '-embl'boolEMBL=False, '-project'enaProject="None", '-taxo'pathTAXO="None", '-e'idEvalue=0.01, '-pid'idThr=30, '-cov'covThr=50, '-pid2'idThrClust=80,
 '-cov'covThrClust=80, '-ext'ext=".fna")
 # Make GenBank phages database
 def phageDB('-i'pathIN, '-o'pathOUT, '-checkv'checkvHQ=75.0)
 # Modified version of VIRIDIC
-def myVIRIDIC('-i'pathIN, '-o'pathOUT, '-thfam'thfam=50.0, '-thgen'thgen=70.0, '-thsp'thsp=95.0, '-db'boolFromDB=False, '-ext'ext=".fna")
+def myVIRIDIC('-i'pathIN, '-o'pathOUT, '-ref'ref="None", '-thfam'thfam=50.0, '-thgen'thgen=70.0, '-thsp'thsp=95.0, '-db'boolFromDB=False, '-ext'ext=".fna")
 # PhiSpy prophages prediction
 def PhiSpy('-i'pathIN, '-o'pathOUT, '-nb'nbAdjacent=3, '-len'minCtgLen=5000, '-ext'ext=".gbk")
 # Search PICMI from gbk files
@@ -154,6 +152,8 @@ def xlsx_to_heatmap('-i'pathIN, '-o'pathOUT, '-cstart'colorStart="FFFFFF", '-cen
 def circos_plot('-i'pathIN, '-o'pathOUT, '-i2'pathIN2="None", '-pid'pident=30, '-cov'cov=80)
 # Circular circos plot for alignment
 def circos_align('-i'pathIN, '-o'pathOUT)
+# Circular circos plot from genbank file with rbh link
+def circos_rbh_plot('-i'pathIN, '-j'pathJSON, '-o'pathOUT, '-maxcore'maxCore=0.9)
 
 """ DOWNLOAD functions """
 # Download all bacteria Genbank files

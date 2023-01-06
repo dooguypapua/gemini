@@ -526,23 +526,22 @@ def circos_plot(pathIN1: str, pathOUT: str, pathIN2: str = "None", pident: int =
     KARYOTYPE.write("\n".join(LstTowrite))
     KARYOTYPE.close()
     # Define ticks correspunding to total size
-    if totalSize >= 4000000:
+    if totalSize >= 1000000:
         ticksMultiplier = 0.000001
-        majorTicksSpacing = "1000000u"
-        minorTicksSpacing = "100000u"
-        majorTicksSuffix = "Mb"
-    elif totalSize >= 100000:
-        ticksMultiplier = 0.00001
         majorTicksSpacing = "100000u"
         minorTicksSpacing = "10000u"
+        majorTicksSuffix = "Mb"
+    elif totalSize >= 1000:
+        ticksMultiplier = 0.001
+        majorTicksSpacing = "1000u"
+        minorTicksSpacing = "100u"
         majorTicksSuffix = "Kb"
-
     # ***** IDEOGRAM ***** #
     IDEOGRAM = open(geminiset.pathTMP+"/ideogram.conf", 'w')
     IDEOGRAM.write("<ideogram>\n")
     IDEOGRAM.write("<spacing>\n")
-    IDEOGRAM.write("default = 0u\n")
-    IDEOGRAM.write("break   = 0u\n")
+    IDEOGRAM.write("default = 0.001r\n")
+    IDEOGRAM.write("break   = 50r\n")
     IDEOGRAM.write("</spacing>\n")
     IDEOGRAM.write("thickness             = 20p\n")  # thickness (px) of chromosome ideogram
     IDEOGRAM.write("stroke_thickness      = 2\n")
@@ -674,10 +673,14 @@ def circos_plot(pathIN1: str, pathOUT: str, pathIN2: str = "None", pident: int =
     CIRCOSCONF.write("<image>\n")
     CIRCOSCONF.write("dir = "+os.path.realpath(os.path.dirname(pathOUT))+"\n")
     CIRCOSCONF.write("file = "+os.path.basename(pathOUT)+"\n")
-    CIRCOSCONF.write("png = yes\n")
-    CIRCOSCONF.write("svg = no\n")
+    if ".png" in os.path.basename(pathOUT):
+        CIRCOSCONF.write("png = yes\n")
+        CIRCOSCONF.write("svg = no\n")
+    else:
+        CIRCOSCONF.write("png = no\n")
+        CIRCOSCONF.write("svg = yes\n")
     CIRCOSCONF.write("radius = 1500p\n")
-    CIRCOSCONF.write("angle_offset = -90\n")
+    CIRCOSCONF.write("angle_offset = -82\n")
     CIRCOSCONF.write("auto_alpha_colors = yes\n")
     CIRCOSCONF.write("auto_alpha_steps  = 5\n")
     CIRCOSCONF.write("</image>\n")
@@ -725,7 +728,7 @@ def circos_plot(pathIN1: str, pathOUT: str, pathIN2: str = "None", pident: int =
     print("circos -conf "+geminiset.pathTMP+"/circos.conf")
     os.system("circos -conf "+geminiset.pathTMP+"/circos.conf")
 
-    exit()
+    print("\n".join(lstQueryFAAFiles))
 
 
 @fct_checker
@@ -931,3 +934,195 @@ def circos_align(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     for align in dicoFASTA:
         print(align)
     exit()
+
+
+@fct_checker
+def circos_rbh_plot(pathIN: str, pathJSON: str, pathOUT: str, maxCore: float = 0.9) -> Tuple[str, str, str, int]:
+    '''
+     ------------------------------------------------------------
+    |                       CIRCOS RBH PLOT                      |
+    |------------------------------------------------------------|
+    |    Circular circos plot from genbank file with rbh link    |
+    |------------------------------------------------------------|
+    |PARAMETERS                                                  |
+    |    pathIN   : path of genbank files (required)             |
+    |    pathJSON : path of rbh clusters JSON file (required)    |
+    |    pathOUT  : path of output file (required)               |
+    |    freq     : max core frequence to show (default=0.9)     |
+     ------------------------------------------------------------
+    '''
+    pathIN = path_converter(pathIN)
+    pathJSON = path_converter(pathJSON)
+    pathOUT = path_converter(pathOUT)
+    lstGBKFiles, maxpathSize = get_input_files(pathIN, "circos_rbh_plot", [".gbk", ".gbk.gz"])
+
+    # ***** READ GBKs & KARYOTYPE ***** #
+    printcolor("♊ Parse GBK"+"\n")
+    dicoGBK = {}
+    dicoGBKLT = {}
+    dicoOrgToId = {}
+    KARYOTYPE = open(geminiset.pathTMP+"/karyotype.txt", 'w')
+    lstColorBand = ["black", "white", "grey"]
+    cptOrg = 1
+    for gbkFile in lstGBKFiles:
+        orgName = os.path.basename(gbkFile).replace(".gbk.gz", "").replace(".gbk", "").replace("Vibrio_crassostreae_", "").replace("_chr1", "")
+        dicoGBK[orgName] = list(make_gbk_dict(gbkFile).values())[0]
+        cptCtg = 1
+        start = 0
+        totalSize = 0
+        lstBand = []
+        bandIndex = 0
+        for contig in dicoGBK[orgName]:
+            ctgLen = len(dicoGBK[orgName][contig]['seq'])
+            totalSize += ctgLen
+            lstBand.append("band chr"+str(cptOrg)+" "+str(cptOrg)+"."+str(cptCtg)+" "+str(cptOrg)+"."+str(cptCtg)+" "+str(start)+" "+str(start+ctgLen)+" "+lstColorBand[bandIndex])
+            bandIndex += 1
+            if bandIndex == 3:
+                bandIndex = 0
+            for lt in dicoGBK[orgName][contig]['dicoLT']:  # {'type', 'product', 'protSeq', 'start', 'end', 'strand', 'protein_id', 'geneSeq'}
+                if dicoGBK[orgName][contig]['dicoLT'][lt]['type'] == "CDS":
+                    shortlt = lt.split(" ")[0]
+                    dicoGBKLT[shortlt] = {'relstart': start+dicoGBK[orgName][contig]['dicoLT'][lt]['start'], 'relend': start+dicoGBK[orgName][contig]['dicoLT'][lt]['end']}
+            start = start+ctgLen
+            cptCtg += 1
+        KARYOTYPE.write("chr - chr"+str(cptOrg)+" "+orgName+" 0 "+str(totalSize)+" black\n")
+        KARYOTYPE.write("\n".join(lstBand)+"\n")
+        dicoOrgToId[orgName] = "chr"+str(cptOrg)
+        cptOrg += 1
+    KARYOTYPE.close()
+
+    # ***** IDEOGRAM ***** #
+    printcolor("♊ Make Ideogram"+"\n")
+    IDEOGRAM = open(geminiset.pathTMP+"/ideogram.conf", 'w')
+    IDEOGRAM.write("<ideogram>\n")
+    IDEOGRAM.write("<spacing>\n")
+    IDEOGRAM.write("default = 100000u\n")
+    IDEOGRAM.write("break   = 0u\n")
+    IDEOGRAM.write("</spacing>\n")
+    IDEOGRAM.write("thickness             = 20p\n")  # thickness (px) of chromosome ideogram
+    IDEOGRAM.write("stroke_thickness      = 2\n")
+    IDEOGRAM.write("stroke_color          = black\n")  # ideogram border color
+    IDEOGRAM.write("fill                  = yes\n")
+    IDEOGRAM.write("fill_color            = black\n")  # the default chromosome color is set here and any value, defined in the karyotype file overrides it
+    IDEOGRAM.write("radius                = 0.85r\n")  # fractional radius position of chromosome ideogram within image
+    IDEOGRAM.write("show_label            = yes\n")
+    IDEOGRAM.write("label_font            = default\n")
+    IDEOGRAM.write("label_radius          = dims(ideogram,radius) + 0.05r\n")
+    IDEOGRAM.write("label_size            = 36\n")
+    IDEOGRAM.write("label_parallel        = yes\n")
+    IDEOGRAM.write("label_case            = upper\n")
+    IDEOGRAM.write("band_stroke_thickness = 2\n")  # cytogenetic bands
+    IDEOGRAM.write("show_bands            = yes\n")  # show_bands determines whether the outline of cytogenetic bands will be seen
+    IDEOGRAM.write("fill_bands            = yes\n")  # in order to fill the bands with the color defined in the karyotype file you must set fill_bands
+    IDEOGRAM.write("</ideogram>\n")
+    IDEOGRAM.close()
+
+    # ****** COLORS ***** #
+    COLORS = open(geminiset.pathTMP+"/colors.conf", 'w')
+    # Gradient
+    HEXlist, RBGlist = linear_gradient("#ffffff", "#db073d", len(dicoGBK))
+    cpt = 1
+    strLstGradient = ""
+    for rgb in RBGlist[::-1]:
+        COLORS.write("gradient"+str(cpt)+" = "+str(rgb[0])+","+str(rgb[1])+","+str(rgb[2])+"\n")
+        strLstGradient += "gradient"+str(cpt)+","
+        cpt += 1
+    COLORS.close()
+    strLstGradient = strLstGradient[:-1]
+
+    # ***** RBH LINKS & HEATMAP ***** #
+    printcolor("♊ Make RBH links / heatmap"+"\n")
+    dicoRBH = load_json(pathJSON)
+    LINKS = open(geminiset.pathTMP+"/links1.txt", 'w')
+    cptLink = 1
+    cptLinkPerFile = 0
+    cptLinkFile = 1
+    for clusterNum in dicoRBH:
+        setOrg = set()
+        for prot in dicoRBH[clusterNum]:
+            print("#"+prot+"#")
+            setOrg.add(prot.split("[")[1].replace("]", ""))
+        if len(setOrg) > 1:
+            setCompDone = set()
+            for prot1 in dicoRBH[clusterNum]:
+                lt1 = prot1.split(" ")[0]
+                orgName1 = prot1.split("[")[1].replace("]", "")
+                # Heatmap
+                HEATMAP = open(geminiset.pathTMP+"/heatmap_"+orgName1+".txt", 'a')
+                HEATMAP.write(dicoOrgToId[orgName1]+" "+str(dicoGBKLT[lt1]['relstart'])+" "+str(dicoGBKLT[lt1]['relend'])+" "+str(len(setOrg))+"\n")
+                HEATMAP.close()
+                if len(setOrg)/len(dicoGBK) <= maxCore:
+                    for prot2 in dicoRBH[clusterNum]:
+                        lt2 = prot2.split(" ")[0]
+                        orgName2 = prot2.split("[")[1].replace("]", "")
+                        if orgName1 != orgName2 and orgName1+"#"+orgName2 not in setCompDone and orgName2+"#"+orgName1 not in setCompDone:
+                            LINKS.write("link"+str(cptLink)+" "+dicoOrgToId[orgName1]+" "+str(dicoGBKLT[lt1]['relstart'])+" "+str(dicoGBKLT[lt1]['relend'])+" color=gradient"+str(len(setOrg))+"\n")
+                            LINKS.write("link"+str(cptLink)+" "+dicoOrgToId[orgName2]+" "+str(dicoGBKLT[lt2]['relstart'])+" "+str(dicoGBKLT[lt2]['relend'])+" color=gradient"+str(len(setOrg))+"\n")
+                            cptLink += 1
+                            cptLinkPerFile += 2
+                            if cptLinkPerFile > 10000:
+                                LINKS.close()
+                                cptLinkPerFile = 0
+                                cptLinkFile += 1
+                                LINKS = open(geminiset.pathTMP+"/links"+str(cptLinkFile)+".txt", 'w')
+                            setCompDone.add(orgName1+"#"+orgName2)
+                            setCompDone.add(orgName2+"#"+orgName1)
+    LINKS.close()
+
+    # ***** CIRCOSCONF ***** #
+    CIRCOSCONF = open(geminiset.pathTMP+"/circos.conf", 'w')
+    CIRCOSCONF.write("karyotype = "+geminiset.pathTMP+"/karyotype.txt\n")
+    CIRCOSCONF.write("<<include "+geminiset.pathTMP+"/ideogram.conf>>\n")
+    CIRCOSCONF.write("<image>\n")
+    CIRCOSCONF.write("dir = "+os.path.realpath(os.path.dirname(pathOUT))+"\n")
+    CIRCOSCONF.write("file = "+os.path.basename(pathOUT)+"\n")
+    if ".png" in os.path.basename(pathOUT):
+        CIRCOSCONF.write("png = yes\n")
+        CIRCOSCONF.write("svg = no\n")
+    else:
+        CIRCOSCONF.write("png = no\n")
+        CIRCOSCONF.write("svg = yes\n")
+    CIRCOSCONF.write("radius = 1500p\n")
+    CIRCOSCONF.write("angle_offset = -90\n")
+    CIRCOSCONF.write("auto_alpha_colors = yes\n")
+    CIRCOSCONF.write("auto_alpha_steps  = 5\n")
+    CIRCOSCONF.write("</image>\n")
+    CIRCOSCONF.write("<colors>\n")
+    CIRCOSCONF.write("<<include "+geminiset.pathTMP+"/colors.conf>>\n")
+    CIRCOSCONF.write("</colors>\n")
+    # Links
+    CIRCOSCONF.write("<links>\n")
+    for file in os.listdir(geminiset.pathTMP):
+        if "links" in file:
+            CIRCOSCONF.write("<link>\n")
+            CIRCOSCONF.write("file          = "+geminiset.pathTMP+"/"+file+"\n")
+            CIRCOSCONF.write("radius        = 0.90r\n")
+            # Curves look best when this value is small (e.g. 0.1r or 0r)
+            CIRCOSCONF.write("bezier_radius = 0.1r\n")
+            CIRCOSCONF.write("thickness     = 1\n")
+            # Limit how many links to read from file and draw
+            CIRCOSCONF.write("record_limit  = 10000\n")
+            CIRCOSCONF.write("</link>\n")
+    CIRCOSCONF.write("</links>\n")
+    # Heatmap
+    CIRCOSCONF.write("<plots>\n")
+    for file in os.listdir(geminiset.pathTMP):
+        if "heatmap" in file:
+            CIRCOSCONF.write("<plot>\n")
+            CIRCOSCONF.write("type    = heatmap\n")
+            CIRCOSCONF.write("file    = "+geminiset.pathTMP+"/"+file+"\n")
+            CIRCOSCONF.write("color   = "+strLstGradient+"\n")
+            CIRCOSCONF.write("r0      = 0.99r\n")
+            CIRCOSCONF.write("r1      = 0.92r\n")
+            CIRCOSCONF.write("min     = 1\n")
+            CIRCOSCONF.write("max     = "+str(len(dicoGBK))+"\n")
+            CIRCOSCONF.write("</plot>\n")
+    CIRCOSCONF.write("</plots>\n")
+
+    CIRCOSCONF.write("<<include /etc/circos/colors_fonts_patterns.conf>>\n")
+    CIRCOSCONF.write("<<include /etc/circos/housekeeping.conf>>\n")
+    CIRCOSCONF.close()
+
+    # ***** MAKE PLOT *****#
+    print("circos -conf "+geminiset.pathTMP+"/circos.conf")
+    os.system("circos -conf "+geminiset.pathTMP+"/circos.conf")

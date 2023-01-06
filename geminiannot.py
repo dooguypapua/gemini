@@ -840,7 +840,6 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
         outfmt = "6 qseqid stitle pident length qlen qstart qend slen sstart send evalue full_sseq"
     else:
         outfmt = "6 qseqid stitle pident length qlen qstart qend slen sstart send evalue"
-    printcolor("♊ diamond_p "+dbTitle+"\n")
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)

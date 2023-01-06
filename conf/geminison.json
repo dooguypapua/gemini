@@ -431,21 +431,6 @@
                                    },
                         "pathTMP":true
                       },
-  "search_terminase": {
-                        "descr": "Search terminase from FAA files",
-                        "tag":"phage", "version":"1.0",
-                        "title":"terminase",
-                        "dicoArgs":{
-                                   "pathIN":{"tag":"-i","value":"","type":"str"},
-                                   "pathDMND":{"tag":"-d","value":"", "type":"str"},
-                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
-                                   "pathJSON":{"tag":"-j","value":"None", "type":"str"},
-                                   "idThr":{"tag":"-pid","value":20, "type":"int"},
-                                   "minLRthr":{"tag":"-minlr","value":50, "type":"int"},
-                                   "maxLRthr":{"tag":"-maxlr","value":50, "type":"int"},
-                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
-                                   }
-                       },
   "phage_annotation": {
                         "descr": "Phage syntaxic and functionnal annotation",
                         "tag":"phage", "version":"1.0",
@@ -483,6 +468,7 @@
                         "dicoArgs":{
                                    "pathIN":{"tag":"-i","value":"", "type":"str"},
                                    "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "ref":{"tag":"-ref","value":"None", "type":"str"},
                                    "thfam":{"tag":"-thfam","value":50.0, "type":"float"},
                                    "thgen":{"tag":"-thgen","value":70.0, "type":"float"},
                                    "thsp":{"tag":"-thsp","value":95.0, "type":"float"},
@@ -704,6 +690,18 @@
                         "dicoArgs":{
                                    "pathIN":{"tag":"-i","value":"","type":"str"},
                                    "pathOUT":{"tag":"-o","value":"", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
+  "circos_rbh_plot":   {
+                        "descr": "Circular circos plot from genbank file with rbh link",
+                        "tag":"plot", "version":"1.0",
+                        "title":"circosRBH",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathJSON":{"tag":"-j","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "maxCore":{"tag":"-maxcore","value":0.9, "type":"float"}
                                    },
                         "pathTMP":true
                        },

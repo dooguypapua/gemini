@@ -245,7 +245,10 @@ def make_rbhcluster_dict(pathIN: str, pathIN2: str, pathJSON: str = "None", idTh
         file = os.path.basename(pathRBH)
         orgName = file.replace(ext, "").replace("."+ext, "")
         pbar.set_description_str(orgName+" ("+str(len(dicoCLUSTER))+" clusters)"+" ".rjust(maxpathSize-len(orgName+" ("+str(len(dicoCLUSTER))+" clusters)")))
-        dicoFAAcurrent = make_fasta_dict(dicoRBHtoFAA[pathRBH])
+        setAllOrgLT = set()
+        dicoTMP = make_fasta_dict(dicoRBHtoFAA[pathRBH])
+        for key in dicoTMP:
+            setAllOrgLT.add(key.split(" [")[0]+" ["+orgName+"]")
         if os.path.getsize(pathRBH) != 0:
             # Read mmseqs RBH file
             MMSEQS = open(pathRBH, 'r')
@@ -282,9 +285,9 @@ def make_rbhcluster_dict(pathIN: str, pathIN2: str, pathJSON: str = "None", idTh
                         dicoLTtoCluster[query] = clusterNum
                         dicoLTtoCluster[target] = clusterNum
         # ADD specific protein
-        for header in dicoFAAcurrent:
-            if header not in dicoLTtoCluster:
-                dicoCLUSTER["cluster"+str(len(dicoCLUSTER)+1).zfill(4)] = set([header])
+        for orgLT in setAllOrgLT:
+            if orgLT not in dicoLTtoCluster:
+                dicoCLUSTER["cluster"+str(len(dicoCLUSTER)+1).zfill(4)] = set([orgLT])
         pbar.update(1)
         title("Clustering", pbar)
     pbar.close()

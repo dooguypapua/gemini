@@ -293,7 +293,7 @@ def get_input_files(pathIN, fctName, fileExt=[""], filter=None):
 
 # ***** Reverse complement ***** #
 def reverse_complement(seq):
-    tab = str.maketrans("ACTG", "TGAC")
+    tab = str.maketrans("ACTGN", "TGACN")
     return seq.translate(tab)[::-1]
 
 

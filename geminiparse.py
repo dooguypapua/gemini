@@ -1038,9 +1038,22 @@ def make_gbk_from_fasta(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: str, 
         exit_gemini()
     if boolProgress is True:
         printcolor("♊ FASTAs to GBK"+"\n")
-    dicoFNA = make_fasta_dict(pathIN1)
+    dicoFNA = make_fasta_dict(pathIN1, onlyLTasHeader=True)
     dicoFFN = make_fasta_dict(pathIN2, onlyLTasHeader=True)
     dicoFAA = make_fasta_dict(pathIN3, onlyLTasHeader=True)
+    dicoDuplicatedSeq = {}
+    dicoTemp = {}
+    # Search duplicated gene sequence
+    for key in dicoFFN:
+        try:
+            dicoTemp[dicoFFN[key]].append(key)
+        except KeyError:
+            dicoTemp[dicoFFN[key]] = [key]
+    for key in dicoTemp:
+        if len(dicoTemp[key]) > 1:
+            dicoDuplicatedSeq[len(dicoDuplicatedSeq)] = dicoTemp[key]
+    dicoTemp.clear()
+    # Get trna if done
     if pathIN4 is not None and pathIN4 != "None":
         dicoTRNA = list(make_trnascanse_dict(pathIN=pathIN4, pathJSON="None", ext="."+pathIN4.split(".")[-1]).values())[0]
     else:
@@ -1053,7 +1066,7 @@ def make_gbk_from_fasta(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: str, 
         if len(dicoFNA) > 1:
             identifier = identifier+"_"+contigName
         # Genome Sequence
-        seqGenome = Seq(dicoFNA[contig])
+        seqGenome = Seq(dicoFNA[contig].upper())
         # ***** MAIN FEATURES ***** #
         orgName = os.path.basename(pathIN1).replace(".fna", "").replace(".fasta", "")
         if len(dicoFNA) > 1:
@@ -1087,16 +1100,27 @@ def make_gbk_from_fasta(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: str, 
             if len(dicoFNA) == 1 or contigName in geneLT:
                 # Get gene Locations
                 seq = dicoFFN[geneLT]
-                if seq in seqGenome:
-                    splitSeq = seqGenome.split(seq)
-                    start = len(splitSeq[0])
+                dicoFindLocation = {}
+                resFor = [i.start() for i in re.finditer(seq.upper(), str(seqGenome))]
+                resRev = [i.start() for i in re.finditer(reverse_complement(seq).upper(), str(seqGenome))]
+                for res in resFor:
+                    dicoFindLocation[res] = 1
+                for res in resRev:
+                    dicoFindLocation[res] = -1
+                if len(dicoFindLocation) == 0:
+                    printcolor("[ERROR: make_gbk_from_fasta]\nUnable to find gene \""+geneLT+"\"\n", 1, "212;64;89", "None", True)
+                    exit_gemini()
+                elif len(dicoFindLocation) == 1:
+                    start = list(dicoFindLocation.keys())[0]
                     end = start+len(seq)
-                    strand = 1
-                elif reverse_complement(seq) in seqGenome:
-                    splitSeq = seqGenome.split(reverse_complement(seq))
-                    start = len(splitSeq[0])
-                    end = start+len(seq)
-                    strand = -1
+                    strand = list(dicoFindLocation.values())[0]
+                else:
+                    for resStart in dicoFindLocation:
+                        if resStart >= end-100 and resStart <= end+10000:
+                            start = resStart
+                            end = resStart+len(seq)
+                            strand = dicoFindLocation[start]
+                            break
                 featureLocation = FeatureLocation(start, end, strand=strand)
                 # Get gene Qualifiers (OrderedDict)
                 orderGeneDicoQualifiers = OrderedDict([('locus_tag', [geneLT])])

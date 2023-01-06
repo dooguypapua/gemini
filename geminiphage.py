@@ -105,113 +105,6 @@ def viridic(pathIN: str, pathOUT: str, ext: str = ".fna") -> Tuple[str, str, str
 
 
 @fct_checker
-def search_terminase(pathIN: str, pathOUT: str, pathJSON: str = "None", idThr: int = 20, minLRthr: int = 50, maxLRthr: int = 50, fromPhageDb: bool = False, ext: str = ".faa") -> Tuple[str, str, str, str, int, int, int, str]:
-    '''
-     ------------------------------------------------------------
-    |                   SEARCH TERMINASE FROM FAA                |
-    |------------------------------------------------------------|
-    |             Search terminase from genome files             |
-    |------------------------------------------------------------|
-    |PARAMETERS                                                  |
-    |    pathIN  : path of input FAA files or folder (required)  |
-    |    pathOUT : path of output files (required)               |
-    |    pathJSON: path of output JSON ("")                      |
-    |    idThr   : %identity threshold (default=20)              |
-    |    minLRthr: %minLrap threshold (default=50)               |
-    |    maxLRthr: %maxLrap threshold (default=50)               |
-    |    ext     : extension of input files (default=.faa)       |
-    |RETURN                                                      |
-    |    dicoTerminase: {org:{'lt':{'seqProt':x,'seqGene':x}}}   |
-     ------------------------------------------------------------
-    '''
-    pathOUT = path_converter(pathOUT)
-    lstFiles, maxpathSize = get_input_files(pathIN, "search_terminase", [ext])
-    if len(lstFiles) == 0:
-        printcolor("[ERROR: search_terminase]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
-        exit_gemini()
-    os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
-    slurmBool, cpu, memMax, memMin = get_sys_info()
-    dicoTerminase = {}
-    printcolor("♊ Search terminase"+"\n")
-    if fromPhageDb is True:
-        pbar = tqdm(total=len(lstFiles), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
-    else:
-        pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
-    for pathFAA in lstFiles:
-        file = os.path.basename(pathFAA)
-        orgName = file.replace(ext, "").replace("."+ext, "")
-        dicoTerminase[orgName] = {}
-        # ***** LAUNCH TOOLS ***** #
-        pathHMMSCAN = pathOUT+"/"+orgName+"_hmmscan.txt"
-        pathTBLOUT = pathOUT+"/"+orgName+"_hmmscan.tblout"
-        pathXML = pathOUT+"/"+orgName+"_diamond.xml"
-        cmdHmmscan = dicoGeminiPath['hmmscan']+" --cpu "+str(cpu)+" -o "+pathHMMSCAN+" --tblout "+pathTBLOUT+" "+dicoGeminiPath['terminase_hmm']+" "+pathFAA
-        cmdDiamond = dicoGeminiPath['diamond']+" blastp -d "+dicoGeminiPath['terminase_dmnd']+" -q "+pathFAA+" -o "+pathXML+" --outfmt 5 --quiet --header --threads 12"
-        if fromPhageDb is True:
-            if "GCA" in file:
-                pbar.set_description_str("GCA_"+file.replace(ext, "").split("_")[-1]+": hmmscan")
-            else:
-                pbar.set_description_str(file.replace(ext, "")[-15:]+": hmmscan")
-        else:
-            pbar.set_description_str(orgName+": hmmscan"+" ".rjust(maxpathSize-len(orgName)+2))
-        if not os.path.isfile(pathHMMSCAN):
-            os.system(cmdHmmscan)
-        if fromPhageDb is True:
-            if "GCA" in file:
-                pbar.set_description_str("GCA_"+file.replace(ext, "").split("_")[-1]+": diamond")
-            else:
-                pbar.set_description_str(file.replace(ext, "")[-15:]+": diamond")
-        else:
-            pbar.set_description_str(orgName+": diamond"+" ".rjust(maxpathSize-len(orgName)+2))
-        if not os.path.isfile(pathXML):
-            os.system(cmdDiamond)
-        # ***** PARSE HMMSCAN OUTPUT & DIAMOND & FASTA ***** #
-        if fromPhageDb is True:
-            if "GCA" in file:
-                pbar.set_description_str("GCA_"+file.replace(ext, "").split("_")[-1]+": parse")
-            else:
-                pbar.set_description_str(file.replace(ext, "")[-15:]+": parse")
-        else:
-            pbar.set_description_str(orgName+": parse"+" ".rjust(maxpathSize-len(orgName)+2))
-        dicoHmmscan = make_hmmscan_dict(pathTBLOUT)[orgName]
-        dicoDiamond = make_blast_dict(pathIN=pathXML, idThr=20, minLRthr=50, maxLRthr=50, ext=".xml")[orgName]
-        dicoFAA = make_fasta_dict(pathFAA)
-        # ***** RETRIEVE TERMINASE SEQUENCE ***** #
-        # From HMMSCAN
-        for query in dicoHmmscan:
-            for target in dicoHmmscan[query]:
-                if query in dicoTerminase[orgName]:
-                    dicoTerminase[orgName][query]['hmmHit'].append(dicoHmmscan[query][target]["targetAcc"])
-                    dicoTerminase[orgName][query]['hmmEvalue'].append(dicoHmmscan[query][target]["fullSeqEvalue"])
-                else:
-                    dicoTerminase[orgName][query] = {'seqProt': dicoFAA[query], 'hmmHit': [dicoHmmscan[query][target]["targetAcc"]],
-                                                     'hmmEvalue': [dicoHmmscan[query][target]["fullSeqEvalue"]],
-                                                     'diamondBestHit': "", 'diamondBestEvalue': 10
-                                                     }
-        # FROM DIAMOND
-        for query in dicoDiamond:
-            for subject in dicoDiamond[query]:
-                if subject != "length":
-                    for hsp in dicoDiamond[query][subject]:
-                        if hsp != "length":
-                            if query in dicoTerminase[orgName]:
-                                if dicoDiamond[query][subject][hsp]['evalue'] < dicoTerminase[orgName][query]['diamondBestEvalue']:
-                                    dicoTerminase[orgName][query]['diamondBestHit'] = subject
-                                    dicoTerminase[orgName][query]['diamondBestEvalue'] = dicoDiamond[query][subject][hsp]['evalue']
-                            else:
-                                dicoTerminase[orgName][query] = {'seqProt': dicoFAA[query], 'hmmHit': [], 'hmmEvalue': [],
-                                                                 'diamondBestHit': subject, 'diamondBestEvalue': dicoDiamond[query][subject][hsp]['evalue']
-                                                                 }
-        pbar.update(1)
-        title("Search terminase", pbar)
-    pbar.close()
-    if pathJSON != "None":
-        dump_json(dicoTerminase, pathJSON)
-    return dicoTerminase
-
-
-@fct_checker
 def phage_annotation(pathIN: str, pathOUT: str, boolEMBL: bool = False, enaProject: str = "None", pathTAXO: str = "None", idEvalue: float = "0.01", idThr: int = 30, covThr: int = 50, idThrClust: int = 80, covThrClust: int = 80, ext: str = ".fna") -> Tuple[str, str, bool, str, str, float, int, int, int, int, str]:
     '''
      ------------------------------------------------------------
@@ -1044,7 +937,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
 
 
 @fct_checker
-def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.0, thsp: float = 95.0, boolFromDB: bool = False, ext: str = ".fna") -> Tuple[str, str, float, float, float, bool, str]:
+def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0, thgen: float = 70.0, thsp: float = 95.0, boolFromDB: bool = False, ext: str = ".fna") -> Tuple[str, str, str, float, float, float, bool, str]:
     '''
      ------------------------------------------------------------
     |                         myVIRIDIC                          |
@@ -1054,6 +947,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     |PARAMETERS                                                  |
     |    pathIN  : path of input FNA folder (required)           |
     |    pathOUT : path of output folder (required)              |
+    |    ref     : reference organism name (default=None)        |
     |    thfam   : threshold for family clustering (default=50)  |
     |    thgen   : threshold for genus clustering (default=70)   |
     |    thsp    : threshold for species clustering (default=95) |
@@ -1081,6 +975,9 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             setAllOrg.add(orgName)
     if len(lstFiles) == 0:
         printcolor("[ERROR: myVIRIDIC]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    if ref != "None" and ref not in setAllOrg:
+        printcolor("[ERROR: myVIRIDIC]\nReference \""+ref+"\" not found in input files\n", 1, "212;64;89", "None", True)
         exit_gemini()
     pathOUT = path_converter(pathOUT)
     os.makedirs(pathOUT, exist_ok=True)
@@ -1141,7 +1038,10 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
     printcolor("♊ Check comparisons"+"\n")
     nbMissingComp = 0
     setAllMissingOrg = set()
-    nbTotComp = len(setAllOrg) * (len(setAllOrg)-1)
+    if ref != "None":
+        nbTotComp = len(setAllOrg)-1
+    else:
+        nbTotComp = len(setAllOrg) * (len(setAllOrg)-1)
     pbar = tqdm(total=len(setAllOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     # Load sqlitedict without table name and check available table
     sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, encode=my_encode, decode=my_decode, outer_stack=False)
@@ -1151,6 +1051,8 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
         sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
         setOrgDone = set(sqldicoViridic.keys())
         setOrgMissing = setAllOrg-setOrgDone
+        if ref != "None" and orgName1 != ref:
+            setOrgMissing = set([ref])
         if len(setOrgMissing) != 0:
             nbMissingComp += len(setOrgMissing)-1
             setAllMissingOrg.update([orgName1], setOrgMissing)
@@ -1180,14 +1082,24 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                 pathInitialFASTA = pathIN+"/"+orgName+ext
             pathReformatFASTA = pathTMPFASTA+"/"+orgName+".fasta"
             seqs = []
-            with gzip.open(pathInitialFASTA, 'rt') as fasta:
-                prev_seq = []
-                for line in fasta:
-                    if line.startswith(">"):
-                        seqs.append("".join(prev_seq))
-                        prev_seq = []
-                    else:
-                        prev_seq.append(line.rstrip())
+            if ".gz" in pathInitialFASTA:
+                with gzip.open(pathInitialFASTA, 'rt') as fasta:
+                    prev_seq = []
+                    for line in fasta:
+                        if line.startswith(">"):
+                            seqs.append("".join(prev_seq))
+                            prev_seq = []
+                        else:
+                            prev_seq.append(line.rstrip())
+            else:
+                with open(pathInitialFASTA, 'r') as fasta:
+                    prev_seq = []
+                    for line in fasta:
+                        if line.startswith(">"):
+                            seqs.append("".join(prev_seq))
+                            prev_seq = []
+                        else:
+                            prev_seq.append(line.rstrip())
             seqs.append("".join(prev_seq))
             REFORMAT = open(pathReformatFASTA, 'w')
             REFORMAT.write(">"+orgName+"\n"+("N"*100).join(seqs)[100:]+"\n")
@@ -1197,12 +1109,14 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
         pbar.close()
         # ***** LAUNCH MISSING BLASTN ***** #
         printcolor("♊ Launch blastN"+"\n")
-        pbar = tqdm(total=len(setAllMissingOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        if ref == "None":
+            pbar = tqdm(total=len(setAllMissingOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for orgName1 in sqldicoMissingComp:
-            if boolFromDB:
-                pbar.set_description_str(orgName1[:15])
-            else:
-                pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+            if ref == "None":
+                if boolFromDB:
+                    pbar.set_description_str(orgName1[:15])
+                else:
+                    pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
             # Make blastDB
             lstFilesToDB = [pathTMPFASTA+"/"+orgName1+".fasta"]
             pathDBblast = pathTMPFASTA+"/"+orgName1+".blastdb"
@@ -1239,17 +1153,21 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
                     os.system("gzip -c "+pathBLASTOUT+" > "+pathMERGEOUT)
                 # Dump setOrgDone
                 dump_json(list(setOrgDone), pathJSONorgDone)
-            pbar.update(1)
+            if ref == "None":
+                pbar.update(1)
             title("blastN", pbar)
-        pbar.close()
+        if ref == "None":
+            pbar.close()
         # ***** LAUNCH VIRIDIC ***** #
         printcolor("♊ Launch VIRIDIC"+"\n")
-        pbar = tqdm(total=len(sqldicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        if ref == "None":
+            pbar = tqdm(total=len(sqldicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for orgName1 in sqldicoMissingComp:
-            if boolFromDB:
-                pbar.set_description_str(orgName1[:15])
-            else:
-                pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+            if ref == "None":
+                if boolFromDB:
+                    pbar.set_description_str(orgName1[:15])
+                else:
+                    pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
             # Create a sqlitedict table with orgName1
             sqldicoIntergSim = SqliteDict(pathSQLITEINTERGSIM, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
             # Load previous results
@@ -1290,17 +1208,21 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             dump_json(dict(sqldicoIntergSim), pathJSONINTERGSIM)
             sqldicoIntergSim.commit()
             sqldicoIntergSim.close()
-            pbar.update(1)
+            if ref == "None":
+                pbar.update(1)
             title("VIRIDIC", pbar)
-        pbar.close()
+        if ref == "None":
+            pbar.close()
         # ***** Compute similarity matrix *****#
         printcolor("♊ Compute simMA"+"\n")
-        pbar = tqdm(total=len(sqldicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        if ref == "None":
+            pbar = tqdm(total=len(sqldicoMissingComp), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for orgName1 in sqldicoMissingComp:
-            if boolFromDB:
-                pbar.set_description_str(orgName1[:15])
-            else:
-                pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
+            if ref == "None":
+                if boolFromDB:
+                    pbar.set_description_str(orgName1[:15])
+                else:
+                    pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
             sqldicoIntergSim1 = SqliteDict(pathSQLITEINTERGSIM, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
             sqldicoViridic = SqliteDict(pathSQLITEVIRIDIC, tablename=orgName1, encode=my_encode, decode=my_decode, outer_stack=False)
             for orgName2 in sqldicoIntergSim1:
@@ -1314,9 +1236,11 @@ def myVIRIDIC(pathIN: str, pathOUT: str, thfam: float = 50.0, thgen: float = 70.
             dump_json(dict(sqldicoViridic), pathVIRIDICJSON)
             sqldicoViridic.commit()
             sqldicoViridic.close()
-            pbar.update(1)
+            if ref == "None":
+                pbar.update(1)
             title("sim-MA", pbar)
-        pbar.close()
+        if ref == "None":
+            pbar.close()
     # ***** FAMILY, GENUS and SPECIES assignment ***** #
     printcolor("♊ Genus/Specie assignment"+"\n")
     dicoTaxo = {'family': {}, 'genus': {}, 'specie': {}}
