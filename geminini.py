@@ -33,6 +33,7 @@ import glob
 import torch
 import torch.nn.functional as F
 import geminiset
+from datetime import datetime
 from tqdm import tqdm
 from yaspin import yaspin
 from yaspin.spinners import Spinners
@@ -177,11 +178,16 @@ def get_gemini_path():
     else:
         pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/geminipath.txt"
     IN = open(pathGeminiPathTXT, 'r')
-    lstLines = IN.read().split("\n")
+    lstCategory = IN.read().split("#")[1:]
     IN.close()
-    for line in lstLines:
-        if line != "" and line[0] != "#":
-            dicoGeminiPath[line.split(":")[0]] = line.split(":")[1]
+    for category in lstCategory:
+        splitLine = category.split("\n")
+        categoryName = splitLine[0].replace(" ", "")
+        categoryLine = splitLine[1:]
+        dicoGeminiPath[categoryName] = {}
+        for line in categoryLine:
+            if line != "" and line[0] != "#":
+                dicoGeminiPath[categoryName][line.split(":")[0]] = line.split(":")[1]
     return dicoGeminiPath
 
 
@@ -368,6 +374,18 @@ def my_decode(obj):
 -------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------
 '''
+
+
+# ***** Get bash command output ***** #
+def get_cmd_output(cmd):
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+    if p_status != 0:
+        printcolor("[ERROR get_cmd_output]\nFollowing command failed: \""+cmd+"\"\n", 1, "212;64;89", "None", True)
+        return "ERROR"
+    else:
+        return output.decode().strip()
 
 
 # ***** Simple threading subprocess ***** #
@@ -710,6 +728,87 @@ def infofct(fctName):
     syntax = Syntax(toDisplay[:-1], "python", theme="monokai", background_color="default", word_wrap=True, line_numbers=False)
     console = Console()
     console.print(syntax)
+
+
+# ***** Show tools and databases version ***** #
+def infoversion(pathOUT: str = None):
+    dicoGeminiPath = get_gemini_path()
+    lstDoubleDashVersion = ["python", "rscript", "transeq", "diamond", "spades", "phanotate", "interproscan",
+                            "eggnog-mapper", "iqtree2", "mash", "fastani", "wordcount", "seqret", "ppanggolin",
+                            "circos", "snippy", "phispy", "macsyfinder", "padloc", "mafft"]
+    toWrite = "# TOOLS\n"
+    printcolor("♊ Check tools/db versions"+"\n")
+    pbar = tqdm(total=len(dicoGeminiPath["TOOLS"])+len(dicoGeminiPath["DATABASES"]), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    for toolName in sorted(dicoGeminiPath["TOOLS"]):
+        toolPath = dicoGeminiPath["TOOLS"][toolName]
+        # --version
+        if toolName in lstDoubleDashVersion:
+            if ".jar" in toolPath:
+                version = get_cmd_output("java -jar "+toolPath+" --version")
+            else:
+                version = get_cmd_output(toolPath+" --version")
+            if toolName in ["python", "ppanggolin", "snippy", "macsyfinder", "padloc"]:
+                version = version.split("\n")[0].split(" ")[1].replace("v", "")
+            elif toolName in ["rscript", "diamond", "interproscan", "iqtree2", "fastani"]:
+                version = version.split("\n")[0].split("version ")[1]
+            elif toolName in ["transeq", "wordcount", "seqret"]:
+                version = version.split(":")[1]
+            elif toolName == "spades":
+                version = version.split("SPAdes genome assembler v")[1]
+            elif toolName in ["phanotate", "mash", "phispy", "mafft"]:
+                version = version.replace("v", "")
+            elif toolName == "eggnog-mapper":
+                version = version.split("emapper-")[1].split(" ")[0]
+            elif toolName == "circos":
+                version = version.split("|")[1].split("v ")[1].replace(" ", "")
+            else:
+                printcolor("[ERROR]\nUnable to check \""+toolName+"\" version\n", 1, "212;64;89", "None", True)
+                exit_gemini()
+            version = version.split(" ")[0]
+        elif toolName == "trimmomatic":
+            version = get_cmd_output("java -jar "+toolPath+" -version").split(" ")[0]
+        elif toolName == "muscle":
+            version = get_cmd_output(toolPath+" -version").split("MUSCLE v")[1].split(" ")[0]
+        elif toolName == "prodigal":
+            version = get_cmd_output(toolPath+" -v").split("Prodigal V")[1].split(":")[0]
+        elif toolName in ["hmmscan", "hmmsearch"]:
+            version = get_cmd_output(toolPath+" -h | grep \"HMMER\"").split("HMMER ")[1].split(" ")[0]
+        elif toolName == "blastn":
+            version = get_cmd_output(toolPath+" -h | grep \"BLAST\"").split("BLAST ")[1]
+        elif toolName == "makeblastdb":
+            version = get_cmd_output(toolPath+" -h | grep \"BLAST\"").split("version ")[1]
+        elif toolName == "trnascanse":
+            version = get_cmd_output(toolPath+" -h | grep -m 1 \"tRNAscan-SE\"").split("tRNAscan-SE ")[1].split(" ")[0]
+        elif toolName == "mmseqs":
+            version = get_cmd_output(toolPath+" -h | grep -m 1 \"MMseqs2 Version\"").split(": ")[1]
+        elif toolName == "fasttree":
+            version = get_cmd_output(toolPath+" -help | grep -m 1 \"FastTree\"").split("FastTree ")[1].split(" ")[0]
+        elif toolName == "famsa":
+            version = get_cmd_output(toolPath+" -h | grep -m 1 \"FAMSA\"").split("ver. ")[1].split(" ")[0]
+        elif toolName == "checkv":
+            version = get_cmd_output(toolPath+" -h | grep -m 1 \"CheckV\"").split("CheckV v")[1].split(":")[0]
+        elif toolName == "satellite_finder":
+            version = get_cmd_output("grep \"SatelliteFinder version\" "+toolPath+"/bin/satellite_finder.py").split("version ")[1]
+        elif toolName in ["multidl"]:
+            continue
+        else:
+            printcolor("[ERROR]\nUnable to check \""+toolName+"\" version\n", 1, "212;64;89", "None", True)
+            exit_gemini()
+        toWrite += toolName+":v"+version+"\n"
+        pbar.update(1)
+    toWrite += "# DATABASES\n"
+    for dbName in sorted(dicoGeminiPath["DATABASES"]):
+        dbPath = dicoGeminiPath["DATABASES"][dbName]
+        if os.path.isfile(dbPath):
+            toWrite += dbPath+":"+str(datetime.fromtimestamp(os.path.getmtime(dbPath)).strftime("%d-%m-%y"))+"\n"
+        pbar.update(1)
+    pbar.close()
+    if pathOUT is None:
+        print(toWrite)
+    else:
+        OUT = open(pathOUT, 'w')
+        OUT.write(toWrite)
+        OUT.close()
 
 
 # ***** Terminal title ***** #

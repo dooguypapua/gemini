@@ -72,12 +72,12 @@ def phage_assembly(pathIN: str, pathOUT: str) -> Tuple[str, str]:
                 pathSPADES = geminiset.pathTMP+"/spades_"+sampleName
                 pathSPADESlog = geminiset.pathTMP+"/spades_"+sampleName+".log"
                 # Launch command
-                cmdTrim = "java -jar "+dicoGeminiPath['trimmomatic']+" PE -threads "+str(cpu)+" -quiet "+pathFASTQr1+" "+pathFASTQr2+" "+pathTRIMr1+" "+pathUNTRIMr1+" "+pathTRIMr2+" "+pathUNTRIMr2+" "+trimmomatic_param
+                cmdTrim = "java -jar "+dicoGeminiPath['TOOLS']['trimmomatic']+" PE -threads "+str(cpu)+" -quiet "+pathFASTQr1+" "+pathFASTQr2+" "+pathTRIMr1+" "+pathUNTRIMr1+" "+pathTRIMr2+" "+pathUNTRIMr2+" "+trimmomatic_param
                 pbar.set_description_str(sampleName+": trimmomatic"+" ".rjust(maxpathSize-len(sampleName)))
                 os.system(cmdTrim)
                 cmdCat = "cat "+pathUNTRIMr1+" "+pathUNTRIMr2+" > "+pathUNTRIM
                 os.system(cmdCat)
-                cmdSpades = dicoGeminiPath['spades']+" -1 "+pathTRIMr1+" -2 "+pathTRIMr2+" -s "+pathUNTRIM+" -o "+pathSPADES+" --threads "+str(cpu)+" "+spades_param+" > "+pathSPADESlog
+                cmdSpades = dicoGeminiPath['TOOLS']['spades']+" -1 "+pathTRIMr1+" -2 "+pathTRIMr2+" -s "+pathUNTRIM+" -o "+pathSPADES+" --threads "+str(cpu)+" "+spades_param+" > "+pathSPADESlog
                 pbar.set_description_str(sampleName+": spades"+" ".rjust(maxpathSize-len(sampleName)+5))
                 os.system(cmdSpades)
                 # Copy output contigs FASTA file
@@ -90,7 +90,7 @@ def phage_assembly(pathIN: str, pathOUT: str) -> Tuple[str, str]:
 
 
 @fct_checker
-def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: int = 10, ext: str = ".fasta") -> Tuple[str, str, int, int, str]:
+def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: int = 2, ext: str = ".fasta") -> Tuple[str, str, int, int, str]:
     '''
      ------------------------------------------------------------
     |                     FILTER PHAGE ASSEMBLY                  |
@@ -101,7 +101,7 @@ def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: 
     |    pathIN : path of input files or folder (required)       |
     |    pathOUT: path of output files (required)                |
     |    minLen : minimum contig length (default=100)            |
-    |    minCov : minimum contig coverage (default=10)           |
+    |    minCov : minimum contig coverage (default=2)           |
     |    ext    : extension of input files (default=.fasta)      |
      ------------------------------------------------------------
     '''
@@ -120,9 +120,9 @@ def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: 
         orgName = file.replace(ext, "").replace("."+ext, "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
         # Blast contigs against contamination sequence
-        cmdBlastn = dicoGeminiPath['blastn']+" -task blastn -query "+pathAssembly+" -db "+dicoGeminiPath['contaPhageDB']+" -out "+geminiset.pathTMP+"/blast.xml -outfmt 5 -perc_identity 80 -qcov_hsp_perc 30 -max_hsps 10 -max_target_seqs 5"
+        cmdBlastn = dicoGeminiPath['TOOLS']['blastn']+" -task blastn -query "+pathAssembly+" -db "+dicoGeminiPath['DATABASES']['contaPhageDB']+" -out "+geminiset.pathTMP+"/blast.xml -outfmt 5 -perc_identity 80 -qcov_hsp_perc 30 -max_hsps 10 -max_target_seqs 5"
         os.system(cmdBlastn)
-        dicoBlast = make_blast_dict(pathIN=geminiset.pathTMP+"/blast.xml", outfmt=".xml", idThr=30, minLRthr=0, maxLRthr=0, ext=".xml")
+        dicoBlast = make_blast_dict(pathIN=geminiset.pathTMP, dbName="blast", pathJSON="None", idThr=30, minLRthr=0, maxLRthr=0, ext=".xml")
         lstContamContig = list(dicoBlast.keys())
         # Read contigs FASTA
         dicoAssembly = make_fasta_dict(pathAssembly)

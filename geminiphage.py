@@ -98,7 +98,7 @@ def viridic(pathIN: str, pathOUT: str, ext: str = ".fna") -> Tuple[str, str, str
     spinner = yaspin(Spinners.aesthetic, text="♊ VIRIDIC", side="right")
     spinner.start()
     title("VIRIDIC", None)
-    cmdViridic = dicoGeminiPath['viridic']+" in = "+pathTMPcat+" projdir = "+pathOUT+" ncor = "+str(cpu)+" > "+pathLOG+" 2>&1"
+    cmdViridic = dicoGeminiPath['TOOLS']['viridic']+" in = "+pathTMPcat+" projdir = "+pathOUT+" ncor = "+str(cpu)+" > "+pathLOG+" 2>&1"
     os.system(cmdViridic)
     spinner.stop()
     printcolor("♊ VIRIDIC"+"\n")
@@ -159,15 +159,15 @@ def phage_annotation(pathIN: str, pathOUT: str, boolEMBL: bool = False, enaProje
     # dicoPVOGSdescr = make_pvogs_desc_dict(pathIN=pathOUT+"/pvogs.json", pathJSON=pathOUT+"/pvogs_descr.json")
     dicoPVOGS_LT = hmmscandict_to_dictlt(dicoPVOGS)
     # ***** Nahant collection Annotation ***** #
-    diamond_p(pathIN=pathOUT, pathDB=dicoGeminiPath['nahant_dmnd'],  pathOUT=pathOUT, ext=".faa")
+    diamond_p(pathIN=pathOUT, pathDB=dicoGeminiPath['DATABASES']['nahant_dmnd'],  pathOUT=pathOUT, ext=".faa")
     dicoNAHANT = make_blast_dict(pathIN=pathOUT, dbName="nahant", pathJSON=pathOUT+"/nahant.json", idThr=idThr, minLRthr=covThr, maxLRthr=covThr, ext=".tsv")
     dicoNAHANT_ANNOTSORT = blastdict_to_annotsort(dicoNAHANT)
     # ***** Refseq collection Annotation ***** #
-    diamond_p(pathIN=pathOUT, pathDB=dicoGeminiPath['refseq212bct_dmnd'],  pathOUT=pathOUT, ext=".faa")
+    diamond_p(pathIN=pathOUT, pathDB=dicoGeminiPath['DATABASES']['refseq212bct_dmnd'],  pathOUT=pathOUT, ext=".faa")
     dicoREFSEQ = make_blast_dict(pathIN=pathOUT, dbName="refseq212bct", pathJSON=pathOUT+"/refseq.json", idThr=idThr, minLRthr=covThr, maxLRthr=covThr, ext=".tsv")
     dicoREFSEQ_ANNOTSORT = blastdict_to_annotsort(dicoREFSEQ)
     # ***** phageDB collection Annotation ***** #
-    diamond_p(pathIN=pathOUT, pathDB=dicoGeminiPath['phagedb_dmnd'],  pathOUT=pathOUT, ext=".faa")
+    diamond_p(pathIN=pathOUT, pathDB=dicoGeminiPath['DATABASES']['phagedb_dmnd'],  pathOUT=pathOUT, ext=".faa")
     dicoPHAGEDB = make_blast_dict(pathIN=pathOUT, dbName="phagedb", pathJSON=pathOUT+"/phagedb.json", idThr=idThr, minLRthr=covThr, maxLRthr=covThr, ext=".tsv")
     dicoPHAGEDB_ANNOTSORT = blastdict_to_annotsort(dicoPHAGEDB)
     # ***** InterProScan Annotation ***** # (JSON output)
@@ -781,7 +781,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
                         cmdWGET = "wget -O "+pathTMP+"/"+gca+"."+str(gcaVersion)+".embl -q "+dicoDB[orgName][gca][srcChoice]['url'].replace("/fasta/", "/embl/").replace("?download = true&gzip = true", "")
                         os.system(cmdWGET)
                         # Convert embl to gbk
-                        cmdSEQRET = dicoGeminiPath['seqret']+" -sequence "+pathTMP+"/"+gca+"."+str(gcaVersion)+".embl -sformat1 embl -outseq "+pathGBK.replace(".gz", "")+" -osformat2 genbank >> "+pathLOG+" 2>&1"
+                        cmdSEQRET = dicoGeminiPath['TOOLS']['seqret']+" -sequence "+pathTMP+"/"+gca+"."+str(gcaVersion)+".embl -sformat1 embl -outseq "+pathGBK.replace(".gz", "")+" -osformat2 genbank >> "+pathLOG+" 2>&1"
                         os.system(cmdSEQRET)
                         # Compress gbk
                         if os.path.isfile(pathGBK.replace(".gz", "")) and os.path.getsize(pathGBK.replace(".gz", "")):
@@ -812,8 +812,8 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
             pathCHECKVOUT = pathOUT+"/CHECKV/"+fna.replace(".fna", "")
             # Launch if required
             if not os.path.isfile(pathCHECKVOUT+"/quality_summary.tsv") or os.path.getsize(pathCHECKVOUT+"/quality_summary.tsv") == 0:
-                os.system("echo \""+dicoGeminiPath['python']+" "+dicoGeminiPath['checkv']+" end_to_end "+pathFNA+" "+pathCHECKVOUT+" -t "+str(cpu)+" -d "+dicoGeminiPath['checkv_db']+"\" >> "+pathLOG)
-                cmdCHECKV = dicoGeminiPath['python']+" "+dicoGeminiPath['checkv']+" end_to_end "+pathFNA+" "+pathCHECKVOUT+" -t "+str(cpu)+" -d "+dicoGeminiPath['checkv_db']+" >> "+pathLOG+" 2>&1"
+                os.system("echo \""+dicoGeminiPath['TOOLS']['python']+" "+dicoGeminiPath['TOOLS']['checkv']+" end_to_end "+pathFNA+" "+pathCHECKVOUT+" -t "+str(cpu)+" -d "+dicoGeminiPath['DATABASES']['checkv_db']+"\" >> "+pathLOG)
+                cmdCHECKV = dicoGeminiPath['TOOLS']['python']+" "+dicoGeminiPath['TOOLS']['checkv']+" end_to_end "+pathFNA+" "+pathCHECKVOUT+" -t "+str(cpu)+" -d "+dicoGeminiPath['DATABASES']['checkv_db']+" >> "+pathLOG+" 2>&1"
                 os.system(cmdCHECKV)
                 # Delete tmp folder
                 shutil.rmtree(pathCHECKVOUT+"/tmp")
@@ -928,7 +928,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     for faa in lstFAA:
         pathTBLOUT = pathOUT+"/ANNOT/"+faa.replace(".faa", ".tblout")
         if not os.path.isfile(pathTBLOUT) or os.path.getsize(pathTBLOUT) == 0:
-            cmdHmmscan = dicoGeminiPath['hmmscan']+" --tblout "+pathTBLOUT+" "+dicoGeminiPath['terminase_hmm']+" "+pathOUT+"/FAA/"+faa
+            cmdHmmscan = dicoGeminiPath['TOOLS']['hmmscan']+" --tblout "+pathTBLOUT+" "+dicoGeminiPath['DATABASES']['terminase_hmm']+" "+pathOUT+"/FAA/"+faa
             dicoThread[faa.replace(".faa", "")] = {"cmd": cmdHmmscan, "returnstatut": None, "returnlines": []}
     if len(dicoThread) > 0:
         launch_threads(dicoThread, "hmmscan_terminase", cpu, pathTMP)
@@ -1123,7 +1123,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
             for orgName2 in sqldicoMissingComp[orgName1]:
                 lstFilesToDB.append(pathTMPFASTA+"/"+orgName2+".fasta")
             cat_lstfiles(lstFilesToDB, pathDBblast)
-            cmdMAKEDB = dicoGeminiPath['makeblastdb']+" -dbtype nucl -logfile "+pathTMPLOG+"/makeblastdb.log -in "+pathDBblast
+            cmdMAKEDB = dicoGeminiPath['TOOLS']['makeblastdb']+" -dbtype nucl -logfile "+pathTMPLOG+"/makeblastdb.log -in "+pathDBblast
             os.system(cmdMAKEDB)
             # Launch blastN
             lstPathOUT = []
@@ -1139,7 +1139,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
                 pathBLASTOUT = pathTMPBLASTCOMPOUT+"/"+orgName1+".out"
                 pathLOG = pathTMPLOG+"/"+orgName1+".log"
                 lstPathOUT.append(pathBLASTOUT)
-                cmdBLASTN = dicoGeminiPath['blastn']+" -query "+pathFASTA+" -db "+pathDBblast+" -out "+pathBLASTOUT + \
+                cmdBLASTN = dicoGeminiPath['TOOLS']['blastn']+" -query "+pathFASTA+" -db "+pathDBblast+" -out "+pathBLASTOUT + \
                     " -outfmt \"6 qseqid sseqid evalue bitscore qlen slen qstart qend sstart send qseq sseq nident gaps\"" + \
                     " -evalue 1 -max_target_seqs 10000 -word_size 7 -reward 2 -penalty -3 -gapopen 5 -gapextend 2" + \
                     " -num_threads "+str(cpu)+" >> "+pathLOG+" 2>&1"
@@ -1188,7 +1188,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
             if os.path.getsize(pathREDUCEOUT) != 0:
                 pathVIRIDICOUT = pathTMPVIRIDIC+"/"+orgName1+".csv"
                 pathLOG = pathTMPLOG+"/"+orgName1+".log"
-                cmdVIRIDIC = dicoGeminiPath['rscript']+" "+pathVIRIDICgeminiR+" blastres="+pathREDUCEOUT+" out="+pathVIRIDICOUT+" >> "+pathLOG+" 2>&1"
+                cmdVIRIDIC = dicoGeminiPath['TOOLS']['rscript']+" "+pathVIRIDICgeminiR+" blastres="+pathREDUCEOUT+" out="+pathVIRIDICOUT+" >> "+pathLOG+" 2>&1"
                 os.system(cmdVIRIDIC)
                 os.system("gzip "+pathVIRIDICOUT)
                 # Parse VIRIDIC output
@@ -1373,10 +1373,10 @@ def PhiSpy(pathIN: str, pathOUT: str, nbAdjacent: int = 3, minCtgLen: int = 5000
                 pathGBK = pathTMP+"/"+orgName+".gbk"
             pathTMPLOG = pathTMP+"/"+orgName+".log"
             if boolPvogs is True:
-                cmdPHISPY = dicoGeminiPath['phispy']+" "+pathGBK+" -o "+pathOUT+" --file_prefix "+orgName+" --output_choice 4 " + \
-                    " --phmms "+dicoGeminiPath['pvogs_hmm']+" --number "+str(nbAdjacent)+" --threads "+str(cpu)+" --log "+pathTMPLOG+" >> "+pathLOG+" 2>&1"
+                cmdPHISPY = dicoGeminiPath['TOOLS']['phispy']+" "+pathGBK+" -o "+pathOUT+" --file_prefix "+orgName+" --output_choice 4 " + \
+                    " --phmms "+dicoGeminiPath['DATABASES']['pvogs_hmm']+" --number "+str(nbAdjacent)+" --threads "+str(cpu)+" --log "+pathTMPLOG+" >> "+pathLOG+" 2>&1"
             else:
-                cmdPHISPY = dicoGeminiPath['phispy']+" "+pathGBK+" -o "+pathOUT+" --file_prefix "+orgName+" --output_choice 4 " + \
+                cmdPHISPY = dicoGeminiPath['TOOLS']['phispy']+" "+pathGBK+" -o "+pathOUT+" --file_prefix "+orgName+" --output_choice 4 " + \
                     " --number "+str(nbAdjacent)+" --threads "+str(cpu)+" --log "+pathTMPLOG+" >> "+pathLOG+" 2>&1"
             os.system(cmdPHISPY)
             os.system("cat "+pathTMPLOG+" >> "+pathLOG)
@@ -1417,8 +1417,8 @@ def picmi_finder_gbk(pathIN: str, pathOUT: str, prefix: str, maxLen: int = 50000
     os.makedirs(pathOUT+"/GFF", exist_ok=True)
     os.makedirs(pathOUT+"/PLOTS", exist_ok=True)
     pathJSON = pathOUT+"/JSON/"+prefix+".json"
-    pathFisDMND = dicoGeminiPath['picmi-db']+"/fis.dmnd"
-    pathHMM = dicoGeminiPath['picmi-db']+"/fis-hel-alpa-int.hmm"
+    pathFisDMND = dicoGeminiPath['DATABASES']['picmi-db']+"/fis.dmnd"
+    pathHMM = dicoGeminiPath['DATABASES']['picmi-db']+"/fis-hel-alpa-int.hmm"
     # Temp
     pathFAA = pathTMP+"/"+prefix+".faa"
     pathDIAMOND = pathTMP+"/"+prefix+".tsv"
@@ -1428,7 +1428,7 @@ def picmi_finder_gbk(pathIN: str, pathOUT: str, prefix: str, maxLen: int = 50000
         # Convert to FAA
         gbk_to_faa(pathIN=pathGBK, pathOUT=pathFAA)
         # Diamond blastP to find Fis
-        cmd = dicoGeminiPath['diamond']+" blastp -d "+pathFisDMND+" -q "+pathFAA+" -o "+pathDIAMOND+" --threads "+str(cpu)+" --max-target-seqs 1 --id 30 --outfmt 6 qtitle > /dev/null 2>&1"
+        cmd = dicoGeminiPath['TOOLS']['diamond']+" blastp -d "+pathFisDMND+" -q "+pathFAA+" -o "+pathDIAMOND+" --threads "+str(cpu)+" --max-target-seqs 1 --id 30 --outfmt 6 qtitle > /dev/null 2>&1"
         os.system(cmd)
         # If Fis found
         if os.path.isfile(pathDIAMOND):
@@ -1440,7 +1440,7 @@ def picmi_finder_gbk(pathIN: str, pathOUT: str, prefix: str, maxLen: int = 50000
             for line in lstLines:
                 lstFisLT.append(line.split("|")[0])
             # Launch HMMSEARCH
-            cmdhmmsearch = dicoGeminiPath['hmmsearch']+" --cpu "+str(cpu)+" --tblout "+pathHMMSEARCH+" "+pathHMM+" "+pathFAA+" > /dev/null 2>&1"
+            cmdhmmsearch = dicoGeminiPath['TOOLS']['hmmsearch']+" --cpu "+str(cpu)+" --tblout "+pathHMMSEARCH+" "+pathHMM+" "+pathFAA+" > /dev/null 2>&1"
             os.system(cmdhmmsearch)
             # If hmmsearch results
             dicoHMM = {'hel': set(), 'alpa': set(), 'int': set()}
@@ -1663,8 +1663,8 @@ def picmi_finder_databankseq(pathIN: str, pathOUT: str, maxLen: int = 50000) -> 
     os.makedirs(pathOUT+"/GBK", exist_ok=True)
     os.makedirs(pathOUT+"/GFF", exist_ok=True)
     os.makedirs(pathOUT+"/PLOTS", exist_ok=True)
-    pathFisDMND = dicoGeminiPath['picmi-db']+"/fis.dmnd"
-    pathHMM = dicoGeminiPath['picmi-db']+"/fis-hel-alpa-int.hmm"
+    pathFisDMND = dicoGeminiPath['DATABASES']['picmi-db']+"/fis.dmnd"
+    pathHMM = dicoGeminiPath['DATABASES']['picmi-db']+"/fis-hel-alpa-int.hmm"
     pathLSTdone = pathOUT+"/lst_done.json"
     if os.path.isfile(pathLSTdone):
         lstDone = load_json(pathLSTdone)
@@ -1697,7 +1697,7 @@ def picmi_finder_databankseq(pathIN: str, pathOUT: str, maxLen: int = 50000) -> 
             FAA.close()
             pathDIAMOND = pathTMP+"/"+record+".tsv"
             # Diamond blastP to find Fis
-            cmd = dicoGeminiPath['diamond']+" blastp -d "+pathFisDMND+" -q "+pathFAA+" -o "+pathDIAMOND+" --threads "+str(cpu)+" --max-target-seqs 1 --id 30 --outfmt 6 qtitle > /dev/null 2>&1"
+            cmd = dicoGeminiPath['TOOLS']['diamond']+" blastp -d "+pathFisDMND+" -q "+pathFAA+" -o "+pathDIAMOND+" --threads "+str(cpu)+" --max-target-seqs 1 --id 30 --outfmt 6 qtitle > /dev/null 2>&1"
             os.system(cmd)
             # If Fis found
             if os.path.isfile(pathDIAMOND):
@@ -1710,7 +1710,7 @@ def picmi_finder_databankseq(pathIN: str, pathOUT: str, maxLen: int = 50000) -> 
                     lstFisLT.append(line.split("|")[0])
                 # Launch HMMSEARCH
                 pathHMMSEARCH = pathTMP+"/"+record+".hmmsearch"
-                cmdhmmsearch = dicoGeminiPath['hmmsearch']+" --cpu "+str(cpu)+" --tblout "+pathHMMSEARCH+" "+pathHMM+" "+pathFAA+" > /dev/null 2>&1"
+                cmdhmmsearch = dicoGeminiPath['TOOLS']['hmmsearch']+" --cpu "+str(cpu)+" --tblout "+pathHMMSEARCH+" "+pathHMM+" "+pathFAA+" > /dev/null 2>&1"
                 os.system(cmdhmmsearch)
                 # If hmmsearch results
                 dicoHMM = {'hel': set(), 'alpa': set(), 'int': set()}

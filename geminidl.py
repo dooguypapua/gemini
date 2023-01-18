@@ -261,7 +261,7 @@ def dl_genbank_bacteria(section: str, taxonomyID: int, pathOUT: str, chunkSize: 
             urlGBKFTP = dicoSummary[gcaAccession]+"/"+os.path.basename(dicoSummary[gcaAccession])+"_genomic.gbff.gz"
             TMP.write(urlGBKFTP+"\n")
         TMP.close()
-        cmdDL = dicoGeminiPath['python']+" "+dicoGeminiPath['multidl']+" -c "+pathTMP+"/chunks.txt -o "+pathTMP+" -n "+str(cpu)+" > /dev/null 2>&1"
+        cmdDL = dicoGeminiPath['TOOLS']['python']+" "+dicoGeminiPath['TOOLS']['multidl']+" -c "+pathTMP+"/chunks.txt -o "+pathTMP+" -n "+str(cpu)+" > /dev/null 2>&1"
         os.system(cmdDL)
         for gcaAccession in subLstMissing:
             pathTmpGBK = pathTMP+"/"+os.path.basename(dicoSummary[gcaAccession])+"_genomic.gbff.gz"

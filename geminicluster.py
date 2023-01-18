@@ -57,7 +57,7 @@ def mmseqs_easycluster(pathIN: str, pathOUT: str, idThr: int = 30, maxLRthr: int
     # Launch command
     pathMMSEQS = pathOUT+"/mmseqs"
     if not os.path.isfile(pathMMSEQS+"_cluster.tsv") or os.path.getsize(pathMMSEQS+"_cluster.tsv") == 0:
-        cmdMmseqs = dicoGeminiPath['mmseqs']+" easy-cluster "+pathIN+"/*"+ext+" "+pathMMSEQS+" "+geminiset.pathTMP+" -c "+str(idThr/100)+" --cov-mode 0 --min-seq-id "+str(maxLRthr/100)+" --threads "+str(cpu)+" -v 0"
+        cmdMmseqs = dicoGeminiPath['TOOLS']['mmseqs']+" easy-cluster "+pathIN+"/*"+ext+" "+pathMMSEQS+" "+geminiset.pathTMP+" -c "+str(idThr/100)+" --cov-mode 0 --min-seq-id "+str(maxLRthr/100)+" --threads "+str(cpu)+" -v 0"
         os.system(cmdMmseqs)
         os.remove(pathMMSEQS+"_rep_seq.fasta")
         os.remove(pathMMSEQS+"_all_seqs.fasta")
@@ -116,9 +116,9 @@ def mmseqs_rbh(pathIN: str, pathOUT: str, ref: str = "None", idThrClust: int = 8
             orgName = file.replace(ext, "").replace("."+ext, "")
             pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
             if boolNucl is False:
-                cmdCreateDB = dicoGeminiPath['mmseqs']+" createdb "+pathFile+" "+pathTMPdirDB+"/"+orgName+".db -v 0 --dbtype 1"
+                cmdCreateDB = dicoGeminiPath['TOOLS']['mmseqs']+" createdb "+pathFile+" "+pathTMPdirDB+"/"+orgName+".db -v 0 --dbtype 1"
             else:
-                cmdCreateDB = dicoGeminiPath['mmseqs']+" createdb "+pathFile+" "+pathTMPdirDB+"/"+orgName+".db -v 0 --dbtype 2"
+                cmdCreateDB = dicoGeminiPath['TOOLS']['mmseqs']+" createdb "+pathFile+" "+pathTMPdirDB+"/"+orgName+".db -v 0 --dbtype 2"
             os.system(cmdCreateDB)
             pbar.update(1)
             title("createdb", pbar)
@@ -151,14 +151,14 @@ def mmseqs_rbh(pathIN: str, pathOUT: str, ref: str = "None", idThrClust: int = 8
                             os.makedirs(pathTMPresPair, exist_ok=True)
                             # Launch mmseqs (use thread = 1 because multithread)
                             if boolNucl is False:
-                                cmdMmseqs = dicoGeminiPath['mmseqs']+" rbh "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair + \
+                                cmdMmseqs = dicoGeminiPath['TOOLS']['mmseqs']+" rbh "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair + \
                                             " -c "+str(covThrClust/100)+" --search-type 1 --cov-mode 0 --min-seq-id "+str(idThrClust/100)+" -v 2 ; " + \
-                                            dicoGeminiPath['mmseqs']+" convertalis "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair+"/mmseqs.tsv " + \
+                                            dicoGeminiPath['TOOLS']['mmseqs']+" convertalis "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair+"/mmseqs.tsv " + \
                                             "--format-output query,target,pident,evalue,alnlen,qstart,qend,qlen,tstart,tend,tlen -v 2 --threads 1"
                             else:
-                                cmdMmseqs = dicoGeminiPath['mmseqs']+" rbh "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair + \
+                                cmdMmseqs = dicoGeminiPath['TOOLS']['mmseqs']+" rbh "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair + \
                                             " -c "+str(covThrClust/100)+" --search-type 3 --cov-mode 0 --min-seq-id "+str(idThrClust/100)+" -v 2 --threads 1 ; " + \
-                                            dicoGeminiPath['mmseqs']+" convertalis "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair+"/mmseqs.tsv " +\
+                                            dicoGeminiPath['TOOLS']['mmseqs']+" convertalis "+pathTMPdb1+" "+pathTMPdb2+" "+pathTMPresPair+"/mmseqs_ali.db "+pathTMPresPair+"/mmseqs.tsv " +\
                                             "--format-output query,target,pident,evalue,alnlen,qstart,qend,qlen,tstart,tend,tlen -v 2 --threads 1"
                             dicoThread[orgName1+"_"+orgName2] = {"cmd": cmdMmseqs, "returnstatut": None, "returnlines": []}
                     # Launch threads
@@ -389,9 +389,9 @@ def make_group_core_align(pathIN: str, pathJSON: str, pathGROUP: str, pathOUT: s
                     OUTprot.close()
                 # Align sequence
                 if boolGene is True:
-                    os.system(dicoGeminiPath['muscle']+" -in "+pathOUTgroupFastaGene+" -out "+pathOUTgroupAlignGene+" > /dev/null 2>&1")
+                    os.system(dicoGeminiPath['TOOLS']['muscle']+" -in "+pathOUTgroupFastaGene+" -out "+pathOUTgroupAlignGene+" > /dev/null 2>&1")
                 if boolProt is True:
-                    os.system(dicoGeminiPath['muscle']+" -in "+pathOUTgroupFastaProt+" -out "+pathOUTgroupAlignProt+" > /dev/null 2>&1")
+                    os.system(dicoGeminiPath['TOOLS']['muscle']+" -in "+pathOUTgroupFastaProt+" -out "+pathOUTgroupAlignProt+" > /dev/null 2>&1")
                 # Parse align
                 if boolGene is True:
                     dicoAlign = make_fasta_dict(pathOUTgroupAlignGene)
@@ -649,7 +649,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
         pbar.close()
         TMPLIST.close()
         # Launch MASH
-        cmdMASH = dicoGeminiPath['mash']+" dist -l -p "+str(cpu)+" "+geminiset.pathTMP+"/"+ref+".fna "+geminiset.pathTMP+"/mash_genome.txt | sed 's, "+geminiset.pathTMP+"/, ,g' | sed 's, .fna, ,g' > "+pathMashOUT+" > /dev/null 2>&1"
+        cmdMASH = dicoGeminiPath['TOOLS']['mash']+" dist -l -p "+str(cpu)+" "+geminiset.pathTMP+"/"+ref+".fna "+geminiset.pathTMP+"/mash_genome.txt | sed 's, "+geminiset.pathTMP+"/, ,g' | sed 's, .fna, ,g' > "+pathMashOUT+" > /dev/null 2>&1"
         os.system(cmdMASH)
     # ***** Contigs filters ***** #
     printcolor("♊ Contigs stats"+"\n")
@@ -780,7 +780,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
         pathALIGN = pathDirFASTAOUT+"/"+ltRef+".align"
         pbar.set_description_str(ltRef+" ".rjust(maxpathSize-len(ltRef)))
         if not os.path.isfile(pathALIGN) or os.path.getsize(pathALIGN) == 0:
-            cmdFAMSA = dicoGeminiPath['famsa']+" -t "+str(cpu)+" "+pathFAA+" "+pathALIGN+" > /dev/null 2>&1"
+            cmdFAMSA = dicoGeminiPath['TOOLS']['famsa']+" -t "+str(cpu)+" "+pathFAA+" "+pathALIGN+" > /dev/null 2>&1"
             os.system(cmdFAMSA)
         pbar.update(1)
         title("Prot align", pbar)
@@ -876,7 +876,7 @@ def ppanggolin(pathIN: str, pathIN2: str, pathOUT: str, maxRGP: int = -1, prefix
             LST.write(os.path.basename(pathFile).replace(ext, "")+"\t"+pathFile+"\n")
         LST.close()
         # Launch PPanGGOLiN
-        cmdPPANGGOLINRGP = dicoGeminiPath["ppanggolin"]+" panrgp --anno "+pathTMPlst+" --output "+pathOUTppanggolin+" --tmpdir "+pathDIRTMP + \
+        cmdPPANGGOLINRGP = dicoGeminiPath['TOOLS']["ppanggolin"]+" panrgp --anno "+pathTMPlst+" --output "+pathOUTppanggolin+" --tmpdir "+pathDIRTMP + \
             " --cpu "+str(cpu)+" --disable_prog_bar --log "+pathLOGppanggolin+" > "+pathLOGppanggolin+" 2>&1"
         os.system(cmdPPANGGOLINRGP)
         os.system("mv "+pathLOGppanggolin+" "+pathOUTppanggolin)
@@ -1027,7 +1027,7 @@ def ppanggolin(pathIN: str, pathIN2: str, pathOUT: str, maxRGP: int = -1, prefix
         cpt += 1
     KARYOTYPE.close()
     # Launch circos
-    cmdCIRCOS = dicoGeminiPath["circos"]+" -conf "+pathDIRTMP+"/circos.conf > /dev/null 2>&1"
+    cmdCIRCOS = dicoGeminiPath['TOOLS']["circos"]+" -conf "+pathDIRTMP+"/circos.conf > /dev/null 2>&1"
     os.system(cmdCIRCOS)
     spinner.stop()
     printcolor("♊ Make Circos RGP plot"+"\n")

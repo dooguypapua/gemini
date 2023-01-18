@@ -90,7 +90,7 @@ def phanotate(pathIN: str, pathOUT: str, minLen: int = 0, fromPhageDb: bool = Fa
         if not os.path.isfile(pathFFN) or os.path.getsize(pathFFN) == 0:
             lstNewFile.append(pathFNA)
             # Construct phanotate threads
-            cmdPhanotate = dicoGeminiPath['phanotate']+" --outfmt fasta -o "+pathFFN+" "+pathFNA
+            cmdPhanotate = dicoGeminiPath['TOOLS']['phanotate']+" --outfmt fasta -o "+pathFFN+" "+pathFNA
             dicoThread[orgName] = {"cmd": cmdPhanotate, "returnstatut": None, "returnlines": []}
     # Launch threads
     if len(dicoThread) > 0:
@@ -212,18 +212,18 @@ def balrog(pathIN: str, pathOUT: str, topology: str, division: str, taxID: int =
     nuc_encode = {"A": 0, "T": 1, "G": 2, "C": 3, "N": 0, "M": 0, "R": 0, "Y": 0, "W": 0, "K": 0}
     start_enc = {"ATG": 0, "GTG": 1, "TTG": 2}
     # Required paths
-    genexa_kmer_path = dicoGeminiPath['balrog_data']+"/kmer_filter/10mer_thresh2_minusARF_all.pkl"
+    genexa_kmer_path = dicoGeminiPath['DATABASES']['balrog_data']+"/kmer_filter/10mer_thresh2_minusARF_all.pkl"
     # genexa_fasta_path = dicoGeminiPath['balrog_data']+"/protein_filter/genexa_genes.fasta"
-    genexa_DB_path = dicoGeminiPath['balrog_data']+"/protein_filter/genexaDB"
-    swissprot_DB_path = dicoGeminiPath['balrog_data']+"/protein_filter/swissprotDB"
-    phanns_DB_path = dicoGeminiPath['balrog_data']+"/protein_filter/phannsDB"
-    pvogs_DB_path = dicoGeminiPath['balrog_data']+"/protein_filter/pvogsDB"
+    genexa_DB_path = dicoGeminiPath['DATABASES']['balrog_data']+"/protein_filter/genexaDB"
+    swissprot_DB_path = dicoGeminiPath['DATABASES']['balrog_data']+"/protein_filter/swissprotDB"
+    phanns_DB_path = dicoGeminiPath['DATABASES']['balrog_data']+"/protein_filter/phannsDB"
+    pvogs_DB_path = dicoGeminiPath['DATABASES']['balrog_data']+"/protein_filter/pvogsDB"
     # ***** LOAD MODEL ***** #
     spinner = yaspin(Spinners.aesthetic, text="♊ Load models", side="right")
     spinner.start()
     title("Loading models", None)
-    model = torch.hub.load(dicoGeminiPath['balrog_data'], "geneTCN", source='local', force_reload=True)
-    model_tis = torch.hub.load(dicoGeminiPath['balrog_data'], "tisTCN", source='local', force_reload=True)
+    model = torch.hub.load(dicoGeminiPath['DATABASES']['balrog_data'], "geneTCN", source='local', force_reload=True)
+    model_tis = torch.hub.load(dicoGeminiPath['DATABASES']['balrog_data'], "tisTCN", source='local', force_reload=True)
     time.sleep(0.5)
     spinner.stop()
     printcolor("♊ Load models"+"\n")
@@ -543,40 +543,40 @@ def balrog(pathIN: str, pathOUT: str, topology: str, division: str, taxID: int =
                         f.writelines(">" + str(i) + "\n"+str(s)[::-1] + "\n")
                 pbar.set_description_str(orgName+" > mmseqs createdb ctg"+str(contigNum).rjust(maxpathSize-len(orgName)-len(" > mmseqs createdb ctg"+str(contigNum))))
                 query_DB_path_35 = os.path.join(dirpath, "candidateDB_35")
-                os.system(dicoGeminiPath['mmseqs']+" createdb "+query_fasta_path_35+" "+query_DB_path_35+" >> "+pathLOG+" 2>&1")
+                os.system(dicoGeminiPath['TOOLS']['mmseqs']+" createdb "+query_fasta_path_35+" "+query_DB_path_35+" >> "+pathLOG+" 2>&1")
                 query_DB_path_53 = os.path.join(dirpath, "candidateDB_53")
-                os.system(dicoGeminiPath['mmseqs']+" createdb "+query_fasta_path_53+" "+query_DB_path_53+" >> "+pathLOG+" 2>&1")
+                os.system(dicoGeminiPath['TOOLS']['mmseqs']+" createdb "+query_fasta_path_53+" "+query_DB_path_53+" >> "+pathLOG+" 2>&1")
                 # ***** GENEXA 3'>5' ***** #
                 pbar.set_description_str(orgName+" > mmseqs genexa ctg"+str(contigNum).rjust(maxpathSize-len(orgName)-len(" > mmseqs genexa ctg"+str(contigNum))))
                 results_DB_path_35 = os.path.join(dirpath, "resultsDB_35")
-                os.system(dicoGeminiPath['mmseqs']+" search -s 7.0 "+query_DB_path_35+" "+genexa_DB_path+" "+results_DB_path_35+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
+                os.system(dicoGeminiPath['TOOLS']['mmseqs']+" search -s 7.0 "+query_DB_path_35+" "+genexa_DB_path+" "+results_DB_path_35+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
                 m8_path_genexa = os.path.join(dirpath, "resultDB_genexa.m8")
-                os.system(dicoGeminiPath['mmseqs']+" convertalis "+query_DB_path_35+" "+genexa_DB_path+" "+results_DB_path_35+" "+m8_path_genexa+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
+                os.system(dicoGeminiPath['TOOLS']['mmseqs']+" convertalis "+query_DB_path_35+" "+genexa_DB_path+" "+results_DB_path_35+" "+m8_path_genexa+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
                 mmseqs_results_genexa = pandas.read_table(m8_path_genexa, header=None, names=["query", "target", "evalue", "raw"]).to_numpy()
                 hit_idx_genexa = np.unique(mmseqs_results_genexa[:, 0]).astype(int)
                 # ***** SWISSPROT 5'>3' ***** #
                 pbar.set_description_str(orgName+" > mmseqs swissprot ctg"+str(contigNum).rjust(maxpathSize-len(orgName)-len(" > mmseqs swissprot ctg"+str(contigNum))))
                 results_DB_path_53 = os.path.join(dirpath, "resultsDB_53")
-                os.system(dicoGeminiPath['mmseqs']+" search -s 7.0 "+query_DB_path_53+" "+swissprot_DB_path+" "+results_DB_path_53+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
+                os.system(dicoGeminiPath['TOOLS']['mmseqs']+" search -s 7.0 "+query_DB_path_53+" "+swissprot_DB_path+" "+results_DB_path_53+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
                 m8_path_secondary = os.path.join(dirpath, "resultDB_secondary.m8")
-                os.system(dicoGeminiPath['mmseqs']+" convertalis "+query_DB_path_53+" "+swissprot_DB_path+" "+results_DB_path_53+" "+m8_path_secondary+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
+                os.system(dicoGeminiPath['TOOLS']['mmseqs']+" convertalis "+query_DB_path_53+" "+swissprot_DB_path+" "+results_DB_path_53+" "+m8_path_secondary+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
                 mmseqs_results_secondary = pandas.read_table(m8_path_secondary, header=None, names=["query", "target", "evalue", "raw"]).to_numpy()
                 hit_idx_secondary = np.unique(mmseqs_results_secondary[:, 0]).astype(int)
                 if division == "PHG":
                     # ***** phannsDB 5'>3' ***** #
                     pbar.set_description_str(orgName+" > mmseqs phanns ctg"+str(contigNum).rjust(maxpathSize-len(orgName)-len(" > mmseqs phanns ctg"+str(contigNum))))
                     results_DB_path_53_phanns = os.path.join(dirpath, "resultsDB_53_phanns")
-                    os.system(dicoGeminiPath['mmseqs']+" search -s 7.0 "+query_DB_path_53+" "+phanns_DB_path+" "+results_DB_path_53_phanns+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
+                    os.system(dicoGeminiPath['TOOLS']['mmseqs']+" search -s 7.0 "+query_DB_path_53+" "+phanns_DB_path+" "+results_DB_path_53_phanns+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
                     m8_path_secondary_phanns = os.path.join(dirpath, "resultDB_secondary_phanns.m8")
-                    os.system(dicoGeminiPath['mmseqs']+" convertalis "+query_DB_path_53+" "+phanns_DB_path+" "+results_DB_path_53_phanns+" "+m8_path_secondary_phanns+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
+                    os.system(dicoGeminiPath['TOOLS']['mmseqs']+" convertalis "+query_DB_path_53+" "+phanns_DB_path+" "+results_DB_path_53_phanns+" "+m8_path_secondary_phanns+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
                     mmseqs_results_secondary_phanns = pandas.read_table(m8_path_secondary_phanns, header=None, names=["query", "target", "evalue", "raw"]).to_numpy()
                     hit_idx_secondary_phanns = np.unique(mmseqs_results_secondary_phanns[:, 0]).astype(int)
                     # ***** pVOGS 5'>3' ***** #
                     pbar.set_description_str(orgName+" > mmseqs pvogs ctg"+str(contigNum).rjust(maxpathSize-len(orgName)-len(" > mmseqs pvogs ctg"+str(contigNum))))
                     results_DB_path_53_pvogs = os.path.join(dirpath, "resultsDB_53_pvogs")
-                    os.system(dicoGeminiPath['mmseqs']+" search -s 7.0 "+query_DB_path_53+" "+pvogs_DB_path+" "+results_DB_path_53_pvogs+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
+                    os.system(dicoGeminiPath['TOOLS']['mmseqs']+" search -s 7.0 "+query_DB_path_53+" "+pvogs_DB_path+" "+results_DB_path_53_pvogs+" "+dirpath+" --threads "+str(cpu)+" >> "+pathLOG+" 2>&1")
                     m8_path_secondary_pvogs = os.path.join(dirpath, "resultDB_secondary_pvogs.m8")
-                    os.system(dicoGeminiPath['mmseqs']+" convertalis "+query_DB_path_53+" "+pvogs_DB_path+" "+results_DB_path_53_pvogs+" "+m8_path_secondary_pvogs+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
+                    os.system(dicoGeminiPath['TOOLS']['mmseqs']+" convertalis "+query_DB_path_53+" "+pvogs_DB_path+" "+results_DB_path_53_pvogs+" "+m8_path_secondary_pvogs+" --format-output \"query,target,evalue,raw\" --threads "+str(cpu)+" > "+pathLOG+" 2>&1")
                     mmseqs_results_secondary_pvogs = pandas.read_table(m8_path_secondary_pvogs, header=None, names=["query", "target", "evalue", "raw"]).to_numpy()
                     hit_idx_secondary_pvogs = np.unique(mmseqs_results_secondary_pvogs[:, 0]).astype(int)
                     cutoffpath = [x for i, x in enumerate(max_ORF_PATH) if (scores_sorted[x] > cutoff or (i in hit_idx_genexa or i in hit_idx_secondary or i in hit_idx_secondary_phanns or i in hit_idx_secondary_pvogs))]
@@ -749,7 +749,7 @@ def trnascan_se(pathIN: str, pathOUT: str, model: str = "-B", ext: str = ".fna")
         pathTRNASCANSE = pathOUT+"/"+orgName+".trnascanse"
         # Launch tRNAscan-SE (empty if any prediction)
         if not os.path.isfile(pathTRNASCANSE):
-            cmdTRNAscanse = dicoGeminiPath['trnascanse']+" "+model+" --forceow --quiet --thread "+str(cpu)+" -o "+pathTRNASCANSE+" "+pathFNA
+            cmdTRNAscanse = dicoGeminiPath['TOOLS']['trnascanse']+" "+model+" --forceow --quiet --thread "+str(cpu)+" -o "+pathTRNASCANSE+" "+pathFNA
             os.system(cmdTRNAscanse)
         pbar.update(1)
         title("tRNAscan-SE", pbar)
@@ -794,7 +794,7 @@ def pvogs(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str, str]:
         pathPVOGS = pathOUT+"/"+orgName+".pvogs"
         # Launch hmmscan on pVOGs database
         if not os.path.isfile(pathPVOGS) or os.path.getsize(pathPVOGS) == 0:
-            cmdHmmsearch = dicoGeminiPath['hmmsearch']+" --cpu "+str(cpu)+" -o /dev/null --noali --tblout "+pathPVOGS+" "+dicoGeminiPath['pvogs_hmm']+" "+pathFAA
+            cmdHmmsearch = dicoGeminiPath['TOOLS']['hmmsearch']+" --cpu "+str(cpu)+" -o /dev/null --noali --tblout "+pathPVOGS+" "+dicoGeminiPath['DATABASES']['pvogs_hmm']+" "+pathFAA
             os.system(cmdHmmsearch)
         pbar.update(1)
         title("pVOGs", pbar)
@@ -832,7 +832,7 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
         if not os.path.isdir(pathTMP):
             pathTMP = "/tmp"
         pathTMPDB = pathTMP+"/"+os.path.basename(pathDB)
-        cmdDiamondDB = dicoGeminiPath['diamond']+" makedb --in "+pathDB+" -d "+pathTMPDB+" --threads "+str(cpu)+" --quiet"
+        cmdDiamondDB = dicoGeminiPath['TOOLS']['diamond']+" makedb --in "+pathDB+" -d "+pathTMPDB+" --threads "+str(cpu)+" --quiet"
         os.system(cmdDiamondDB)
         pathDB = pathTMPDB
     dbTitle = os.path.basename(pathDB).replace(".dmnd", "")
@@ -848,7 +848,7 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
         pathRES = pathOUT+"/"+orgName+"_"+dbTitle+".tsv"
         # Launch diamond blastp on collection database
         if not os.path.isfile(pathRES) or os.path.getsize(pathRES) == 0:
-            cmdDiamond = dicoGeminiPath['diamond']+" blastp -d "+pathDB+" -q "+pathFAA+" -o "+pathRES+" --threads "+str(cpu)+" --outfmt "+outfmt+" --max-target-seqs 1000000000 --header --quiet"
+            cmdDiamond = dicoGeminiPath['TOOLS']['diamond']+" blastp -d "+pathDB+" -q "+pathFAA+" -o "+pathRES+" --threads "+str(cpu)+" --outfmt "+outfmt+" --max-target-seqs 1000000000 --header --quiet"
             os.system(cmdDiamond)
         pbar.update(1)
         title("diamond_p "+dbTitle, pbar)
@@ -893,14 +893,14 @@ def interproscan(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str
         # CAT input FASTA
         cat_lstfiles(lstFiles, geminiset.pathTMP+"/concat.faa")
         # LAUNCH interproscan
-        if ".jar" in dicoGeminiPath['interproscan']:
-            os.chdir(os.path.dirname(dicoGeminiPath['interproscan']))
-            cmdIprscan = "java -Xms"+str(memMin)+"g -Xmx"+str(memMax)+"g -jar "+dicoGeminiPath['interproscan'] + \
+        if ".jar" in dicoGeminiPath['TOOLS']['interproscan']:
+            os.chdir(os.path.dirname(dicoGeminiPath['TOOLS']['interproscan']))
+            cmdIprscan = "java -Xms"+str(memMin)+"g -Xmx"+str(memMax)+"g -jar "+dicoGeminiPath['TOOLS']['interproscan'] + \
                          " --input "+geminiset.pathTMP+"/concat.faa --outfile "+pathINTERPRO+" --formats TSV --tempdir "+geminiset.pathTMP + \
                          " --seqtype p --applications "+strLstApp+" --disable-precalc --disable-residue-annot" + \
                          " --cpu "+str(cpu)+" > "+geminiset.pathTMP+"/iprscan.log 2>&1"
         else:
-            cmdIprscan = dicoGeminiPath['interproscan'] + \
+            cmdIprscan = dicoGeminiPath['TOOLS']['interproscan'] + \
                          " --input "+geminiset.pathTMP+"/concat.faa --outfile "+pathINTERPRO+" --formats TSV --tempdir "+geminiset.pathTMP + \
                          " --seqtype p --applications "+strLstApp+" --disable-precalc --disable-residue-annot" + \
                          " --cpu "+str(cpu)+" > "+geminiset.pathTMP+"/iprscan.log 2>&1"
@@ -947,9 +947,9 @@ def eggnog(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, ext: st
         # CAT input FASTA
         cat_lstfiles(lstFiles, geminiset.pathTMP+"/concat.faa")
         # LAUNCH EggNOG
-        cmdEmapper = dicoGeminiPath['eggnog-mapper']+" -i "+geminiset.pathTMP+"/concat.faa --output all_proteins --output_dir "+geminiset.pathTMP+" --temp_dir "+geminiset.pathTMP + \
+        cmdEmapper = dicoGeminiPath['TOOLS']['eggnog-mapper']+" -i "+geminiset.pathTMP+"/concat.faa --output all_proteins --output_dir "+geminiset.pathTMP+" --temp_dir "+geminiset.pathTMP + \
             " -m diamond --itype proteins --pident "+str(idThr)+" --query_cover "+str(covThr)+" --subject_cover "+str(covThr) + \
-            " --data_dir "+dicoGeminiPath['eggnog-db']+" --cpu "+str(cpu)+" --hmm_maxhits 0 > "+geminiset.pathTMP+"/eggnog.log 2>&1"
+            " --data_dir "+dicoGeminiPath['TOOLS']['eggnog-db']+" --cpu "+str(cpu)+" --hmm_maxhits 0 > "+geminiset.pathTMP+"/eggnog.log 2>&1"
         os.system(cmdEmapper)
         # CHECK errors
         if not os.path.isfile(geminiset.pathTMP+"/all_proteins.emapper.annotations") or os.path.getsize(geminiset.pathTMP+"/all_proteins.emapper.annotations") == 0:
@@ -994,7 +994,7 @@ def recombinase(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
         pathREC = pathOUT+"/"+orgName+".recomb"
         # Launch hmmscan on VirFam/PFAM recombinase database
         if not os.path.isfile(pathREC) or os.path.getsize(pathREC) == 0:
-            cmdHmmsearch = dicoGeminiPath['hmmsearch']+" --cpu "+str(cpu)+" -o /dev/null --noali --tblout "+pathREC+" "+dicoGeminiPath['recombinase_hmm']+" "+pathFAA
+            cmdHmmsearch = dicoGeminiPath['TOOLS']['hmmsearch']+" --cpu "+str(cpu)+" -o /dev/null --noali --tblout "+pathREC+" "+dicoGeminiPath['DATABASES']['recombinase_hmm']+" "+pathFAA
             os.system(cmdHmmsearch)
         pbar.update(1)
         title("Recombinase", pbar)
@@ -1040,7 +1040,7 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
     pathLOG = pathOUT+"/gemini.log"
     # ***** DefenseFinder ***** #
     printcolor("♊ DefenseFinder"+"\n")
-    lstModels = os.listdir(dicoGeminiPath['defense-finder-models']+"/"+dfmodelV+"/definitions")
+    lstModels = os.listdir(dicoGeminiPath['DATABASES']['defense-finder-models']+"/"+dfmodelV+"/definitions")
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
@@ -1059,8 +1059,8 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
                 else:
                     covProfile = 0.1
                     accWeight = ""
-                cmdMacsyfinder = dicoGeminiPath['macsyfinder']+" --db-type ordered_replicon --sequence-db "+pathFAA + \
-                    " --models-dir "+dicoGeminiPath['defense-finder-models']+" --models "+dfmodelV+"/"+model+" all" + \
+                cmdMacsyfinder = dicoGeminiPath['TOOLS']['macsyfinder']+" --db-type ordered_replicon --sequence-db "+pathFAA + \
+                    " --models-dir "+dicoGeminiPath['DATABASES']['defense-finder-models']+" --models "+dfmodelV+"/"+model+" all" + \
                     " --out-dir "+geminiset.pathTMP+"/"+model+" --coverage-profile "+str(covProfile) + \
                     " --w "+str(cpu)+" --exchangeable-weight 1"+accWeight+" >> "+pathLOG+" 2>&1"
                 os.system(cmdMacsyfinder)
@@ -1098,7 +1098,7 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
             GFF.close()
             FAA.close()
             # Launch PADLOC
-            cmdPADLOC = dicoGeminiPath['padloc']+" --cpu "+str(cpu)+" --data "+dicoGeminiPath['padloc-db']+"/"+plmodelV + \
+            cmdPADLOC = dicoGeminiPath['TOOLS']['padloc']+" --cpu "+str(cpu)+" --data "+dicoGeminiPath['DATABASES']['padloc-db']+"/"+plmodelV + \
                 " --faa "+geminiset.pathTMP+"/padloc.faa"+" --gff "+geminiset.pathTMP+"/padloc.gff --outdir "+geminiset.pathTMP+" >> "+pathLOG+" 2>&1"
             os.system(cmdPADLOC)
             pathTMPCSV = geminiset.pathTMP+"/padloc_padloc.csv"
@@ -1222,7 +1222,7 @@ def satellite_finder(pathIN: str, pathOUT: str, modelSel: str = "ALL", ext: str 
         exit_gemini()
     # Look for available models
     dicoGeminiPath = get_gemini_path()
-    lstModels = [sub.replace(".xml", "") for sub in os.listdir(dicoGeminiPath['satellite_finder']+"/models/SatelliteFinder/definitions/")]
+    lstModels = [sub.replace(".xml", "") for sub in os.listdir(dicoGeminiPath['TOOLS']['satellite_finder']+"/models/SatelliteFinder/definitions/")]
     if modelSel not in lstModels+["ALL"]:
         printcolor("[ERROR: satellite_finder]\nInvalid model \""+modelSel+"\". Availables = "+str(lstModels+["ALL"])+"\n", 1, "212;64;89", "None", True)
         exit_gemini()
@@ -1252,7 +1252,7 @@ def satellite_finder(pathIN: str, pathOUT: str, modelSel: str = "ALL", ext: str 
             pbar.set_description_str(orgName+" ("+str(cpt)+"/"+str(len(lstSelectedModels))+")"+" ".rjust(maxpathSize-len(orgName)))
             pathModelOUT = pathOUT+"/raw/"+orgName+"____"+model+".tsv"
             if not os.path.isfile(pathModelOUT):
-                cmdSatelliteFinder = dicoGeminiPath["python"]+" "+dicoGeminiPath['satellite_finder'] + "/bin/satellite_finder.py" + \
+                cmdSatelliteFinder = dicoGeminiPath['TOOLS']["python"]+" "+dicoGeminiPath['TOOLS']['satellite_finder'] + "/bin/satellite_finder.py" + \
                     " --models " + model + " --sequence-db " + pathTMPFAA + " --db-type ordered_replicon" + \
                     " --out-dir " + geminiset.pathTMP + "/" + model + " --worker " + str(cpu) + " --idx" + " >> " + pathLOG + " 2>&1"
                 os.system(cmdSatelliteFinder)

@@ -28,6 +28,7 @@ from geminiparse import *
 from geminiphage import *
 from geminiphylo import *
 from geminiplot import *
+from geminiassembly import *
 
 
 if __name__ == "__main__":

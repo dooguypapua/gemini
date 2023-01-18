@@ -756,7 +756,7 @@ def circos_align(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     spinner = yaspin(Spinners.aesthetic, text="♊ MAFFT", side="right")
     spinner.start()
     title("MAFFT", None)
-    cmdMAFFT = dicoGeminiPath['mafft']+" --quiet --thread "+str(geminiset.cpu)+" "+geminiset.pathTMP+"/catseq.fasta > "+geminiset.pathTMP+"/mafft.fasta"
+    cmdMAFFT = dicoGeminiPath['TOOLS']['mafft']+" --quiet --thread "+str(geminiset.cpu)+" "+geminiset.pathTMP+"/catseq.fasta > "+geminiset.pathTMP+"/mafft.fasta"
     os.system(cmdMAFFT)
     spinner.stop()
     printcolor("♊ MAFFT"+"\n")

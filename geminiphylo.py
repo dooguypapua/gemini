@@ -109,7 +109,7 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
         pathSKETCH = pathOUTSKETCH+"/"+orgName+".msh"
         if not os.path.isfile(pathSKETCH) or os.path.getsize(pathSKETCH) == 0:
-            cmdSKETCH = dicoGeminiPath['mash']+" sketch -o "+pathSKETCH.replace(".msh", "")+" -p "+str(cpu)+" -s "+str(sketchSize)+" "+pathFNA+" > /dev/null 2>&1"
+            cmdSKETCH = dicoGeminiPath['TOOLS']['mash']+" sketch -o "+pathSKETCH.replace(".msh", "")+" -p "+str(cpu)+" -s "+str(sketchSize)+" "+pathFNA+" > /dev/null 2>&1"
             os.system(cmdSKETCH)
         pbar.update(1)
         title("Sketch genomes", pbar)
@@ -134,7 +134,7 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
             TMPLIST = open(pathTMPLST, 'w')
             TMPLIST.write(strpathSKETCH2)
             TMPLIST.close()
-            cmdDIST = dicoGeminiPath['mash']+" dist -s "+str(sketchSize)+" -l "+pathSKETCH1+" "+pathTMPLST + \
+            cmdDIST = dicoGeminiPath['TOOLS']['mash']+" dist -s "+str(sketchSize)+" -l "+pathSKETCH1+" "+pathTMPLST + \
                 " | cut -f 2, 3,4, 5 | awk \'{gsub(\""+pathINreplace+"\", \"\");gsub(\""+ext+"\", \"\")}1\' >> "+pathDIST
             dicoThread[orgName1] = {"cmd": cmdDIST, "returnstatut": None, "returnlines": []}
         pbar.update(1)
@@ -300,7 +300,7 @@ def fastani_db(pathIN: str, pathIN2: str, pathJSON: str, fragLen: int = 3000, ex
         for orgName2 in setOrgName:
             if orgName1 not in dicoANI or orgName2 not in dicoANI[orgName1]:
                 pathTMPOUT = pathTMP+"/"+orgName1+"#####"+orgName2+".txt"
-                cmdFASTANI = dicoGeminiPath['fastani']+" -q "+pathIN+"/"+orgName1+".fna -r "+pathIN+"/"+orgName2+".fna -o "+pathTMPOUT+" --threads 1 --fragLen "+str(fragLen)+" > /dev/null 2>&1"
+                cmdFASTANI = dicoGeminiPath['TOOLS']['fastani']+" -q "+pathIN+"/"+orgName1+".fna -r "+pathIN+"/"+orgName2+".fna -o "+pathTMPOUT+" --threads 1 --fragLen "+str(fragLen)+" > /dev/null 2>&1"
                 dicoThread[orgName1+"_"+orgName2] = {"cmd": cmdFASTANI, "returnstatut": None, "returnlines": []}
     printcolor("⏩ "+str(len(dicoThread))+" missing couples"+"\n")
     # ***** LAUNCH missing fastANI ***** #
@@ -539,7 +539,7 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
         # Align gene FASTA
         pathCoreGeneALIGN = pathOUTalign+"/"+outLT+"_align.ffn"
         if not os.path.isfile(pathCoreGeneALIGN) or os.path.getsize(pathCoreGeneALIGN) == 0:
-            os.system(dicoGeminiPath['famsa']+" -t "+str(cpu)+" "+pathCoreGeneFFN+" "+pathCoreGeneALIGN+" > /dev/null 2>&1")
+            os.system(dicoGeminiPath['TOOLS']['famsa']+" -t "+str(cpu)+" "+pathCoreGeneFFN+" "+pathCoreGeneALIGN+" > /dev/null 2>&1")
         pbar.update(1)
         title("Align core", pbar)
     pbar.close()
@@ -551,7 +551,7 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
         pathCoreGeneALIGN = pathOUTalign+"/"+outLT+"_align.ffn"
         pathCoreGeneTREE = pathOUTtree+"/"+outLT+"_GTR_fasttree.nwk"
         if not os.path.isfile(pathCoreGeneTREE) or os.path.getsize(pathCoreGeneTREE) == 0:
-            os.system(dicoGeminiPath['fasttree']+" -quiet -nt -gtr "+pathCoreGeneALIGN+" > "+pathCoreGeneTREE+" 2>/dev/null")
+            os.system(dicoGeminiPath['TOOLS']['fasttree']+" -quiet -nt -gtr "+pathCoreGeneALIGN+" > "+pathCoreGeneTREE+" 2>/dev/null")
         pbar.update(1)
         title("Make trees", pbar)
     pbar.close()
@@ -653,7 +653,7 @@ def specific_kmers(pathIN: str, pathIN2: str, pathOUT: str, kmerLen: int = 25, e
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
         pathKMERS = pathOUT+"/"+orgName+".k"+str(kmerLen)+".kmers"
         if not os.path.isfile(pathKMERS) or os.path.getsize(pathKMERS) == 0:
-            cmdWORDCOUNT = dicoGeminiPath['wordcount']+" -sequence "+pathFile+" -wordsize "+str(kmerLen)+" -outfile "+pathKMERS+" > /dev/null 2>&1"
+            cmdWORDCOUNT = dicoGeminiPath['TOOLS']['wordcount']+" -sequence "+pathFile+" -wordsize "+str(kmerLen)+" -outfile "+pathKMERS+" > /dev/null 2>&1"
             os.system(cmdWORDCOUNT)
         pbar.update(1)
         title("Make kmers", pbar)
@@ -837,7 +837,7 @@ def core_prot_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80,
         # Launch muscle
         pathALIGN = pathOUT+"/core_align/coreprot_"+str(coreProtNum)+"_align.fasta"
         lstAlignFiles.append(pathALIGN)
-        cmdMUSCLE = dicoGeminiPath['muscle']+" -in "+pathTMPFAA+" -out "+pathALIGN+" -quiet"
+        cmdMUSCLE = dicoGeminiPath['TOOLS']['muscle']+" -in "+pathTMPFAA+" -out "+pathALIGN+" -quiet"
         os.system(cmdMUSCLE)
         pbar.update(1)
         title("Align core", pbar)
@@ -860,7 +860,7 @@ def core_prot_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80,
     spinner = yaspin(Spinners.aesthetic, text="♊ Make core tree", side="right")
     spinner.start()
     title("Core tree", None)
-    cmdTree = dicoGeminiPath['iqtree2']+" -s "+pathOUT+"/core_align/all_core_align.fasta -T "+str(cpu)+" --mem "+str(memMax)+"GB --quiet -m LG -B 1000 --seqtype AA --prefix "+pathOUT+"/iqtree2"
+    cmdTree = dicoGeminiPath['TOOLS']['iqtree2']+" -s "+pathOUT+"/core_align/all_core_align.fasta -T "+str(cpu)+" --mem "+str(memMax)+"GB --quiet -m LG -B 1000 --seqtype AA --prefix "+pathOUT+"/iqtree2"
     os.system(cmdTree)
     shutil.copyfile(pathOUT+"/iqtree2.treefile", pathOUT+"/all_core.nwk")
     os.system("rm -f "+pathOUT+"/iqtree2*")
@@ -952,7 +952,7 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
         # Launch muscle
         pathALIGN = pathOUT+"/core_align/coregene_"+str(coreGeneNum)+"_align.fasta"
         lstAlignFiles.append(pathALIGN)
-        cmdMUSCLE = dicoGeminiPath['muscle']+" -in "+pathTMPFFN+" -out "+pathALIGN+" -quiet"
+        cmdMUSCLE = dicoGeminiPath['TOOLS']['muscle']+" -in "+pathTMPFFN+" -out "+pathALIGN+" -quiet"
         os.system(cmdMUSCLE)
         pbar.update(1)
         title("Align core", pbar)
@@ -982,7 +982,7 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
         # Launch
         pathALIGN = pathOUT+"/core_align/coregene_"+str(coreGeneNum)+"_align.fasta"
         pathTREE = pathOUT+"/core_tree/coregene_"+str(coreGeneNum)+".nwk"
-        cmdTree = dicoGeminiPath['fasttree']+" -nt -quiet -gtr "+pathALIGN+" > "+pathTREE
+        cmdTree = dicoGeminiPath['TOOLS']['fasttree']+" -nt -quiet -gtr "+pathALIGN+" > "+pathTREE
         os.system(cmdTree)
         pbar.update(1)
         title("Make trees", pbar)
@@ -991,7 +991,7 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
     spinner = yaspin(Spinners.aesthetic, text="♊ Make core tree", side="right")
     spinner.start()
     title("Core tree", None)
-    cmdTree = dicoGeminiPath['fasttree']+" -nt -quiet -gtr "+pathOUT+"/core_align/all_core_align.fasta"+" > "+pathOUT+"/core_tree/all_core.nwk 2>/dev/null"
+    cmdTree = dicoGeminiPath['TOOLS']['fasttree']+" -nt -quiet -gtr "+pathOUT+"/core_align/all_core_align.fasta"+" > "+pathOUT+"/core_tree/all_core.nwk 2>/dev/null"
     os.system(cmdTree)
     spinner.stop()
     printcolor("♊ Make core tree"+"\n")
@@ -1063,7 +1063,7 @@ def protein_similarity_matrix(pathIN: str, pathOUT: str, locusTag: str, idThr: i
     spinner = yaspin(Spinners.aesthetic, text="♊ Make database", side="right")
     spinner.start()
     title("makeblastdb", None)
-    cmdMakeDB = dicoGeminiPath['diamond']+" makedb --in "+pathSubjectFASTA+" -d "+pathSubjectDMND+" --quiet --threads "+str(cpu)
+    cmdMakeDB = dicoGeminiPath['TOOLS']['diamond']+" makedb --in "+pathSubjectFASTA+" -d "+pathSubjectDMND+" --quiet --threads "+str(cpu)
     os.system(cmdMakeDB)
     spinner.stop()
     printcolor("♊ Make database"+"\n")
@@ -1071,7 +1071,7 @@ def protein_similarity_matrix(pathIN: str, pathOUT: str, locusTag: str, idThr: i
     spinner = yaspin(Spinners.aesthetic, text="♊ Launch blastp", side="right")
     spinner.start()
     title("blastP", None)
-    cmdBlastP = dicoGeminiPath['diamond']+" blastp -d "+pathSubjectDMND+" -q "+pathQueryFASTA+" -o "+pathDiamondOUT + \
+    cmdBlastP = dicoGeminiPath['TOOLS']['diamond']+" blastp -d "+pathSubjectDMND+" -q "+pathQueryFASTA+" -o "+pathDiamondOUT + \
         " --id "+str(idThr)+" --query-cover "+str(covThr)+" --subject-cover "+str(covThr)+" --max-target-seqs "+str(maxTargetSeq)+" --quiet --threads "+str(cpu)
     os.system(cmdBlastP)
     spinner.stop()
@@ -1104,10 +1104,10 @@ def protein_similarity_matrix(pathIN: str, pathOUT: str, locusTag: str, idThr: i
     FASTA.close()
     shutil.copyfile(pathQueryFASTA, pathSubjectFASTA)
     # Make database
-    cmdMakeDB = dicoGeminiPath['diamond']+" makedb --in "+pathSubjectFASTA+" -d "+pathSubjectDMND+" --quiet --threads "+str(cpu)
+    cmdMakeDB = dicoGeminiPath['TOOLS']['diamond']+" makedb --in "+pathSubjectFASTA+" -d "+pathSubjectDMND+" --quiet --threads "+str(cpu)
     os.system(cmdMakeDB)
     # Launch Blastp
-    cmdBlastP = dicoGeminiPath['diamond']+" blastp -d "+pathSubjectDMND+" -q "+pathQueryFASTA+" -o "+pathDiamondOUT + \
+    cmdBlastP = dicoGeminiPath['TOOLS']['diamond']+" blastp -d "+pathSubjectDMND+" -q "+pathQueryFASTA+" -o "+pathDiamondOUT + \
         " --id "+str(idThr)+" --query-cover "+str(covThr)+" --subject-cover "+str(covThr)+" --max-target-seqs "+str(maxTargetSeq)+" --quiet --threads "+str(cpu)
     os.system(cmdBlastP)
     # Parse output
@@ -1305,7 +1305,7 @@ def panacota_flexible_tree(pathIN: str, pathOUT: str, filterOrg: str = "None") -
     for pathFASTA in lstFASTA:
         pbar.set_description_str(os.path.basename(pathFASTA).replace(".fasta", ""))
         pathALIGN = pathFASTA.replace(".fasta", "_align.fasta")
-        cmdFAMSA = dicoGeminiPath['famsa']+" -t "+str(cpu)+" "+pathFASTA+" "+pathALIGN+" > /dev/null 2>&1"
+        cmdFAMSA = dicoGeminiPath['TOOLS']['famsa']+" -t "+str(cpu)+" "+pathFASTA+" "+pathALIGN+" > /dev/null 2>&1"
         os.system(cmdFAMSA)
         lstALIGN.append(pathALIGN)
         pbar.update(1)
@@ -1445,7 +1445,7 @@ def snippy(pathIN: str, pathOUT: str, ext: str = ".gbk") -> Tuple[str, str, str]
                 pathSNPOUT = pathOUT+"/snippy_"+orgName1+"_vs_"+orgName2+".tab"
                 lstSnippyOUT.append(pathSNPOUT)
                 if not os.path.isfile(pathSNPOUT):
-                    cmdSnippy = dicoGeminiPath['snippy']+" --outdir "+pathTMPOUT+" --ref "+pathGBK+" --ctgs "+pathFNA + \
+                    cmdSnippy = dicoGeminiPath['TOOLS']['snippy']+" --outdir "+pathTMPOUT+" --ref "+pathGBK+" --ctgs "+pathFNA + \
                         " --cpus "+str(cpu)+" --ram "+str(memMax)+" --tmpdir "+pathTMP+" >> "+pathLOG+" 2>&1"
                     os.system(cmdSnippy)
                     shutil.copyfile(pathTMPOUT+"/snps.tab", pathSNPOUT)

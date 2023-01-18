@@ -601,7 +601,7 @@ def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
             TMPFASTA.write(">"+contig+"\n"+dicoGBK[org][contig]['seq'])
             TMPFASTA.close()
             if syntaxic == "prodigal":
-                cmdSYNTAXIC = dicoGeminiPath['prodigal']+" -d "+geminiset.pathTMP+"/gbk_to_faa_temp.ffn -g 11 -i "+geminiset.pathTMP+"/gbk_to_faa_temp.fna -q > /dev/null 2>&1"
+                cmdSYNTAXIC = dicoGeminiPath['TOOLS']['prodigal']+" -d "+geminiset.pathTMP+"/gbk_to_faa_temp.ffn -g 11 -i "+geminiset.pathTMP+"/gbk_to_faa_temp.fna -q > /dev/null 2>&1"
                 os.system(cmdSYNTAXIC)
                 dicoFFN = make_fasta_dict(geminiset.pathTMP+"/gbk_to_faa_temp.ffn")
                 FAA = open(geminiset.pathTMP+"/gbk_to_faa_temp.faa", 'w')
@@ -653,7 +653,7 @@ def gbk_to_ffn(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
             TMPFASTA.write(">"+contig+"\n"+dicoGBK[org][contig]['seq'])
             TMPFASTA.close()
             if syntaxic == "prodigal":
-                cmdSYNTAXIC = dicoGeminiPath['prodigal']+" -d "+geminiset.pathTMP+"/gbk_to_ffn_temp.ffn -g 11 -i "+geminiset.pathTMP+"/gbk_to_ffn_temp.fna -q > /dev/null 2>&1"
+                cmdSYNTAXIC = dicoGeminiPath['TOOLS']['prodigal']+" -d "+geminiset.pathTMP+"/gbk_to_ffn_temp.ffn -g 11 -i "+geminiset.pathTMP+"/gbk_to_ffn_temp.fna -q > /dev/null 2>&1"
                 os.system(cmdSYNTAXIC)
                 dicoFFN = make_fasta_dict(geminiset.pathTMP+"/gbk_to_ffn_temp.ffn")
                 for header in dicoFFN:
@@ -798,7 +798,7 @@ def gbk_to_all(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
                 TMPFASTA.write(">"+contig+"\n"+dicoGBK[contig]['seq'])
                 TMPFASTA.close()
                 if syntaxic == "prodigal":
-                    cmdSYNTAXIC = dicoGeminiPath['prodigal']+" -d "+pathTMP+"/"+orgName+"_tmp.ffn -g 11 -i "+pathTMP+"/"+orgName+"_tmp.fna -q > /dev/null 2>&1"
+                    cmdSYNTAXIC = dicoGeminiPath['TOOLS']['prodigal']+" -d "+pathTMP+"/"+orgName+"_tmp.ffn -g 11 -i "+pathTMP+"/"+orgName+"_tmp.fna -q > /dev/null 2>&1"
                     os.system(cmdSYNTAXIC)
                     exit()
                     dicoFFN = make_fasta_dict(pathTMP+"/"+orgName+"_tmp.ffn")
@@ -1467,7 +1467,7 @@ def make_pvogs_desc_dict(pathIN: str = "None", pathJSON: str = "None") -> Tuple[
         for orgName in dicoPVOGSresults:
             setResultsPvogs.update(list(dicoPVOGSresults[orgName].keys()))
     else:
-        for tableFile in os.listdir(dicoGeminiPath['pvogs_table']):
+        for tableFile in os.listdir(dicoGeminiPath['DATABASES']['pvogs_table']):
             setResultsPvogs.add(tableFile.replace(".txt", ""))
     if pathJSON != "None" and os.path.isfile(pathJSON):
         dicoPVOGS = load_json(pathJSON)
@@ -1476,7 +1476,7 @@ def make_pvogs_desc_dict(pathIN: str = "None", pathJSON: str = "None") -> Tuple[
         pbar = tqdm(total=len(setResultsPvogs), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for pvogsID in setResultsPvogs:
             pbar.set_description_str(pvogsID)
-            pathTable = dicoGeminiPath['pvogs_table']+"/"+pvogsID+".txt"
+            pathTable = dicoGeminiPath['DATABASES']['pvogs_table']+"/"+pvogsID+".txt"
             TABLE = open(pathTable, 'r')
             lstLines = TABLE.read().split("\n")
             TABLE.close()
