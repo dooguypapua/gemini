@@ -671,7 +671,7 @@ def gemini_fct_header(fctName):
 # ***** Show all gemini functions ***** #
 def listfct():
     gemini_header()
-    lstFctTag = ["sequence", "parser", "annotation", "cluster", "phage", "phylo", "plot", "download"]
+    lstFctTag = ["sequence", "parser", "annotation", "cluster", "phage", "phylo", "plot", "assembly", "download"]
     toDisplay = ""
     for fctTag in lstFctTag:
         toDisplay += "\"\"\" "+fctTag.upper()+" functions \"\"\"\n"

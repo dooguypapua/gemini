@@ -157,6 +157,14 @@ def circos_align('-i'pathIN, '-o'pathOUT)
 # Circular circos plot from genbank file with rbh link
 def circos_rbh_plot('-i'pathIN, '-j'pathJSON, '-o'pathOUT, '-maxcore'maxCore=0.9)
 
+""" ASSEMBLY functions """
+# Trim FASTQ & de novo assembly using spades (-careful)
+def phage_assembly('-i'pathIN, '-o'pathOUT)
+# Filter phage assembly contigs
+def filter_phage_assembly('-i'pathIN, '-o'pathOUT, '-minlen'minLen=100, '-mincov'minCov=2, '-ext'ext=".fasta")
+# Search replicons in assembly contigs
+def replicon_distribution('-i'pathIN, '-ref'pathREF, '-o'pathOUT, '-pid'idThr=80, '-ext1'extIN=".fasta", '-ext2'extREF=".fasta")
+
 """ DOWNLOAD functions """
 # Download all bacteria Genbank files
 def dl_genbank_bacteria('-section'section, '-tax'taxonomyID, '-o'pathOUT, '-chunk'chunkSize=100)
