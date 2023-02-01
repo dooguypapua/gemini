@@ -36,14 +36,15 @@ satellite_finder:/mnt/c/Users/dgoudenege/Tools/satellite_finder_0.9.1
 # DATABASES
 terminase_hmm:/mnt/g/db/HMMs/large_terminase_subunit.hmm
 terminase_dmnd:/mnt/g/db/DMND/grooveDB_largeTerminase.dmnd
-contaPhageDB:/mnt/g/db/BLAST/contaPhage
+contaPhageDB:/mnt/g/db/blast/contaPhage
 pvogs_hmm:/mnt/g/db/HMMs/pVOGs.hmm
 pvogs_table:/mnt/g/db/pVOGs/Allvogtables
 pvogs_json:/mnt/g/db/pVOGs/Allvogtables.json
 nahant_dmnd:/mnt/g/db/DMND/nahant.dmnd
 refseq212bct_dmnd:/mnt/g/db/DMND/refseq212bct.dmnd
 uniprot_mapping:/mnt/g/db/uniprot-database_type_RefSeq.tab
-phagedb_dmnd:/mnt/g/db/DMND/phagedb.dmnd
+phagedb_dmnd:/mnt/g/db/phageDB/all_protein.dmnd
+phagedb_dmnd_phanotate:/mnt/g/db/phageDB/all_phanotate.dmnd
 eggnog-db:/mnt/g/db/eggnog-mapper-data/
 recombinase_hmm:/mnt/g/db/HMMs/recombinase/VirFam_PFAM_recombinase.hmm
 checkv_db:/mnt/g/db/checkv-db-v1.0

@@ -31,7 +31,8 @@ module load mafft/7.407
 export isslurm="true"
 export geminicpu="16"
 export geminimem="32"
-export PYTHONPATH=/home/umr8227/gv/dgoudenege/script/python_lib:/home/umr8227/gv/dgoudenege/.local/lib/python3.9/site-packages/:/shared/software/miniconda/envs/python-pytorch-tensorflow-3.9-1.11.0-2.6.2/lib/python3.9/site-packages/
+export PYTHONPATH=/home/umr8227/gv/dgoudenege/script/python_lib:/home/umr8227/gv/dgoudenege/.local/lib/python3.9/site-packages/
+# :/shared/software/miniconda/envs/python-pytorch-tensorflow-3.9-1.11.0-2.6.2/lib/python3.9/site-packages/
 # script --flush --quiet --return /dev/null --command "python3.9 /home/umr8227/gv/dgoudenege/script/gemini/gemini.py $@"
 script --flush --command "python3.9 /home/umr8227/gv/dgoudenege/script/gemini/gemini.py $@"
 # Example

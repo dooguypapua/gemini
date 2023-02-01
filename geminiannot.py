@@ -823,7 +823,8 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
     if len(lstFiles) == 0:
         printcolor("[ERROR: diamond_blastp]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
-    os.makedirs(pathOUT, exist_ok=True)
+    if os.path.isdir(pathIN):
+        os.makedirs(pathOUT, exist_ok=True)
     dicoGeminiPath = get_gemini_path()
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
@@ -845,7 +846,10 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext, "").replace("."+ext, "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
-        pathRES = pathOUT+"/"+orgName+"_"+dbTitle+".tsv"
+        if os.path.isdir(pathIN):
+            pathRES = pathOUT+"/"+orgName+"_"+dbTitle+".tsv"
+        else:
+            pathRES = pathOUT
         # Launch diamond blastp on collection database
         if not os.path.isfile(pathRES) or os.path.getsize(pathRES) == 0:
             cmdDiamond = dicoGeminiPath['TOOLS']['diamond']+" blastp -d "+pathDB+" -q "+pathFAA+" -o "+pathRES+" --threads "+str(cpu)+" --outfmt "+outfmt+" --max-target-seqs 1000000000 --header --quiet"

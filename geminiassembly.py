@@ -20,8 +20,10 @@ import geminiset
 from tabulate import tabulate
 from typing import Tuple
 from tqdm import tqdm
+from yaspin import yaspin
+from yaspin.spinners import Spinners
 from geminini import path_converter, get_input_files, printcolor, get_gemini_path, get_sys_info, fct_checker
-from geminini import title, exit_gemini
+from geminini import title, exit_gemini, read_file, launch_threads
 from geminiparse import unwrap_fasta, make_blast_dict, make_fasta_dict, check_circular
 
 
@@ -156,3 +158,176 @@ def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: 
     pbar.close()
     printcolor("♊ Results\n")
     printcolor(tabulate(tabulateTable, headers=["orgName", "Initial contigs", "Final contigs", "Circular", "Final size"], tablefmt="pretty")+"\n")
+
+
+@fct_checker
+def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 80, extIN: str = ".fasta", extREF: str = ".fasta") -> Tuple[str, str, str, int, str, str]:
+    '''
+     ------------------------------------------------------------
+    |                     REPLICON DISTRIBUTION                  |
+     ------------------------------------------------------------
+    |            Search replicons in assembly contigs            |
+     ------------------------------------------------------------
+    |PARAMETERS                                                  |
+    |    pathIN : path of input files or folder (required)       |
+    |    pathREF: path of reference files (required)             |
+    |    pathOUT: path of output tsv (required)                  |
+    |    idThr  : %identity threshold (default=80)               |
+    |    extIN  : extension of input files (default=.fasta)      |
+    |    extREF : extension of reference files (default=.fasta)  |
+     ------------------------------------------------------------
+    '''
+    pathOUT = path_converter(pathOUT)
+    lstQuery, maxpathSize1 = get_input_files(pathIN, "replicon_distribution", [extIN])
+    if len(lstQuery) == 0:
+        printcolor("[ERROR: replicon_distribution]\nAny query files found, check extension\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    lstRef, maxpathSize2 = get_input_files(pathREF, "replicon_distribution", [extREF])
+    if len(lstQuery) == 0:
+        printcolor("[ERROR: replicon_distribution]\nAny reference files found, check extension\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    dicoGeminiPath = get_gemini_path()
+    # Variables
+    maxpathSize = max(maxpathSize1, maxpathSize2)
+    setRefRepliconPath = set()
+    setRefRepliconName = set()
+    dicoRepliconCov = {}
+    blastoutfmt = "6 delim=; qseqid sseqid pident qlen qstart qend sstart send bitscore slen"
+    # Split reference replicons in distinct FASTA files (required header ">repliconType [orgName]")
+    printcolor("♊ Split references"+"\n")
+    pbar = tqdm(total=len(lstRef), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    for pathFile in lstRef:
+        fileName = os.path.basename(pathFile).replace(extREF, "").replace("."+extREF, "")
+        pbar.set_description_str(fileName+" ".rjust(maxpathSize-len(fileName)))
+        dicoFASTA = make_fasta_dict(pathFile)
+        for key in dicoFASTA:
+            repliconType = key.replace("|", " ").split(" ")[0]
+            orgName = key.split("[")[1].replace("]", "").replace(" ", "_")
+            pathREPLICON = geminiset.pathTMP+"/"+repliconType+".fasta"
+            setRefRepliconPath.add(pathREPLICON)
+            setRefRepliconName.add(repliconType)
+            REPLICON = open(pathREPLICON,'a')
+            REPLICON.write(">"+orgName+"\n"+dicoFASTA[key]+"\n")
+            REPLICON.close()
+        pbar.update(1)
+        title("Split references", pbar)
+    pbar.close()
+    # Blast each query on each replicon fasta
+    spinner = yaspin(Spinners.aesthetic, text="♊ Blast replicons", side="right")
+    spinner.start()
+    title("Blast", None)
+    dicoThread = {}
+    for pathFile in lstQuery:
+        orgName = os.path.basename(pathFile).replace(extIN, "").replace("."+extIN, "")
+        # Foreach replicon FASTA
+        for pathREPLICON in setRefRepliconPath:
+            repliconName = os.path.basename(pathREPLICON).replace(".fasta", "")
+            # Launch blastn
+            pathREPLICONOUT = geminiset.pathTMP+"/"+orgName+"_____"+repliconName+".out"
+            cmdBlastn = dicoGeminiPath["blastn"]+" -query "+pathFile+" -subject "+pathREPLICON+" -out "+pathREPLICONOUT+" -outfmt \""+blastoutfmt+"\" -perc_identity "+str(idThr)
+            dicoThread[orgName+"_"+repliconName] = {"cmd": cmdBlastn, "returnstatut": None, "returnlines": []}
+    # Launch threads
+    if len(dicoThread) > 0:
+        launch_threads(dicoThread, "blast", geminiset.cpu, geminiset.pathTMP, spinner)
+    spinner.stop()
+    printcolor("♊ Blast replicons"+"\n")
+    # Parse blast results
+    printcolor("♊ Search replicons"+"\n")
+    pbar = tqdm(total=len(lstQuery), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    for pathFile in lstQuery:
+        orgName = os.path.basename(pathFile).replace(extIN, "").replace("."+extIN, "")
+        pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
+        dicoQuery = {}
+        dicoSubject = {}
+        dicoRepliconCov[orgName] = {}
+        for pathREPLICON in setRefRepliconPath:
+            repliconName = os.path.basename(pathREPLICON).replace(".fasta", "")
+            pathREPLICONOUT = geminiset.pathTMP+"/"+orgName+"_____"+repliconName+".out"
+            if os.path.isfile(pathREPLICONOUT):
+                lstLine = read_file(pathREPLICONOUT,yaspinBool=False)
+                for line in lstLine:
+                    splitLine = line.split(";")
+                    query = splitLine[0]
+                    bitscore = float(splitLine[8])
+                    # Keep best for each contig query
+                    if not query in dicoQuery:
+                        dicoQuery[query] = {}
+                    if not repliconName in dicoQuery[query]:
+                        dicoQuery[query][repliconName] = { 'bestScore': bitscore, 'line': [] }
+                    dicoQuery[query][repliconName]['bestScore'] = max(dicoQuery[query][repliconName]['bestScore'], bitscore)
+                    dicoQuery[query][repliconName]['line'].append(line)
+        # Compute coverage for each bestScore replicon
+        for query in dicoQuery:
+            bestScore = 0
+            bestReplicon = ""
+            for repliconName in dicoQuery[query]:
+                if dicoQuery[query][repliconName]['bestScore']>bestScore:
+                    bestScore = dicoQuery[query][repliconName]['bestScore']
+                    bestReplicon = repliconName
+            if not bestReplicon in dicoSubject:
+                dicoSubject[bestReplicon] = {}
+            # Parse correspunding blast line
+            for line in dicoQuery[query][bestReplicon]['line']:
+                splitLine = line.split(";")
+                query = splitLine[0]
+                subject = splitLine[1]
+                pident = float(splitLine[2])
+                qlen = int(splitLine[3])
+                qstart = int(splitLine[4])
+                qend = int(splitLine[5])        
+                sstart = int(splitLine[6])
+                send = int(splitLine[7])
+                bitscore = float(splitLine[8])
+                slen = int(splitLine[9])
+                qcov = (qend-qstart)*100/qlen
+                # Init if new
+                if not subject in dicoSubject[bestReplicon]:
+                    dicoSubject[bestReplicon][subject] = {}
+                    for i in range(slen):
+                        dicoSubject[bestReplicon][subject][i+1] = 0
+                # Add covered position
+                for i in range(min(sstart,send),max(sstart,send)+1,1):
+                    dicoSubject[bestReplicon][subject][i] = 1
+        # Look for coverage per replicon
+        for repliconName in dicoSubject:
+            bestCov = 0
+            for subject in dicoSubject[repliconName]:
+                cov = 0
+                for pos in dicoSubject[repliconName][subject]:
+                    if dicoSubject[repliconName][subject][pos] == 1:
+                        cov += 1
+                percentCov = cov*100/len(dicoSubject[repliconName][subject])
+                bestCov = max(bestCov, percentCov)
+            dicoRepliconCov[orgName][repliconName] = bestCov
+        pbar.update(1)
+        title("Search replicons", pbar)
+    pbar.close()
+    # Write output
+    printcolor("♊ Write output"+"\n")
+    OUT = open(pathOUT, 'w')
+    OUT.write("organism")
+    # Sorted replicon name with chromosome as first
+    lstSortedRepliconChrom = []
+    lstSortedRepliconOthers = []
+    for repliconName in setRefRepliconName:
+        if "chr" in repliconName or "chrom" in repliconName or "chromosome" in repliconName:
+            lstSortedRepliconChrom.append(repliconName)
+        else:
+            lstSortedRepliconOthers.append(repliconName)
+    lstSortedRepliconChrom.sort()
+    lstSortedRepliconOthers.sort()
+    lstSortedReplicon = lstSortedRepliconChrom+lstSortedRepliconOthers
+    # Write header
+    for repliconName in lstSortedReplicon:
+        OUT.write("\t"+repliconName)
+    OUT.write("\n")
+    # Write % coverage
+    for orgName in dicoRepliconCov:
+        OUT.write(orgName)
+        for repliconName in lstSortedReplicon:
+            if repliconName in dicoRepliconCov[orgName]:
+                OUT.write("\t"+str(round(dicoRepliconCov[orgName][repliconName],1)).replace(".",","))
+            else:
+                OUT.write("\t0")
+        OUT.write("\n")
+    OUT.close()

@@ -103,7 +103,7 @@ def dump_json(dico, pathJSON, indent=4):
 # ***** FileReader ***** #
 def read_file(file_path: str, excludeFirstKr: str = "#", yaspinBool: bool = True) -> []:
     if not os.path.isfile(file_path):
-        printcolor("File not found \""+file_path+"\"\n", 1, "212;64;89", "None", True)
+        printcolor("\nFile not found \""+file_path+"\"\n", 1, "212;64;89", "None", True)
         exit_gemini()
     if yaspinBool:
         spinner = yaspin(Spinners.simpleDotsScrolling, text="reading", side="right")

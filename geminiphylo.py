@@ -869,12 +869,12 @@ def core_prot_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80,
 
 
 @fct_checker
-def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext: str = ".ffn") -> Tuple[str, str, int, int, str]:
+def individual_core_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, boolNucl: bool = False, ext: str = ".faa") -> Tuple[str, str, int, int, bool, str]:
     '''
      ------------------------------------------------------------
-    |                  GENES PHYLOGENETIC TREE                   |
+    |      INDIVIDUAL CORE GENES/PROTEINS PHYLOGENETIC TREE      |
     |------------------------------------------------------------|
-    |            Make individual and core genes tree             |
+    |        Make individual and core genes/proteins tree        |
     |------------------------------------------------------------|
     |PARAMETERS                                                  |
     |    pathIN  : path of input files or folder (required)      |
@@ -884,14 +884,14 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
     |    ext     : extension of input files (default=.ffn)       |
      ------------------------------------------------------------
     '''
-    lstFiles, maxpathSize = get_input_files(pathIN, "genes_tree", [ext])
+    lstFiles, maxpathSize = get_input_files(pathIN, "individual_core_tree", [ext])
     dicoGeminiPath = get_gemini_path()
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     if "." not in ext:
         ext = "."+ext
     if len(lstFiles) == 0:
-        printcolor("[ERROR: genes_tree]\nAny input files found\n", 1, "212;64;89", "None", True)
+        printcolor("[ERROR: individual_core_tree]\nAny input files found\n", 1, "212;64;89", "None", True)
         exit_gemini()
     if os.path.isdir(pathOUT+"/core_align"):
         shutil.rmtree(pathOUT+"/core_align")
@@ -900,9 +900,12 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
         shutil.rmtree(pathOUT+"/core_tree")
     os.makedirs(pathOUT+"/core_tree", exist_ok=True)
     # ***** MMSEQS RBH ***** #
-    mmseqs_rbh(pathIN=pathIN, pathOUT=pathOUT+"/rbh", ref="None", idThrClust=30, covThrClust=50, boolNucl=True, ext=".ffn")
+    mmseqs_rbh(pathIN=pathIN, pathOUT=pathOUT+"/rbh", ref="None", idThrClust=idThr, covThrClust=covThr, boolNucl=True, ext=ext)
     # ***** RETRIEVE GENE SEQUENCE ***** #
-    printcolor("♊ Get genes"+"\n")
+    if boolNucl is True:
+        printcolor("♊ Get genes"+"\n")
+    else:
+        printcolor("♊ Get proteins"+"\n")
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoLTtoOrg = {}
     dicoLTtoSeq = {}
@@ -924,7 +927,7 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
     pbar.close()
     # ***** MAKE RBH CLUSTERS ***** #
     printcolor("♊ RBH clustering"+"\n")
-    dicoCluster = make_rbhcluster_dict(pathIN=pathOUT+"/rbh", pathIN2=pathIN, pathJSON="None", idThrClust=25, covThrClust=50, ext=".rbh", ext2=".ffn")
+    dicoCluster = make_rbhcluster_dict(pathIN=pathOUT+"/rbh", pathIN2=pathIN, pathJSON="None", idThrClust=idThr, covThrClust=covThr, ext=".rbh", ext2=ext)
     # Final core dictionnary
     dicoCore = {}
     for clusterNum in dicoCluster:
@@ -934,25 +937,33 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
             setOrg.add(orgName)
         if len(setOrg) == len(lstFiles) == len(dicoCluster[clusterNum]):  # to avoid paralogous or split gene
             dicoCore[len(dicoCore)] = dicoCluster[clusterNum]
-    printcolor("⏩ Found "+str(len(dicoCore))+" core genes"+"\n")
-    # ***** ALIGN CORE GENES ***** #
-    printcolor("♊ Align core genes"+"\n")
+    if boolNucl is True:
+        printcolor("⏩ Found "+str(len(dicoCore))+" core genes"+"\n")
+        printcolor("♊ Align core genes"+"\n")
+    else:
+        printcolor("⏩ Found "+str(len(dicoCore))+" core proteins"+"\n")
+        printcolor("♊ Align core proteins"+"\n")
+    # ***** ALIGN CORE GENES/PROTEINS ***** #
     pbar = tqdm(total=len(dicoCore), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     lstAlignFiles = []
-    for coreGeneNum in dicoCore:
-        orgName = os.path.basename(pathFile).replace(ext, "")
-        pbar.set_description_str("Core gene "+str(coreGeneNum)+" ".rjust(maxpathSize-len("Core gene "+str(coreGeneNum))))
+    for coreNum in dicoCore:
+        if boolNucl is True:
+            pbar.set_description_str("Core gene "+str(coreNum)+" ".rjust(maxpathSize-len("Core gene "+str(coreNum))))
+            pathTMPFASTA = pathTMP+"/coregene_"+str(coreNum)+".fasta"
+            pathALIGN = pathOUT+"/core_align/coregene_"+str(coreNum)+"_align.fasta"        
+        else:            
+            pbar.set_description_str("Core protein "+str(coreNum)+" ".rjust(maxpathSize-len("Core protein "+str(coreNum))))
+            pathTMPFASTA = pathTMP+"/coreprot_"+str(coreNum)+".fasta"
+            pathALIGN = pathOUT+"/core_align/coreprot_"+str(coreNum)+"_align.fasta"        
         # Create gene fasta
-        pathTMPFFN = pathTMP+"/coregene_"+str(coreGeneNum)+".ffn"
-        TMPFFN = open(pathTMPFFN, 'w')
-        for header in dicoCore[coreGeneNum]:
+        TMPFASTA = open(pathTMPFASTA, 'w')
+        for header in dicoCore[coreNum]:
             lt = header.split(" ")[0]
-            TMPFFN.write(">"+lt+" ["+dicoLTtoOrg[lt]+"]\n"+dicoLTtoSeq[lt]+"\n")
-        TMPFFN.close()
-        # Launch muscle
-        pathALIGN = pathOUT+"/core_align/coregene_"+str(coreGeneNum)+"_align.fasta"
+            TMPFASTA.write(">"+dicoLTtoOrg[lt]+"\n"+dicoLTtoSeq[lt]+"\n")
+        TMPFASTA.close()
+        # Launch muscle    
         lstAlignFiles.append(pathALIGN)
-        cmdMUSCLE = dicoGeminiPath['TOOLS']['muscle']+" -in "+pathTMPFFN+" -out "+pathALIGN+" -quiet"
+        cmdMUSCLE = dicoGeminiPath['TOOLS']['muscle']+" -in "+pathTMPFASTA+" -out "+pathALIGN+" -quiet"
         os.system(cmdMUSCLE)
         pbar.update(1)
         title("Align core", pbar)
@@ -961,12 +972,11 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
     dicoAlign = {}
     for alignFile in os.listdir(pathOUT+"/core_align"):
         dicoFASTA = make_fasta_dict(pathOUT+"/core_align/"+alignFile)
-        for key in dicoFASTA:
-            orgName = key.split("[")[1].replace("]", "")
+        for orgName in dicoFASTA:
             try:
-                dicoAlign[orgName] += dicoFASTA[key]
+                dicoAlign[orgName] += dicoFASTA[orgName]
             except KeyError:
-                dicoAlign[orgName] = dicoFASTA[key]
+                dicoAlign[orgName] = dicoFASTA[orgName]
     ALL = open(pathOUT+"/core_align/all_core_align.fasta", 'w')
     for orgName in dicoAlign:
         ALL.write(">"+orgName+"\n"+dicoAlign[orgName]+"\n")
@@ -976,14 +986,22 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
     printcolor("♊ Make trees"+"\n")
     pbar = tqdm(total=len(dicoCore), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     lstAlignFiles = []
-    for coreGeneNum in dicoCore:
-        orgName = os.path.basename(pathFile).replace(ext, "")
-        pbar.set_description_str("Core gene "+str(coreGeneNum)+" ".rjust(maxpathSize-len("Core gene "+str(coreGeneNum))))
+    for coreNum in dicoCore:
         # Launch
-        pathALIGN = pathOUT+"/core_align/coregene_"+str(coreGeneNum)+"_align.fasta"
-        pathTREE = pathOUT+"/core_tree/coregene_"+str(coreGeneNum)+".nwk"
-        cmdTree = dicoGeminiPath['TOOLS']['fasttree']+" -nt -quiet -gtr "+pathALIGN+" > "+pathTREE
-        os.system(cmdTree)
+        if boolNucl is True:
+            pbar.set_description_str("Core gene "+str(coreNum)+" ".rjust(maxpathSize-len("Core gene "+str(coreNum))))
+            pathALIGN = pathOUT+"/core_align/coregene_"+str(coreNum)+"_align.fasta"
+            pathTREE = pathOUT+"/core_tree/coregene_"+str(coreNum)+"_iqtree2"
+            cmdTree = dicoGeminiPath['TOOLS']['iqtree2']+" -s "+pathALIGN+" -T "+str(cpu)+" --mem "+str(memMax)+"GB --quiet -m GTR -B 1000 --seqtype DNA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1"
+            os.system(cmdTree)
+            os.system("rm -f "+pathTREE+".splits.nex "+pathTREE+".log "+pathTREE+".mldist "+pathTREE+".bionj "+pathTREE+".ckp.gz "+pathTREE+".contree "+pathTREE+".iqtree")
+        else:
+            pbar.set_description_str("Core protein "+str(coreNum)+" ".rjust(maxpathSize-len("Core protein "+str(coreNum))))            
+            pathALIGN = pathOUT+"/core_align/coreprot_"+str(coreNum)+"_align.fasta"
+            pathTREE = pathOUT+"/core_tree/coreprot_"+str(coreNum)+"_iqtree2"
+            cmdTree = dicoGeminiPath['TOOLS']['iqtree2']+" -s "+pathALIGN+" -T "+str(cpu)+" --mem "+str(memMax)+"GB --quiet -m LG -B 1000 --seqtype AA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1"
+            os.system(cmdTree)
+            os.system("rm -f "+pathTREE+".splits.nex "+pathTREE+".log "+pathTREE+".mldist "+pathTREE+".bionj "+pathTREE+".ckp.gz "+pathTREE+".contree "+pathTREE+".iqtree")
         pbar.update(1)
         title("Make trees", pbar)
     pbar.close()
@@ -991,8 +1009,11 @@ def genes_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80, ext
     spinner = yaspin(Spinners.aesthetic, text="♊ Make core tree", side="right")
     spinner.start()
     title("Core tree", None)
-    cmdTree = dicoGeminiPath['TOOLS']['fasttree']+" -nt -quiet -gtr "+pathOUT+"/core_align/all_core_align.fasta"+" > "+pathOUT+"/core_tree/all_core.nwk 2>/dev/null"
+    pathALIGN = pathOUT+"/core_align/all_core_align.fasta"
+    pathTREE = pathOUT+"/core_tree/all_core_align_iqtree2"
+    cmdTree = dicoGeminiPath['TOOLS']['iqtree2']+" -s "+pathALIGN+" -T "+str(cpu)+" --mem "+str(memMax)+"GB --quiet -m LG -B 1000 --seqtype AA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1"
     os.system(cmdTree)
+    os.system("rm -f "+pathTREE+".splits.nex "+pathTREE+".log "+pathTREE+".mldist "+pathTREE+".bionj "+pathTREE+".ckp.gz "+pathTREE+".contree "+pathTREE+".iqtree")
     spinner.stop()
     printcolor("♊ Make core tree"+"\n")
 

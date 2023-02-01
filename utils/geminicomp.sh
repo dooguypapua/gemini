@@ -30,7 +30,7 @@ _geminicomplementation()
     # Switch case
     case ${COMP_CWORD} in
         1)
-            COMPREPLY=($(compgen -W "unwrap_fasta split_fasta search_in_fasta check_circular fasta_genome_size gbk_to_fna gbk_to_ffn gbk_to_faa gbk_to_annotFAA gbk_to_all gbk_to_gff gff_to_table make_fasta_dict make_gbk_dict make_gff_dict make_gbk_from_fasta make_blast_dict make_hmmscan_dict make_pvogs_desc_dict make_trnascanse_dict make_eggnog_dict make_interpro_dict reformat_phanotate reformat_panacota make_mmseqs_cluster_dict phanotate balrog transeq trnascan_se diamond_p interproscan eggnog pvogs recombinase defense_system satellite_finder phage_assembly filter_phage_assembly viridic phage_annotation phageDB myVIRIDIC PhiSpy picmi_finder_gbk picmi_finder_databankseq mmseqs_easycluster mmseqs_rbh make_rbhcluster_dict make_group_core_align pan_core_group make_vibrio_core ppanggolin gff_to_linear_geneplot gff_to_linear_group_geneplot svg_dna_transform xlsx_to_heatmap circos_plot circos_align circos_rbh_plot mash_matrix fastani_db best_gene_tree_topology specific_kmers core_prot_tree genes_tree protein_similarity_matrix panacota_flexible_tree snippy wgrr_matrix dl_genbank_bacteria" -- ${cur}))
+            COMPREPLY=($(compgen -W "unwrap_fasta split_fasta search_in_fasta check_circular fasta_genome_size gbk_to_fna gbk_to_ffn gbk_to_faa gbk_to_annotFAA gbk_to_all gbk_to_gff gff_to_table make_fasta_dict make_gbk_dict make_gff_dict make_gbk_from_fasta make_blast_dict make_hmmscan_dict make_pvogs_desc_dict make_trnascanse_dict make_eggnog_dict make_interpro_dict reformat_phanotate reformat_panacota make_mmseqs_cluster_dict phanotate balrog transeq trnascan_se diamond_p interproscan eggnog pvogs recombinase defense_system satellite_finder phage_assembly filter_phage_assembly replicon_distribution viridic phage_annotation phageDB phageDBsearch myVIRIDIC PhiSpy picmi_finder_gbk picmi_finder_databankseq mmseqs_easycluster mmseqs_rbh make_rbhcluster_dict make_group_core_align pan_core_group make_vibrio_core ppanggolin gff_to_linear_geneplot gff_to_linear_group_geneplot svg_dna_transform xlsx_to_heatmap circos_plot circos_align circos_rbh_plot mash_matrix fastani_db best_gene_tree_topology specific_kmers core_prot_tree individual_core_tree protein_similarity_matrix panacota_flexible_tree snippy wgrr_matrix dl_genbank_bacteria" -- ${cur}))
             ;;
         2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 18 | 20 | 22 | 24 | 26 | 28 | 30 | 32 | 34 | 36 | 38 | 40)
             case ${prev} in
@@ -115,11 +115,16 @@ _geminicomplementation()
                 filter_phage_assembly)
                 options="-i -o -minlen -mincov -ext"
                 ;;
-                phage_annotation)
+                replicon_distribution)
+                options="-i -ref -o -pid -ext1 -ext2"
+                ;;
                 options="-i -o -embl -project -taxo -e -pid -cov -pid2 -ext"
                 ;;
                 phageDB)
                 options="-i -o -checkv"
+                ;;
+                phageDBsearch)
+                options="-i -o -pid -cov -db"
                 ;;
                 myVIRIDIC)
                 options="-i -o -ref -thfam -thgen -thsp -db -ext"
@@ -184,8 +189,8 @@ _geminicomplementation()
                 specific_kmers)
                 options="-i -i2 -o -len -ext"
                 ;;
-                core_prot_tree | genes_tree)
-                options="-i -o -pid -cov -ext"
+                core_prot_tree | individual_core_tree)
+                options="-i -o -pid -cov -nucl -ext"
                 ;;
                 protein_similarity_matrix)
                 options="-i -o -lt -pid -cov -ext"

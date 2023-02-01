@@ -461,6 +461,19 @@
                                    },
                         "pathTMP":true
                        },
+  "phageDBsearch": {
+                        "descr": "Search in genbank source or phanotate phage database",
+                        "tag":"phage", "version":"1.0",
+                        "title":"phageDBsearch",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":20, "type":"int"},
+                                   "covThr":{"tag":"-cov","value":50, "type":"int"},
+                                   "dmndDB":{"tag":"-db","value":"genbank", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },
   "myVIRIDIC": {
                         "descr": "Modified version of VIRIDIC",
                         "tag":"phage", "version":"1.1",
@@ -773,15 +786,16 @@
                                    },
                         "pathTMP":true
                        },
-  "genes_tree": {
-                        "descr": "Make individual and core genes tree",
+  "individual_core_tree": {
+                        "descr": "Make individual and core genes/proteins tree",
                         "tag":"phylo", "version":"1.0",
-                        "title":"genesTree",
+                        "title":"individualCoreTree",
                         "dicoArgs":{
                                    "pathIN":{"tag":"-i","value":"","type":"str"},
                                    "pathOUT":{"tag":"-o","value":"", "type":"str"},
                                    "idThr":{"tag":"-pid","value":30, "type":"int"},
                                    "covThr":{"tag":"-cov","value":80, "type":"int"},
+                                   "boolNucl":{"tag":"-nucl","value":false, "type":"bool"},
                                    "ext":{"tag":"-ext","value":".ffn", "type":"str"}
                                    },
                         "pathTMP":true
@@ -867,5 +881,19 @@
                                    "ext":{"tag":"-ext","value":".fasta", "type":"str"}
                                    },
                         "pathTMP":true
-                      }
+                      },
+  "replicon_distribution": {
+                        "descr": "Search replicons in assembly contigs",
+                        "tag":"assembly", "version":"1.0",
+                        "title":"repliconDistri",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathREF":{"tag":"-ref","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "idThr":{"tag":"-pid","value":80, "type":"int"},
+                                   "extIN":{"tag":"-ext1","value":".fasta", "type":"str"},
+                                   "extREF":{"tag":"-ext2","value":".fasta", "type":"str"}
+                                   },
+                        "pathTMP":true
+                      }                      
 }

@@ -33,7 +33,7 @@ from yaspin.spinners import Spinners
 from Bio.Seq import Seq
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from sqlitedict import SqliteDict
-from geminini import path_converter, get_input_files, printcolor, get_gemini_path, get_sys_info, fct_checker, my_encode, my_decode
+from geminini import path_converter, get_input_files, printcolor, get_gemini_path, get_sys_info, fct_checker, my_encode, my_decode, read_file
 from geminini import dump_json, load_json, reverse_complement, launch_threads, title, exit_gemini, longest_common_substring, cat_lstfiles
 from geminiparse import unwrap_fasta, make_blast_dict, make_fasta_dict, make_hmmscan_dict, make_gff_dict
 from geminiparse import make_trnascanse_dict, make_interpro_dict, make_eggnog_dict, make_gbk_from_fasta
@@ -934,6 +934,78 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
         launch_threads(dicoThread, "hmmscan_terminase", cpu, pathTMP)
     spinner.stop()
     printcolor("♊ Search large terminase"+"\n")
+
+
+@fct_checker
+def phageDBsearch(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, dmndDB: str = "genbank") -> Tuple[str, str, int, int, str]:
+    '''
+     ------------------------------------------------------------
+    |                  SEARCH IN PHAGE DATABASE                  |
+    |------------------------------------------------------------|
+    |    Search in genbank source or phanotate phage database    |
+    |------------------------------------------------------------|
+    |PARAMETERS                                                  |
+    |    pathIN  : path of query protein file (required)         |
+    |    pathOUT : path of search output dir (required)          |
+    |    idThr   : %identity threshold (default=20)              |
+    |    covThr  : %coverage threshold (default=50)              |
+    |    dmndDB  : database genbank|phanotate (default=phanotate)|
+     ------------------------------------------------------------
+    '''
+    pathIN = path_converter(pathIN)
+    pathOUT = path_converter(pathOUT)
+    if not os.path.isfile(pathIN):
+        printcolor("[ERROR: phageDBsearch]\nAny input FAA file\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    dicoGeminiPath = get_gemini_path()
+    if dmndDB == "genbank":
+        pathDB = dicoGeminiPath['DATABASES']['phagedb_dmnd']
+    elif dmndDB == "phanotate":
+        pathDB = dicoGeminiPath['DATABASES']['phagedb_dmnd_phanotate']
+    else:
+        printcolor("[ERROR: phageDBsearch]\nInvalid dmnd database, must be \"genbank\" or \"phanotate\"\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    pathTMP = geminiset.pathTMP
+    diamond_p(pathIN=pathIN, pathDB=pathDB, pathOUT=pathTMP+"/diamond.out", boolSeq=True, ext="")
+    lstLines = read_file(pathTMP+"/diamond.out", excludeFirstKr=None, yaspinBool=False)
+    if len(lstLines) <= 3:
+        printcolor("⛔ Any protein found"+"\n")
+    else:
+        printcolor("⏩ Found "+str(len(lstLines)-3)+" protein(s)"+"\n")
+        os.makedirs(pathOUT, exist_ok=True)
+        shutil.move(pathTMP+"/diamond.out",pathOUT+"/diamond.out")
+        dicoPerQuery = {}
+        splitHeader = lstLines[2].replace("# Fields: ", "").split(", ")
+        dicoHeader = {}
+        for i in range(len(splitHeader)):
+            dicoHeader[splitHeader[i]] = i
+        for line in lstLines[3:]:
+            splitLine = line.split("\t")
+            query = splitLine[dicoHeader["Query ID"]]
+            subject = splitLine[dicoHeader["Subject title"]]
+            pident = float(splitLine[dicoHeader["Percentage of identical matches"]])
+            alen = int(splitLine[dicoHeader["Alignment length"]])
+            qlen = int(splitLine[dicoHeader["Query length"]])
+            qstart = int(splitLine[dicoHeader["Start of alignment in query"]])
+            qend = int(splitLine[dicoHeader["End of alignment in query"]])
+            slen = int(splitLine[dicoHeader["Subject length"]])
+            sstart = int(splitLine[dicoHeader["Start of alignment in subject"]])
+            send = int(splitLine[dicoHeader["End of alignment in subject"]])
+            evalue = float(splitLine[dicoHeader["Expected value"]])
+            sseq = splitLine[dicoHeader["Subject sequence"]]
+            qcov = round(((max(qstart,qend)-min(qstart,qend))*100/qlen),1)
+            scov = round(((max(sstart,send)-min(sstart,send))*100/qlen),1)
+            toWrite = ">"+subject+"|query="+query+"|pident="+str(pident)+"|qcov="+str(qcov)+"|scov="+str(scov)+"\n"+sseq
+            try:
+                dicoPerQuery[query].add(toWrite)
+            except KeyError:
+                dicoPerQuery[query] = set([toWrite])
+        # Write per query results FASTA
+        for query in dicoPerQuery:
+            OUT = open(pathOUT+"/"+query+"_phageDBsearch.faa",'w')
+            for toWrite in dicoPerQuery[query]:
+                OUT.write(toWrite)
+            OUT.close()
 
 
 @fct_checker
