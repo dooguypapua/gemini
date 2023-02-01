@@ -108,6 +108,8 @@ def phage_annotation('-i'pathIN, '-o'pathOUT, '-embl'boolEMBL=False, '-project'e
 '-cov'covThrClust=80, '-ext'ext=".fna")
 # Make GenBank phages database
 def phageDB('-i'pathIN, '-o'pathOUT, '-checkv'checkvHQ=75.0)
+# Search in genbank source or phanotate phage database
+def phageDBsearch('-i'pathIN, '-o'pathOUT, '-pid'idThr=20, '-cov'covThr=50, '-db'dmndDB="genbank")
 # Modified version of VIRIDIC
 def myVIRIDIC('-i'pathIN, '-o'pathOUT, '-ref'ref="None", '-thfam'thfam=50.0, '-thgen'thgen=70.0, '-thsp'thsp=95.0, '-db'boolFromDB=False, '-ext'ext=".fna")
 # PhiSpy prophages prediction
@@ -128,8 +130,8 @@ def best_gene_tree_topology('-i'pathIN1, '-i2'pathIN2, '-i3'pathIN3, '-o'pathOUT
 def specific_kmers('-i'pathIN, '-i2'pathIN2, '-o'pathOUT, '-len'kmerLen=25, '-ext'ext=".fna")
 # Make core proteins tree
 def core_prot_tree('-i'pathIN, '-o'pathOUT, '-pid'idThr=30, '-cov'covThr=80, '-ext'ext=".faa")
-# Make individual and core genes tree
-def genes_tree('-i'pathIN, '-o'pathOUT, '-pid'idThr=30, '-cov'covThr=80, '-ext'ext=".ffn")
+# Make individual and core genes/proteins tree
+def individual_core_tree('-i'pathIN, '-o'pathOUT, '-pid'idThr=30, '-cov'covThr=80, '-nucl'boolNucl=False, '-ext'ext=".ffn")
 # Create similarity matrix for one protein
 def protein_similarity_matrix('-i'pathIN, '-o'pathOUT, '-lt'locusTag, '-pid'idThr=30, '-cov'covThr=80, '-ext'ext=".faa")
 # Make flexible genes tree form PanACoTA results
