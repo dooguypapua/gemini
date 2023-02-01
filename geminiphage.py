@@ -973,7 +973,7 @@ def phageDBsearch(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, 
     else:
         printcolor("⏩ Found "+str(len(lstLines)-3)+" protein(s)"+"\n")
         os.makedirs(pathOUT, exist_ok=True)
-        shutil.move(pathTMP+"/diamond.out",pathOUT+"/diamond.out")
+        shutil.move(pathTMP+"/diamond.out", pathOUT+"/diamond.out")
         dicoPerQuery = {}
         splitHeader = lstLines[2].replace("# Fields: ", "").split(", ")
         dicoHeader = {}
@@ -984,17 +984,17 @@ def phageDBsearch(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, 
             query = splitLine[dicoHeader["Query ID"]]
             subject = splitLine[dicoHeader["Subject title"]]
             pident = float(splitLine[dicoHeader["Percentage of identical matches"]])
-            alen = int(splitLine[dicoHeader["Alignment length"]])
+            # alen = int(splitLine[dicoHeader["Alignment length"]])
             qlen = int(splitLine[dicoHeader["Query length"]])
             qstart = int(splitLine[dicoHeader["Start of alignment in query"]])
             qend = int(splitLine[dicoHeader["End of alignment in query"]])
-            slen = int(splitLine[dicoHeader["Subject length"]])
+            # slen = int(splitLine[dicoHeader["Subject length"]])
             sstart = int(splitLine[dicoHeader["Start of alignment in subject"]])
             send = int(splitLine[dicoHeader["End of alignment in subject"]])
-            evalue = float(splitLine[dicoHeader["Expected value"]])
+            # evalue = float(splitLine[dicoHeader["Expected value"]])
             sseq = splitLine[dicoHeader["Subject sequence"]]
-            qcov = round(((max(qstart,qend)-min(qstart,qend))*100/qlen),1)
-            scov = round(((max(sstart,send)-min(sstart,send))*100/qlen),1)
+            qcov = round(((max(qstart, qend)-min(qstart, qend))*100/qlen), 1)
+            scov = round(((max(sstart, send)-min(sstart, send))*100/qlen), 1)
             toWrite = ">"+subject+"|query="+query+"|pident="+str(pident)+"|qcov="+str(qcov)+"|scov="+str(scov)+"\n"+sseq
             try:
                 dicoPerQuery[query].add(toWrite)
@@ -1002,7 +1002,7 @@ def phageDBsearch(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, 
                 dicoPerQuery[query] = set([toWrite])
         # Write per query results FASTA
         for query in dicoPerQuery:
-            OUT = open(pathOUT+"/"+query+"_phageDBsearch.faa",'w')
+            OUT = open(pathOUT+"/"+query+"_phageDBsearch.faa", 'w')
             for toWrite in dicoPerQuery[query]:
                 OUT.write(toWrite)
             OUT.close()

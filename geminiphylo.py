@@ -950,18 +950,18 @@ def individual_core_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int
         if boolNucl is True:
             pbar.set_description_str("Core gene "+str(coreNum)+" ".rjust(maxpathSize-len("Core gene "+str(coreNum))))
             pathTMPFASTA = pathTMP+"/coregene_"+str(coreNum)+".fasta"
-            pathALIGN = pathOUT+"/core_align/coregene_"+str(coreNum)+"_align.fasta"        
-        else:            
+            pathALIGN = pathOUT+"/core_align/coregene_"+str(coreNum)+"_align.fasta"
+        else:
             pbar.set_description_str("Core protein "+str(coreNum)+" ".rjust(maxpathSize-len("Core protein "+str(coreNum))))
             pathTMPFASTA = pathTMP+"/coreprot_"+str(coreNum)+".fasta"
-            pathALIGN = pathOUT+"/core_align/coreprot_"+str(coreNum)+"_align.fasta"        
+            pathALIGN = pathOUT+"/core_align/coreprot_"+str(coreNum)+"_align.fasta"
         # Create gene fasta
         TMPFASTA = open(pathTMPFASTA, 'w')
         for header in dicoCore[coreNum]:
             lt = header.split(" ")[0]
             TMPFASTA.write(">"+dicoLTtoOrg[lt]+"\n"+dicoLTtoSeq[lt]+"\n")
         TMPFASTA.close()
-        # Launch muscle    
+        # Launch muscle
         lstAlignFiles.append(pathALIGN)
         cmdMUSCLE = dicoGeminiPath['TOOLS']['muscle']+" -in "+pathTMPFASTA+" -out "+pathALIGN+" -quiet"
         os.system(cmdMUSCLE)
@@ -996,7 +996,7 @@ def individual_core_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int
             os.system(cmdTree)
             os.system("rm -f "+pathTREE+".splits.nex "+pathTREE+".log "+pathTREE+".mldist "+pathTREE+".bionj "+pathTREE+".ckp.gz "+pathTREE+".contree "+pathTREE+".iqtree")
         else:
-            pbar.set_description_str("Core protein "+str(coreNum)+" ".rjust(maxpathSize-len("Core protein "+str(coreNum))))            
+            pbar.set_description_str("Core protein "+str(coreNum)+" ".rjust(maxpathSize-len("Core protein "+str(coreNum))))
             pathALIGN = pathOUT+"/core_align/coreprot_"+str(coreNum)+"_align.fasta"
             pathTREE = pathOUT+"/core_tree/coreprot_"+str(coreNum)+"_iqtree2"
             cmdTree = dicoGeminiPath['TOOLS']['iqtree2']+" -s "+pathALIGN+" -T "+str(cpu)+" --mem "+str(memMax)+"GB --quiet -m LG -B 1000 --seqtype AA --prefix "+pathTREE+" --keep-ident > /dev/null 2>&1"

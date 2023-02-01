@@ -192,9 +192,9 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
     setRefRepliconPath = set()
     setRefRepliconName = set()
     dicoRepliconCov = {}
-    blastoutfmt = "6 delim=; qseqid sseqid pident qlen qstart qend sstart send bitscore slen"
+    blastoutfmt = "6 delim=; qseqid sseqid sstart send bitscore slen"
     # Split reference replicons in distinct FASTA files (required header ">repliconType [orgName]")
-    printcolor("♊ Split references"+"\n")
+    printcolor("♊ Split replicons"+"\n")
     pbar = tqdm(total=len(lstRef), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstRef:
         fileName = os.path.basename(pathFile).replace(extREF, "").replace("."+extREF, "")
@@ -206,11 +206,11 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
             pathREPLICON = geminiset.pathTMP+"/"+repliconType+".fasta"
             setRefRepliconPath.add(pathREPLICON)
             setRefRepliconName.add(repliconType)
-            REPLICON = open(pathREPLICON,'a')
+            REPLICON = open(pathREPLICON, 'a')
             REPLICON.write(">"+orgName+"\n"+dicoFASTA[key]+"\n")
             REPLICON.close()
         pbar.update(1)
-        title("Split references", pbar)
+        title("Split replicons", pbar)
     pbar.close()
     # Blast each query on each replicon fasta
     spinner = yaspin(Spinners.aesthetic, text="♊ Blast replicons", side="right")
@@ -244,16 +244,16 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
             repliconName = os.path.basename(pathREPLICON).replace(".fasta", "")
             pathREPLICONOUT = geminiset.pathTMP+"/"+orgName+"_____"+repliconName+".out"
             if os.path.isfile(pathREPLICONOUT):
-                lstLine = read_file(pathREPLICONOUT,yaspinBool=False)
+                lstLine = read_file(pathREPLICONOUT, yaspinBool=False)
                 for line in lstLine:
                     splitLine = line.split(";")
                     query = splitLine[0]
                     bitscore = float(splitLine[8])
                     # Keep best for each contig query
-                    if not query in dicoQuery:
+                    if query not in dicoQuery:
                         dicoQuery[query] = {}
-                    if not repliconName in dicoQuery[query]:
-                        dicoQuery[query][repliconName] = { 'bestScore': bitscore, 'line': [] }
+                    if repliconName not in dicoQuery[query]:
+                        dicoQuery[query][repliconName] = {'bestScore': bitscore, 'line': []}
                     dicoQuery[query][repliconName]['bestScore'] = max(dicoQuery[query][repliconName]['bestScore'], bitscore)
                     dicoQuery[query][repliconName]['line'].append(line)
         # Compute coverage for each bestScore replicon
@@ -261,32 +261,27 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
             bestScore = 0
             bestReplicon = ""
             for repliconName in dicoQuery[query]:
-                if dicoQuery[query][repliconName]['bestScore']>bestScore:
+                if dicoQuery[query][repliconName]['bestScore'] > bestScore:
                     bestScore = dicoQuery[query][repliconName]['bestScore']
                     bestReplicon = repliconName
-            if not bestReplicon in dicoSubject:
+            if bestReplicon not in dicoSubject:
                 dicoSubject[bestReplicon] = {}
             # Parse correspunding blast line
             for line in dicoQuery[query][bestReplicon]['line']:
                 splitLine = line.split(";")
                 query = splitLine[0]
                 subject = splitLine[1]
-                pident = float(splitLine[2])
-                qlen = int(splitLine[3])
-                qstart = int(splitLine[4])
-                qend = int(splitLine[5])        
-                sstart = int(splitLine[6])
-                send = int(splitLine[7])
-                bitscore = float(splitLine[8])
-                slen = int(splitLine[9])
-                qcov = (qend-qstart)*100/qlen
+                sstart = int(splitLine[2])
+                send = int(splitLine[3])
+                bitscore = float(splitLine[4])
+                slen = int(splitLine[5])
                 # Init if new
-                if not subject in dicoSubject[bestReplicon]:
+                if subject not in dicoSubject[bestReplicon]:
                     dicoSubject[bestReplicon][subject] = {}
                     for i in range(slen):
                         dicoSubject[bestReplicon][subject][i+1] = 0
                 # Add covered position
-                for i in range(min(sstart,send),max(sstart,send)+1,1):
+                for i in range(min(sstart, send), max(sstart, send)+1, 1):
                     dicoSubject[bestReplicon][subject][i] = 1
         # Look for coverage per replicon
         for repliconName in dicoSubject:
@@ -326,7 +321,7 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
         OUT.write(orgName)
         for repliconName in lstSortedReplicon:
             if repliconName in dicoRepliconCov[orgName]:
-                OUT.write("\t"+str(round(dicoRepliconCov[orgName][repliconName],1)).replace(".",","))
+                OUT.write("\t"+str(round(dicoRepliconCov[orgName][repliconName], 1)).replace(".", ","))
             else:
                 OUT.write("\t0")
         OUT.write("\n")
