@@ -248,7 +248,7 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
                 for line in lstLine:
                     splitLine = line.split(";")
                     query = splitLine[0]
-                    bitscore = float(splitLine[8])
+                    bitscore = float(splitLine[4])
                     # Keep best for each contig query
                     if query not in dicoQuery:
                         dicoQuery[query] = {}
@@ -275,23 +275,15 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
                 send = int(splitLine[3])
                 bitscore = float(splitLine[4])
                 slen = int(splitLine[5])
-                # Init if new
-                if subject not in dicoSubject[bestReplicon]:
-                    dicoSubject[bestReplicon][subject] = {}
-                    for i in range(slen):
-                        dicoSubject[bestReplicon][subject][i+1] = 0
                 # Add covered position
                 for i in range(min(sstart, send), max(sstart, send)+1, 1):
-                    dicoSubject[bestReplicon][subject][i] = 1
+                    try: dicoSubject[bestReplicon][subject]['cov_pos'][i] = 1
+                    except: dicoSubject[bestReplicon][subject] = {'cov_pos':{i:1}, 'len':slen}
         # Look for coverage per replicon
         for repliconName in dicoSubject:
             bestCov = 0
             for subject in dicoSubject[repliconName]:
-                cov = 0
-                for pos in dicoSubject[repliconName][subject]:
-                    if dicoSubject[repliconName][subject][pos] == 1:
-                        cov += 1
-                percentCov = cov*100/len(dicoSubject[repliconName][subject])
+                percentCov = len(dicoSubject[repliconName][subject]['cov_pos'])*100/dicoSubject[repliconName][subject]['len']
                 bestCov = max(bestCov, percentCov)
             dicoRepliconCov[orgName][repliconName] = bestCov
         pbar.update(1)
