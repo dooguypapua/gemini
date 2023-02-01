@@ -224,7 +224,7 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
             repliconName = os.path.basename(pathREPLICON).replace(".fasta", "")
             # Launch blastn
             pathREPLICONOUT = geminiset.pathTMP+"/"+orgName+"_____"+repliconName+".out"
-            cmdBlastn = dicoGeminiPath["blastn"]+" -query "+pathFile+" -subject "+pathREPLICON+" -out "+pathREPLICONOUT+" -outfmt \""+blastoutfmt+"\" -perc_identity "+str(idThr)
+            cmdBlastn = dicoGeminiPath["TOOLS"]["blastn"]+" -query "+pathFile+" -subject "+pathREPLICON+" -out "+pathREPLICONOUT+" -outfmt \""+blastoutfmt+"\" -perc_identity "+str(idThr)
             dicoThread[orgName+"_"+repliconName] = {"cmd": cmdBlastn, "returnstatut": None, "returnlines": []}
     # Launch threads
     if len(dicoThread) > 0:
