@@ -21,16 +21,17 @@ def get_best_solution(tmp_dir):
 
 
 def parse_best_solution(dir):
+    # attention of macsyfinder number of header lines output
     tsv_file = open(os.path.join(dir, 'best_solution.tsv'))
     tsv = csv.reader(tsv_file, delimiter='\t')
     data = []
     for row in tsv:
         data.append(row)
     tsv_file.close()
-    if "No Systems found" in ' '.join(data[2]):
+    if "No Systems found" in ' '.join(data[3]):
         return []
     else:
-        data = data[3:]
+        data = data[4:]
         header = data.pop(0)
         out = []
         for lst in data:

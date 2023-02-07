@@ -277,8 +277,10 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
                 slen = int(splitLine[5])
                 # Add covered position
                 for i in range(min(sstart, send), max(sstart, send)+1, 1):
-                    try: dicoSubject[bestReplicon][subject]['cov_pos'][i] = 1
-                    except: dicoSubject[bestReplicon][subject] = {'cov_pos':{i:1}, 'len':slen}
+                    try:
+                        dicoSubject[bestReplicon][subject]['cov_pos'][i] = 1
+                    except KeyError:
+                        dicoSubject[bestReplicon][subject] = {'cov_pos': {i: 1}, 'len': slen}
         # Look for coverage per replicon
         for repliconName in dicoSubject:
             bestCov = 0

@@ -118,6 +118,7 @@ _geminicomplementation()
                 replicon_distribution)
                 options="-i -ref -o -pid -ext1 -ext2"
                 ;;
+                phage_annotation)
                 options="-i -o -embl -project -taxo -e -pid -cov -pid2 -ext"
                 ;;
                 phageDB)

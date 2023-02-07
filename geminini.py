@@ -120,9 +120,15 @@ def read_file(file_path: str, excludeFirstKr: str = "#", yaspinBool: bool = True
 
 # ***** Concatenate files ***** #
 def cat_lstfiles(lstFiles, pathOUT):
-    os.system("cp "+lstFiles[0]+" "+pathOUT)
-    for i in range(1, len(lstFiles), 1):
-        os.system("cat "+lstFiles[i]+" >> "+pathOUT)
+    lstExistingFiles = []
+    for file in lstFiles:
+        if os.path.isfile(file):
+            lstExistingFiles.append(file)
+    os.system("touch "+pathOUT)
+    if len(lstFiles) != 0:
+        os.system("cp "+lstExistingFiles[0]+" "+pathOUT)
+        for i in range(1, len(lstExistingFiles), 1):
+            os.system("cat "+lstExistingFiles[i]+" >> "+pathOUT)
 
 
 # ***** Instanciate internal gemini dico ***** #

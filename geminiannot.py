@@ -1068,12 +1068,14 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
                     " --out-dir "+geminiset.pathTMP+"/"+model+" --coverage-profile "+str(covProfile) + \
                     " --w "+str(cpu)+" --exchangeable-weight 1"+accWeight+" >> "+pathLOG+" 2>&1"
                 os.system(cmdMacsyfinder)
-                shutil.rmtree(geminiset.pathTMP+"/"+model)
                 cpt += 1
             # DefenseFinder post treatment scripts
             bs = get_best_solution(geminiset.pathTMP)
             export_defense_finder_genes(bs, pathOUT, orgName, dfmodelV)
             export_defense_finder_systems(bs, pathOUT, orgName, dfmodelV)
+            # Remove files
+            for model in lstModels:
+                shutil.rmtree(geminiset.pathTMP+"/"+model)
             if os.path.isfile(pathFAA+".idx"):
                 os.remove(pathFAA+".idx")
         title("DefenseFinder", pbar)
