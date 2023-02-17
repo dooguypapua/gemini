@@ -53,7 +53,7 @@ _geminicomplementation()
                 options="-i -o"
                 ;;
                 gbk_to_ffn | gbk_to_faa | gbk_to_all)
-                options="-i -o -syntaxic"
+                options="-i -o -syntaxic -split"
                 ;;
                 gff_to_table)
                 options="-i -o -format -width -ext"
@@ -221,7 +221,7 @@ _geminicomplementation()
                 COMPREPLY=($(compgen -W ".annotations .faa .faa.gz .fasta .fasta.gz .ffn .ffn.gz .fna .fna.gz .gbk .gbk.gz .gff .rbh .tblout .trnascanse .tsv .xml .xlsx .xls" -- ${cur}))
                 ;;
                 # BOOLEAN
-                -mmseqs | -ltheader | -nodoublon | -db | -sort | -orgheader | -phagedb | -nucl | -gene | -prot | -embl | -addseq | -progress)
+                -mmseqs | -ltheader | -nodoublon | -db | -sort | -orgheader | -phagedb | -nucl | -gene | -prot | -embl | -addseq | -split | -progress)
                 COMPREPLY=($(compgen -W "true false" -- ${cur}))
                 ;;                
                 # INTEGER

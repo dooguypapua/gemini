@@ -1068,22 +1068,26 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     os.makedirs(pathDIRJSON, exist_ok=True)
     pathTMPFASTA = pathTMP+"/FASTA"
     os.makedirs(pathTMPFASTA, exist_ok=True)
+    pathTMPMISSING = pathTMP+"/MISSING"
+    os.makedirs(pathTMPMISSING, exist_ok=True)    
     printcolor("⏩ Found "+str(len(setAllOrg))+" phages"+"\n")
     # ***** CHECK MISSING DISTANCES ***** #
     printcolor("♊ Check JSON"+"\n")
     pbar = tqdm(total=len(setAllOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
-    dicoMissing = {}
     cptMissing = 0
     for orgName in setAllOrg:
         if ref == "None" or orgName == ref:
             pathVIRIDICJSON = pathDIRJSON+"/"+orgName+".json"
+            pathMISSINGJSON = pathTMPMISSING+"/"+orgName+".json"
+            dicoMissing = {}
             if not os.path.isfile(pathVIRIDICJSON):
                 dump_json({orgName: 100.0}, pathVIRIDICJSON)
-                dicoMissing[orgName] = setAllOrg - set([orgName])
+                dicoMissing = list(setAllOrg - set([orgName]))
             else:
                 dicoSimMA = load_json(pathVIRIDICJSON)
-                dicoMissing[orgName] = setAllOrg - set(dicoSimMA.keys()) - set([orgName])
-            cptMissing += len(dicoMissing[orgName])
+                dicoMissing = list(setAllOrg - set(dicoSimMA.keys()) - set([orgName]))
+            cptMissing += len(dicoMissing)
+            dump_json(dicoMissing, pathMISSINGJSON)
         pbar.update(1)
         title("Check JSON", pbar)
     pbar.close()
@@ -1173,7 +1177,9 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
             # Concatenate missing blast results
             pathMERGEBLAST = pathTMP+"/"+orgName1+".out"
             lstBlastOut = []
-            for orgName2 in dicoMissing[orgName1]:
+            pathMISSINGJSON1 = pathTMPMISSING+"/"+orgName1+".json"
+            dicoMissing1 = load_json(pathMISSINGJSON1)
+            for orgName2 in dicoMissing1:
                 lstBlastOut.append(pathORGBLAST+"/"+orgName2+".out")
             cat_lstfiles(lstBlastOut, pathMERGEBLAST)
             # Construct VIRIDIC threads for current organism
@@ -1194,22 +1200,35 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
                     orgName2 = line.replace("\"", "").split("\t")[1]
                     intergSim = float(line.replace("\"", "").split("\t")[9])
                     dicoSimMA1[orgName2] = min(intergSim*2, 100.0)
-                    dicoMissing[orgName1].remove(orgName2)
+                    dicoMissing1.remove(orgName2)
                     pathVIRIDICJSON2 = pathDIRJSON+"/"+orgName2+".json"
                     if os.path.isfile(pathVIRIDICJSON2):
                         dicoSimMA2 = load_json(pathVIRIDICJSON2)
                         dicoSimMA2[orgName1] = min(intergSim*2, 100.0)
                         dump_json(dicoSimMA2, pathVIRIDICJSON2)
-                        dicoMissing[orgName2].remove(orgName1)
-            for orgName2 in dicoMissing[orgName1]:
+                        pathMISSINGJSON2 = pathTMPMISSING+"/"+orgName2+".json"
+                        dicoMissing2 = load_json(pathMISSINGJSON2)
+                        try:
+                            dicoMissing2.remove(orgName1)
+                            dump_json(dicoMissing2, pathMISSINGJSON2)
+                        except ValueError:
+                            pass                        
+            for orgName2 in dicoMissing1:
                 dicoSimMA1[orgName2] = 0.0
                 pathVIRIDICJSON2 = pathDIRJSON+"/"+orgName2+".json"
                 if os.path.isfile(pathVIRIDICJSON2):
                     dicoSimMA2 = load_json(pathVIRIDICJSON2)
                     dicoSimMA2[orgName1] = 0.0
                     dump_json(dicoSimMA2, pathVIRIDICJSON2)
-                    dicoMissing[orgName2].remove(orgName1)
-            dicoMissing[orgName1] = set()
+                    pathMISSINGJSON2 = pathTMPMISSING+"/"+orgName2+".json"
+                    dicoMissing2 = load_json(pathMISSINGJSON2)
+                    try:
+                        dicoMissing2.remove(orgName1)
+                        dump_json(dicoMissing2, pathMISSINGJSON2)
+                    except ValueError:
+                        pass 
+            dicoMissing1 = []
+            dump_json(dicoMissing1, pathMISSINGJSON1)
             dump_json(dicoSimMA1, pathVIRIDICJSON1)
             if ref == "None":
                 pbar.update(1)

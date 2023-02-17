@@ -575,7 +575,7 @@ def make_gff_dict(pathIN: str, pathJSON: str = "None", ext: str = ".gff") -> Tup
 
 
 @fct_checker
-def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[str, str, str]:
+def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal", boolSplit: bool = False) -> Tuple[str, str, str, bool]:
     '''
      ------------------------------------------------------------
     |                   CONVERT GENBANK TO FAA                   |
@@ -583,9 +583,10 @@ def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
     |  Retrieve protein sequence in a GBK file and create a FAA  |
     |------------------------------------------------------------|
     |PARAMETERS                                                  |
-    |    pathIN : path of input GBK file (required)              |
-    |    pathOUT: path of output FAA file (required)             |
-    |    syntaxic: syntaxic missing annot tool (default=prodigal)|
+    |    pathIN   : path of input GBK file (required)            |
+    |    pathOUT  : path of output FAA file (required)           |
+    |    syntaxic : syntaxic tool for missing (default=prodigal) |
+    |    boolSplit: create one output per contig (default=False) |
      ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
@@ -593,8 +594,11 @@ def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
     dicoGBK = make_gbk_dict(pathIN)
     dicoGeminiPath = get_gemini_path()
     org = list(dicoGBK.keys())[0]
-    OUT = open(pathOUT, 'w')
+    if boolSplit is False:
+        OUT = open(pathOUT, 'w')
     for contig in dicoGBK[org]:
+        if boolSplit is True and os.path.isfile(pathOUT+"/"+contig+".faa"):
+            os.remove(pathOUT+"/"+contig+".faa")
         # Case of any syntaxic annotation
         if len(dicoGBK[org][contig]['dicoLT']) == 0:
             TMPFASTA = open(geminiset.pathTMP+"/gbk_to_faa_temp.fna", 'w')
@@ -622,8 +626,13 @@ def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
         for lt in dicoGBK[org][contig]['dicoLT']:
             if dicoGBK[org][contig]['dicoLT'][lt]['protSeq'] is not None:
                 toWrite = ">"+lt+"|"+str(dicoGBK[org][contig]['dicoLT'][lt]['product'])+"|"+org+"\n"+dicoGBK[org][contig]['dicoLT'][lt]['protSeq']+"\n"
+                if boolSplit is True:
+                    OUT = open(pathOUT+"/"+contig+".faa", 'a')
                 OUT.write(toWrite)
-    OUT.close()
+        if boolSplit is True and os.path.isfile(pathOUT+"/"+contig+".faa"):
+            OUT.close()
+    if boolSplit is False:
+        OUT.close()
 
 
 @fct_checker

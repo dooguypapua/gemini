@@ -84,7 +84,8 @@
                         "dicoArgs":{
                                    "pathIN":{"tag":"-i","value":"","type":"str"},
                                    "pathOUT":{"tag":"-o","value":"", "type":"str"},
-                                   "syntaxic":{"tag":"-syntaxic","value":"prodigal","type":"str"}
+                                   "syntaxic":{"tag":"-syntaxic","value":"prodigal","type":"str"},
+                                   "boolSplit":{"tag":"-split","value":"false","type":"bool"}
                                    },
                         "pathTMP":true
                        },
