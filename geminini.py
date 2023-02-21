@@ -137,7 +137,7 @@ def build_gemini_dico(lstArgv):
     slurmBool, cpu, memMax, memMin = get_sys_info()
     # temporary folder
     if dicoGemini[fctName]['pathTMP'] is True:
-        if slurmBool is True:
+        if slurmBool is True and os.path.isdir("/scratch2/sbr/dynamic/tmp"):
             tmpDir = "/scratch2/sbr/dynamic/tmp"
         else:
             tmpDir = "/tmp"
@@ -180,9 +180,15 @@ def get_gemini_path():
     dicoGeminiPath = {}
     slurmBool, cpu, memMax, memMin = get_sys_info()
     if slurmBool is True:
-        pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/geminipathslurm.txt"
+        if os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipathslurm.txt"):
+            pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipathslurm.txt"
+        else:
+            pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/geminipathslurm.txt"
     else:
-        pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/geminipath.txt"
+        if os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipath.txt"):
+            pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipath.txt"
+        else:
+            pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/geminipath.txt"
     IN = open(pathGeminiPathTXT, 'r')
     lstCategory = IN.read().split("#")[1:]
     IN.close()

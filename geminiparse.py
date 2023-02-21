@@ -338,12 +338,12 @@ def check_circular(seqIN: str, minLen: int = 3) -> Tuple[str, int]:
 
 
 @fct_checker
-def fasta_genome_size(pathIN: str, pathOUT: str = "None", boolSort: bool = True, ext: str = ".fna") -> Tuple[str, str, bool, str]:
+def fasta_stats(pathIN: str, pathOUT: str = "None", boolSort: bool = True, ext: str = ".fna") -> Tuple[str, str, bool, str]:
     '''
      ------------------------------------------------------------
-    |                   MAKE GENOME SIZE TABLE                   |
+    |                   MAKE FASTA STATS SIZE                    |
     |------------------------------------------------------------|
-    |        Create a table with the size (pb) of genomes        |
+    |          Create a table with various FASTA stats           |
     |------------------------------------------------------------|
     |PARAMETERS                                                  |
     |    pathIN  : path of input files or folder (required)      |
@@ -353,7 +353,9 @@ def fasta_genome_size(pathIN: str, pathOUT: str = "None", boolSort: bool = True,
      ------------------------------------------------------------
     '''
     dicoSize = {}
-    pathOUT = path_converter(pathOUT)
+    dicoNbCtg = {}
+    if pathOUT != "None":
+        pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "fasta_genome_size", [ext])
     if len(lstFiles) == 0:
         printcolor("[ERROR: fasta_genome_size]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
@@ -362,11 +364,14 @@ def fasta_genome_size(pathIN: str, pathOUT: str = "None", boolSort: bool = True,
         file = os.path.basename(pathFNA)
         org = file.replace(ext, "")
         dicoSize[org] = 0
+        dicoNbCtg[org] = 0
         for record in SeqIO.parse(open(pathFNA, "r"), "fasta"):
             dicoSize[org] += len(record.seq)
+            dicoNbCtg[org] += 1
     if boolSort is True:
         dicoSize = dict(sorted(dicoSize.items(), key=lambda item: item[0]))
-    df = pd.DataFrame(list(dicoSize.items()), columns=['Org', 'Size'])
+        dicoNbCtg = dict(sorted(dicoNbCtg.items(), key=lambda item: item[0]))
+    df = pd.DataFrame({'Org':list(dicoNbCtg.keys()), 'NbCtg':list(dicoNbCtg.values()), 'Size':list(dicoSize.values())})
     if pathOUT == "None":
         printcolor(df.to_string(index=False)+"\n")
     else:
@@ -598,6 +603,7 @@ def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal", boolSplit:
         OUT = open(pathOUT, 'w')
     for contig in dicoGBK[org]:
         if boolSplit is True and os.path.isfile(pathOUT+"/"+contig+".faa"):
+            os.makedirs(pathOUT, exist_ok=True)
             os.remove(pathOUT+"/"+contig+".faa")
         # Case of any syntaxic annotation
         if len(dicoGBK[org][contig]['dicoLT']) == 0:
@@ -625,7 +631,7 @@ def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal", boolSplit:
                                                                       'strand': int(splitHeader[3]), 'geneSeq': None, 'protSeq': dicoFAA[header]}
         for lt in dicoGBK[org][contig]['dicoLT']:
             if dicoGBK[org][contig]['dicoLT'][lt]['protSeq'] is not None:
-                toWrite = ">"+lt+"|"+str(dicoGBK[org][contig]['dicoLT'][lt]['product'])+"|"+org+"\n"+dicoGBK[org][contig]['dicoLT'][lt]['protSeq']+"\n"
+                toWrite = ">"+lt+"|"+contig+"|"+str(dicoGBK[org][contig]['dicoLT'][lt]['product'])+"|"+org+"\n"+dicoGBK[org][contig]['dicoLT'][lt]['protSeq']+"\n"
                 if boolSplit is True:
                     OUT = open(pathOUT+"/"+contig+".faa", 'a')
                 OUT.write(toWrite)

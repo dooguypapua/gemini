@@ -1,54 +1,54 @@
 # TOOLS
-python:/usr/bin/python3.8
-rscript:/usr/bin/Rscript
-transeq:/usr/bin/transeq
-hmmscan:/usr/local/bin/hmmscan
-hmmsearch:/usr/local/bin/hmmsearch
-diamond:/mnt/c/Users/dgoudenege/Tools/diamond_v2.0.8
-trimmomatic:/mnt/c/Users/dgoudenege/Tools/Trimmomatic-0.39/trimmomatic-0.39.jar
-spades:/mnt/c/Users/dgoudenege/Tools/SPAdes-3.15.2/spades.py
-blastn:/usr/bin/blastn
-makeblastdb:/usr/bin/makeblastdb
-phanotate:/usr/local/bin/phanotate.py
-trnascanse:/usr/local/bin/tRNAscan-SE
-interproscan:/mnt/c/Users/dgoudenege/Tools/interproscan-5.52-86.0/interproscan-5.jar
-mmseqs:/mnt/c/Users/dgoudenege/Tools/mmseqs/bin/mmseqs
-eggnog-mapper:/usr/local/bin/emapper.py
-muscle:/usr/bin/muscle
-iqtree2:/usr/local/bin/iqtree2
-fasttree:/mnt/c/Users/dgoudenege/Tools/FastTree
-mash:/usr/bin/mash
-famsa:/mnt/c/Users/dgoudenege/Tools/FAMSA-1.6.2/famsa
-fastani:/mnt/c/Users/dgoudenege/Tools/fastANI
-prodigal:/mnt/c/Users/dgoudenege/Tools/prodigal_v2.6.3
-wordcount:/usr/bin/wordcount
-seqret:/usr/bin/seqret
-checkv:/usr/local/bin/checkv
-ppanggolin:/usr/local/bin/ppanggolin
-circos:/usr/bin/circos
-snippy:/mnt/c/Users/dgoudenege/Tools/snippy/bin/snippy
-phispy:/usr/local/bin/PhiSpy.py
-multidl:/usr/local/bin/multidl
-macsyfinder:/usr/local/bin/macsyfinder
-padloc:/mnt/c/Users/dgoudenege/Tools/padloc/bin/padloc
-mafft:/usr/bin/mafft
-satellite_finder:/mnt/c/Users/dgoudenege/Tools/satellite_finder_0.9.1
+python:<PATH EXECUTABLE>
+rscript:<PATH EXECUTABLE>
+transeq:<PATH EXECUTABLE>
+hmmscan:<PATH EXECUTABLE>
+hmmsearch:<PATH EXECUTABLE>
+diamond:<PATH EXECUTABLE>
+trimmomatic:<PATH JAR>
+spades:<PATH EXECUTABLE>
+blastn:<PATH EXECUTABLE>
+makeblastdb:<PATH EXECUTABLE>
+phanotate:<PATH EXECUTABLE>
+trnascanse:<PATH EXECUTABLE>
+interproscan:<PATH JAR>
+mmseqs:<PATH EXECUTABLE>
+eggnog-mapper:<PATH EXECUTABLE>
+muscle:<PATH EXECUTABLE>
+iqtree2:<PATH EXECUTABLE>
+fasttree:<PATH EXECUTABLE>
+mash:<PATH EXECUTABLE>
+famsa:<PATH EXECUTABLE>
+fastani:<PATH EXECUTABLE>
+prodigal:<PATH EXECUTABLE>
+wordcount:<PATH EXECUTABLE>
+seqret:<PATH EXECUTABLE>
+checkv:<PATH EXECUTABLE>
+ppanggolin:<PATH EXECUTABLE>
+circos:<PATH EXECUTABLE>
+snippy:<PATH EXECUTABLE>
+phispy:<PATH EXECUTABLE>
+multidl:<PATH EXECUTABLE>
+macsyfinder:<PATH EXECUTABLE>
+padloc:<PATH EXECUTABLE>
+mafft:<PATH EXECUTABLE>
+satellite_finder:<PATH DIR>
 # DATABASES
-terminase_hmm:/mnt/g/db/HMMs/large_terminase_subunit.hmm
-terminase_dmnd:/mnt/g/db/DMND/grooveDB_largeTerminase.dmnd
-contaPhageDB:/mnt/g/db/blast/contaPhage
-pvogs_hmm:/mnt/g/db/HMMs/pVOGs.hmm
-pvogs_table:/mnt/g/db/pVOGs/Allvogtables
-pvogs_json:/mnt/g/db/pVOGs/Allvogtables.json
-nahant_dmnd:/mnt/g/db/DMND/nahant.dmnd
-refseq212bct_dmnd:/mnt/g/db/DMND/refseq212bct.dmnd
-uniprot_mapping:/mnt/g/db/uniprot-database_type_RefSeq.tab
-phagedb_dmnd:/mnt/g/db/phageDB/all_protein.dmnd
-phagedb_dmnd_phanotate:/mnt/g/db/phageDB/all_phanotate.dmnd
-eggnog-db:/mnt/g/db/eggnog-mapper-data/
-recombinase_hmm:/mnt/g/db/HMMs/recombinase/VirFam_PFAM_recombinase.hmm
-checkv_db:/mnt/g/db/checkv-db-v1.0
-balrog_data:/mnt/g/db/balrog_data
-defense-finder-models:/mnt/g/db/defense-finder-models
-padloc-db:/mnt/g/db/padloc-db
-picmi-db:/mnt/g/db/PICMI
+terminase_hmm:<PATH HMM FILE>
+terminase_dmnd:<PATH DMND DB>
+contaPhageDB:<PATH DB>
+pvogs_hmm:<PATH HMM FILE>
+pvogs_table:<PATH TABLE>
+pvogs_json:<PATH JSON>
+nahant_dmnd:<PATH DMND DB>
+refseq212bct_dmnd:<PATH DMND DB>
+uniprot_mapping:<PATH TABLE>
+phagedb_dmnd:<PATH DMND DB>
+phagedb_dmnd_phanotate:<PATH DMND DB>
+eggnog-db:<PATH DB>
+recombinase_hmm:<PATH HMM FILE>
+checkv_db:<PATH DB>
+balrog_data:<PATH DB>
+defense-finder-models:<PATH DIR MODELS>
+padloc-db:<PATH DB>
+picmi-db:<PATH DB>

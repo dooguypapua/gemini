@@ -44,13 +44,13 @@
                                    },
                         "pathTMP":false
                        },
-  "fasta_genome_size": {
+  "fasta_stats":       {
                         "descr": "Create a table with the size (pb) of genomes",
                         "tag":"sequence", "version":"1.0",
                         "title":"fastaLen",
                         "dicoArgs":{
                                    "pathIN":{"tag":"-i","value":"","type":"str"},
-                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"None", "type":"str"},
                                    "boolSort":{"tag":"-s","value":true, "type":"bool"},
                                    "ext":{"tag":"-ext","value":".fna", "type":"str"}
                                    },
@@ -85,7 +85,7 @@
                                    "pathIN":{"tag":"-i","value":"","type":"str"},
                                    "pathOUT":{"tag":"-o","value":"", "type":"str"},
                                    "syntaxic":{"tag":"-syntaxic","value":"prodigal","type":"str"},
-                                   "boolSplit":{"tag":"-split","value":"false","type":"bool"}
+                                   "boolSplit":{"tag":"-split","value":false,"type":"bool"}
                                    },
                         "pathTMP":true
                        },

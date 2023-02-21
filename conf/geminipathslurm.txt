@@ -1,53 +1,54 @@
 # TOOLS
-python:python3.9
-rscript:Rscript
-hmmscan:hmmscan
-hmmsearch:hmmsearch
-diamond:diamond
-trimmomatic:trimmomatic
-spades:spades.py
-blastn:blastn
-makeblastdb:makeblastdb
-interproscan:interproscan.sh
-mmseqs:/home/umr8227/gv/dgoudenege/script/mmseqs_v13-45111/bin/mmseqs
-phanotate:/home/umr8227/gv/dgoudenege/script/python_lib/bin/phanotate.py
-trnascanse:/usr/local/genome2/conda3/envs/trnascan-se-2.0/bin/tRNAscan-SE
-transeq:transeq
-eggnog-mapper:emapper.py
-muscle:muscle
-iqtree2:iqtree2
-fasttree:fasttree
-mash:/home/umr8227/gv/dgoudenege/script/mash-Linux64-v2.3/mash
-famsa:/home/umr8227/gv/dgoudenege/script/FAMSA-1.6.2/famsa
-fastani:/home/umr8227/gv/dgoudenege/script/fastANI
-prodigal:prodigal
-wordcount:wordcount
-seqret:seqret
-checkv:/home/umr8227/gv/dgoudenege/.local/bin/checkv
-ppanggolin:ppanggolin
-circos:circos
-snippy:snippy
-mafft:mafft
-phispy:/home/umr8227/gv/dgoudenege/.local/bin/PhiSpy.py
-multidl:/home/umr7139/gv/dgoudenege/script/python_lib/multidl/multidl.py
-macsyfinder:/home/umr8227/gv/dgoudenege/.local/bin/macsyfinder
-padloc:/home/umr8227/gv/dgoudenege/script/padloc/bin/padloc
-satellite_finder:/home/umr7139/gv/dgoudenege/script/satellite_finder_0.9.1
+python:<PATH EXECUTABLE>
+rscript:<PATH EXECUTABLE>
+transeq:<PATH EXECUTABLE>
+hmmscan:<PATH EXECUTABLE>
+hmmsearch:<PATH EXECUTABLE>
+diamond:<PATH EXECUTABLE>
+trimmomatic:<PATH JAR>
+spades:<PATH EXECUTABLE>
+blastn:<PATH EXECUTABLE>
+makeblastdb:<PATH EXECUTABLE>
+phanotate:<PATH EXECUTABLE>
+trnascanse:<PATH EXECUTABLE>
+interproscan:<PATH JAR>
+mmseqs:<PATH EXECUTABLE>
+eggnog-mapper:<PATH EXECUTABLE>
+muscle:<PATH EXECUTABLE>
+iqtree2:<PATH EXECUTABLE>
+fasttree:<PATH EXECUTABLE>
+mash:<PATH EXECUTABLE>
+famsa:<PATH EXECUTABLE>
+fastani:<PATH EXECUTABLE>
+prodigal:<PATH EXECUTABLE>
+wordcount:<PATH EXECUTABLE>
+seqret:<PATH EXECUTABLE>
+checkv:<PATH EXECUTABLE>
+ppanggolin:<PATH EXECUTABLE>
+circos:<PATH EXECUTABLE>
+snippy:<PATH EXECUTABLE>
+phispy:<PATH EXECUTABLE>
+multidl:<PATH EXECUTABLE>
+macsyfinder:<PATH EXECUTABLE>
+padloc:<PATH EXECUTABLE>
+mafft:<PATH EXECUTABLE>
+satellite_finder:<PATH DIR>
 # DATABASES
-terminase_hmm:/shared/projects/dynamic/db/HMMs/large_terminase_subunit.hmm
-terminase_dmnd:/shared/projects/dynamic/db/dmnd/grooveDB_largeTerminase.dmnd
-contaPhageDB:/shared/projects/dynamic/db/blast/contaPhage
-pvogs_hmm:/shared/projects/dynamic/db/HMMs/pVOGs.hmm
-pvogs_table:/shared/projects/dynamic/db/pVOGs/Allvogtables
-pvogs_json:/shared/projects/dynamic/db/pVOGs/Allvogtables.json
-nahant_dmnd:/shared/projects/dynamic/db/dmnd/nahant.dmnd
-refseq212bct_dmnd:/shared/projects/dynamic/db/dmnd/refseq212bct.dmnd
-uniprot_mapping:/shared/projects/dynamic/db/uniprot-database_type_RefSeq.tab
-phagedb_dmnd:/shared/projects/dynamic/db/dmnd/phagedb.dmnd
-eggnog-db:/shared/projects/dynamic/db/eggnog-mapper-data
-recombinase_hmm:/shared/projects/dynamic/db/HMMs/VirFam_PFAM_recombinase.hmm
-checkv_db:/home/umr8227/gv/dgoudenege/db/checkv-db-v1.0
-balrog_data:/home/umr8227/gv/dgoudenege/db/balrog_data
-defense-finder-models:/shared/projects/dynamic/db/defense-finder-models
-padloc-db:/shared/projects/dynamic/db/padloc-db
-picmi-db:/shared/projects/dynamic/db/PICMI
+terminase_hmm:<PATH HMM FILE>
+terminase_dmnd:<PATH DMND DB>
+contaPhageDB:<PATH DB>
+pvogs_hmm:<PATH HMM FILE>
+pvogs_table:<PATH TABLE>
+pvogs_json:<PATH JSON>
+nahant_dmnd:<PATH DMND DB>
+refseq212bct_dmnd:<PATH DMND DB>
+uniprot_mapping:<PATH TABLE>
+phagedb_dmnd:<PATH DMND DB>
+phagedb_dmnd_phanotate:<PATH DMND DB>
+eggnog-db:<PATH DB>
+recombinase_hmm:<PATH HMM FILE>
+checkv_db:<PATH DB>
+balrog_data:<PATH DB>
+defense-finder-models:<PATH DIR MODELS>
+padloc-db:<PATH DB>
+picmi-db:<PATH DB>
