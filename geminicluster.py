@@ -41,6 +41,8 @@ def mmseqs_easycluster(pathIN: str, pathOUT: str, idThr: int = 30, maxLRthr: int
     |    maxLRthr: % maxLrap threshold (default=80)              |
     |    ext     : extension of input files (default=.faa)       |
      ------------------------------------------------------------
+    |TOOLS: mmseqs                                               |
+     ------------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "mmseqs_easycluster", [ext])
@@ -51,7 +53,9 @@ def mmseqs_easycluster(pathIN: str, pathOUT: str, idThr: int = 30, maxLRthr: int
         printcolor("[ERROR: mmseqs_easycluster]\nMMseqs require more than one FASTA file\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'mmseqs' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['mmseqs'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     printcolor("♊ easycluster"+"\n")
     # Launch command
@@ -81,6 +85,8 @@ def mmseqs_rbh(pathIN: str, pathOUT: str, ref: str = "None", idThrClust: int = 8
     |    boolNucl   : bool for nucleotide input (default=False)  |
     |    ext        : extension of input files (default=.faa)    |
      ------------------------------------------------------------
+    |TOOLS: mmseqs                                               |
+     ------------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "mmseqs_easyrbh", [ext])
@@ -91,7 +97,9 @@ def mmseqs_rbh(pathIN: str, pathOUT: str, ref: str = "None", idThrClust: int = 8
         printcolor("[ERROR: mmseqs_easyrbh]\nMMseqs require more than one FASTA file\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'mmseqs' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['mmseqs'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     # ***** Check if some results are missing ***** #
     boolMissing = False
@@ -319,12 +327,16 @@ def make_group_core_align(pathIN: str, pathJSON: str, pathGROUP: str, pathOUT: s
     |    extN     : ext of gene fasta files (default=.ffn)       |
     |    extP     : ext of prot fasta files (default=.faa)       |
      ------------------------------------------------------------
+    |TOOLS: muscle                                               |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathJSON = path_converter(pathJSON)
     pathGROUP = path_converter(pathGROUP)
     pathOUT = path_converter(pathOUT)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'muscle' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['muscle'])
     printcolor("♊ RBH to core align"+"\n")
     if pathJSON != "" and os.path.isfile(pathJSON):
         dicoCLUSTER = load_json(pathJSON)
@@ -540,12 +552,18 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
     |    minsize    : min genome length (Mb) (default=1.0)       |
     |    ext        : ext of prot fasta files (default=.faa)     |
      ------------------------------------------------------------
+    |TOOLS: mash, famsa                                          |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathIN2 = path_converter(pathIN2)
     pathOUT = path_converter(pathOUT)
     slurmBool, cpu, memMax, memMin = get_sys_info()
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'mash' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['mash'])
+    if 'famsa' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['famsa'])
     lstFiles, maxpathSize = get_input_files(pathIN, "make_vibrio_core", [ext])
     if len(lstFiles) == 0:
         printcolor("[ERROR: make_vibrio_core]\nAny input fasta files found, check extension\n", 1, "212;64;89", "None", True)
@@ -841,6 +859,8 @@ def ppanggolin(pathIN: str, pathIN2: str, pathOUT: str, maxRGP: int = -1, prefix
     |    prefix : organism prefix (default=None)                 |
     |    ext    : ext of prot fasta files (default=.gbk.gz)      |
      ------------------------------------------------------------
+    |TOOLS: ppanggolin, circos                                   |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "ppanggolin", [ext])
     if len(lstFiles) == 0:
@@ -848,7 +868,11 @@ def ppanggolin(pathIN: str, pathIN2: str, pathOUT: str, maxRGP: int = -1, prefix
         exit_gemini()
     pathOUT = path_converter(pathOUT)
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'ppanggolin' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['ppanggolin'])
+    if 'circos' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['circos'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathDIRTMP = geminiset.pathTMP
     # ***** Ordered organisms list ***** #
@@ -876,7 +900,7 @@ def ppanggolin(pathIN: str, pathIN2: str, pathOUT: str, maxRGP: int = -1, prefix
             LST.write(os.path.basename(pathFile).replace(ext, "")+"\t"+pathFile+"\n")
         LST.close()
         # Launch PPanGGOLiN
-        cmdPPANGGOLINRGP = dicoGeminiPath['TOOLS']["ppanggolin"]+" panrgp --anno "+pathTMPlst+" --output "+pathOUTppanggolin+" --tmpdir "+pathDIRTMP + \
+        cmdPPANGGOLINRGP = dicoGeminiPath['TOOLS']['ppanggolin']+" panrgp --anno "+pathTMPlst+" --output "+pathOUTppanggolin+" --tmpdir "+pathDIRTMP + \
             " --cpu "+str(cpu)+" --disable_prog_bar --log "+pathLOGppanggolin+" > "+pathLOGppanggolin+" 2>&1"
         os.system(cmdPPANGGOLINRGP)
         os.system("mv "+pathLOGppanggolin+" "+pathOUTppanggolin)
@@ -1027,7 +1051,7 @@ def ppanggolin(pathIN: str, pathIN2: str, pathOUT: str, maxRGP: int = -1, prefix
         cpt += 1
     KARYOTYPE.close()
     # Launch circos
-    cmdCIRCOS = dicoGeminiPath['TOOLS']["circos"]+" -conf "+pathDIRTMP+"/circos.conf > /dev/null 2>&1"
+    cmdCIRCOS = dicoGeminiPath['TOOLS']['circos']+" -conf "+pathDIRTMP+"/circos.conf > /dev/null 2>&1"
     os.system(cmdCIRCOS)
     spinner.stop()
     printcolor("♊ Make Circos RGP plot"+"\n")

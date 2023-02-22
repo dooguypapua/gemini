@@ -48,6 +48,8 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
     |    sketchSize: fastaANI fragments length (default=10000)   |
     |    ext       : extension of input files (default=.fna)     |
      ------------------------------------------------------------
+    |TOOLS: mash                                                 |
+     ------------------------------------------------------------
     |  Sketch size = number of min-hashes that are kept.         |
      ------------------------------------------------------------
     '''
@@ -70,7 +72,9 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
     PATHSVG = pathOUT+"/mash_matrix_"+str(sketchSize)+".svg"
     PATHXLSX = pathOUT+"/mash_matrix_"+str(sketchSize)+".xlsx"
     lstFiles.sort()
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'mash' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['mash'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     if "." not in ext:
@@ -248,6 +252,8 @@ def fastani_db(pathIN: str, pathIN2: str, pathJSON: str, fragLen: int = 3000, ex
     |    fragLen  : fastaANI fragments length (default=3000)     |
     |    ext      : extension of input files (default=.fna)      |
      ------------------------------------------------------------
+    |TOOLS: fastani                                              |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "fastani_db", [ext])
     if len(lstFiles) == 0:
@@ -261,7 +267,9 @@ def fastani_db(pathIN: str, pathIN2: str, pathJSON: str, fragLen: int = 3000, ex
     lstFiles2, maxpathSize2 = get_input_files(pathIN2, "fastani_db", [".txt"])
     lstFiles.sort()
     lstFiles2.sort()
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'fastani' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['fastani'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     if pathJSON == "":
@@ -361,6 +369,8 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
     |    ext1        : extension of input files (default=.ffn)   |
     |    ext2        : extension of input files (default=.faa)   |
      ------------------------------------------------------------
+    |TOOLS: famsa, fasttree                                      |
+     ------------------------------------------------------------
     '''
     lstFilesFFN, maxpathSize1 = get_input_files(pathIN1, "best_gene_tree_topology", [ext1])
     if len(lstFilesFFN) == 0:
@@ -394,7 +404,11 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
             printcolor("  "+miss+"\n", 1, "212;64;89", "None", True)
         exit_gemini()
     # Initialization
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'famsa' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['famsa'])
+    if 'fasttree' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['fasttree'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     if pathOUT == "":
         printcolor("[ERROR: best_tree_topology]\nMissing '-o'pathOUT\n", 1, "212;64;89", "None", True)
@@ -609,9 +623,13 @@ def specific_kmers(pathIN: str, pathIN2: str, pathOUT: str, kmerLen: int = 25, e
     |    kmerLen    : kmer length (default=25)                   |
     |    ext        : extension of input files (default=.fna)    |
      ------------------------------------------------------------
+    |TOOLS: wordcount                                            |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "specific_kmers", [ext])
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'wordcount' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['wordcount'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     if "." not in ext:
         ext = "."+ext
@@ -755,9 +773,15 @@ def core_prot_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80,
     |    covThr  : %coverage threshold (default=80)              |
     |    ext     : extension of input files (default=.faa)       |
      ------------------------------------------------------------
+    |TOOLS: muscle, iqtree2                                      |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "core_prot_tree", [ext])
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'muscle' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['muscle'])
+    if 'iqtree2' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['iqtree2'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     if "." not in ext:
@@ -883,9 +907,15 @@ def individual_core_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int
     |    covThr  : %coverage threshold (default=80)              |
     |    ext     : extension of input files (default=.ffn)       |
      ------------------------------------------------------------
+    |TOOLS: muscle, iqtree2                                      |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "individual_core_tree", [ext])
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'muscle' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['muscle'])
+    if 'iqtree2' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['iqtree2'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     if "." not in ext:
@@ -1034,9 +1064,13 @@ def protein_similarity_matrix(pathIN: str, pathOUT: str, locusTag: str, idThr: i
     |    covThr   : min % coverage (default=80)                  |
     |    ext      : extension of input files (default=.faa)      |
      ------------------------------------------------------------
+    |TOOLS: diamond                                              |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "protein_similarity_matrix", [ext])
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'diamond' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['diamond'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     pathQueryFASTA = pathTMP+"/query.faa"
@@ -1235,6 +1269,8 @@ def panacota_flexible_tree(pathIN: str, pathOUT: str, filterOrg: str = "None") -
     |    pathOUT   : path of output folder (required)            |
     |    filterOrg : organism name filter (default=None)         |
      ------------------------------------------------------------
+    |TOOLS: famsa                                                |
+     ------------------------------------------------------------
     '''
     pathPanacotaDir = path_converter(pathIN)
     if not os.path.isdir(pathPanacotaDir):
@@ -1252,7 +1288,9 @@ def panacota_flexible_tree(pathIN: str, pathOUT: str, filterOrg: str = "None") -
     os.makedirs(pathOUT, exist_ok=True)
     pathJSONmean = pathOUT+"/flexible_mean_similarities.json"
     pathJSONgene = pathOUT+"/flexible_genes_similarities.json"
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'famsa' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['famsa'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     dicoGeneToOrg = {}
@@ -1413,6 +1451,8 @@ def snippy(pathIN: str, pathOUT: str, ext: str = ".gbk") -> Tuple[str, str, str]
     |    pathOUT  : path of output folder (required)             |
     |    ext      : extension of input files (default=.faa)      |
      ------------------------------------------------------------
+    |TOOLS: snippy                                               |
+     ------------------------------------------------------------
     # dicoSNIPPY[org1][org2] = {'count':{'total':0,'intergenic':0,'cds':0,'cds_notsyn':0,'gene':0,'gene_notsyn':0},
     #                           'dicoSNP': {lt:{pos:{'contig','hgvs_n','hgvs_p','effect','gene','product'}}}
     #                         }
@@ -1420,7 +1460,9 @@ def snippy(pathIN: str, pathOUT: str, ext: str = ".gbk") -> Tuple[str, str, str]
     lstFiles, maxpathSize = get_input_files(pathIN, "snippy", [ext, ext+".gz"])
     maxpathSize = (maxpathSize*2)+4
     pathOUT = path_converter(pathOUT)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'snippy' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['snippy'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     os.makedirs(pathOUT, exist_ok=True)

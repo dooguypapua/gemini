@@ -56,6 +56,8 @@ def viridic(pathIN: str, pathOUT: str, ext: str = ".fna") -> Tuple[str, str, str
     |    pathOUT : path of output files (required)               |
     |    ext     : extension of input files (default=.fna)       |
      ------------------------------------------------------------
+    |TOOLS: viridic                                              |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "viridic", [ext])
     if len(lstFiles) == 0:
@@ -64,7 +66,9 @@ def viridic(pathIN: str, pathOUT: str, ext: str = ".fna") -> Tuple[str, str, str
     if len(lstFiles) == 1:
         printcolor("[ERROR: viridic]\nViridic required a minimum of two genomes\n", 1, "212;64;89", "None", True)
         exit_gemini()
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'viridic' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['viridic'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     if pathOUT == "":
         printcolor("[ERROR: viridic]\nMissing '-o'pathOUT\n", 1, "212;64;89", "None", True)
@@ -141,7 +145,7 @@ def phage_annotation(pathIN: str, pathOUT: str, boolEMBL: bool = False, enaProje
             printcolor("[ERROR: phage_annotation]\nMissing ENA project for .embl files\n", 1, "212;64;89", "None", True)
             exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
     # ***** SYNTAXIC Annotation & TRANSLATION ***** #
     phanotate(pathIN=pathIN, pathOUT=pathOUT, ext=".fna")
     transeq(pathIN=pathOUT, pathOUT=pathOUT, boolOrgName=False, ext=".ffn")
@@ -469,6 +473,8 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     |    pathOUT : path of output files (required)               |
     |    checkv  : checkV High/MediumQuality % (default=75)      |
      ------------------------------------------------------------
+    |TOOLS: seqret, python, hmmscan                              |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathOUT = path_converter(pathOUT)
@@ -504,7 +510,13 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     urlGBKFTPsummary = "genomes/ASSEMBLY_REPORTS/assembly_summary_genbank.txt"
     urlGBKHTTPsummary = "https: //ftp.ncbi.nlm.nih.gov/genomes/ASSEMBLY_REPORTS/assembly_summary_genbank.txt"
     # Gemini variables
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'seqret' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['seqret'])
+    if 'python' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['python'])
+    if 'hmmscan' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['hmmscan'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     lstBadKr = ["#", "'", "(", ")", ",", "/", ": ", " "]
     # Summary JSON
@@ -956,7 +968,7 @@ def phageDBsearch(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, 
     if not os.path.isfile(pathIN):
         printcolor("[ERROR: phageDBsearch]\nAny input FAA file\n", 1, "212;64;89", "None", True)
         exit_gemini()
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
     if dmndDB == "genbank":
         pathDB = dicoGeminiPath['DATABASES']['phagedb_dmnd']
     elif dmndDB == "phanotate":
@@ -1024,6 +1036,8 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     |    thsp    : threshold for species clustering (default=95) |
     |    ext     : extension of input files (default=.fna)       |
      ------------------------------------------------------------
+    |TOOLS: blastn, rscript                                      |
+     ------------------------------------------------------------
     '''
     setAllOrg = set()
     if boolFromDB:
@@ -1055,7 +1069,11 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     if "." not in ext:
         ext = "."+ext
     # Gemini variables
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'blastn' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['blastn'])
+    if 'rscript' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['rscript'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathVIRIDICgeminiR = os.path.dirname(os.path.abspath(__file__))+"/utils/geminiVIRIDIC.R"
     # ***** OUTPUT *****#
@@ -1069,7 +1087,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     pathTMPFASTA = pathTMP+"/FASTA"
     os.makedirs(pathTMPFASTA, exist_ok=True)
     pathTMPMISSING = pathTMP+"/MISSING"
-    os.makedirs(pathTMPMISSING, exist_ok=True)    
+    os.makedirs(pathTMPMISSING, exist_ok=True)
     printcolor("⏩ Found "+str(len(setAllOrg))+" phages"+"\n")
     # ***** CHECK MISSING DISTANCES ***** #
     printcolor("♊ Check JSON"+"\n")
@@ -1212,7 +1230,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
                             dicoMissing2.remove(orgName1)
                             dump_json(dicoMissing2, pathMISSINGJSON2)
                         except ValueError:
-                            pass                        
+                            pass
             for orgName2 in dicoMissing1:
                 dicoSimMA1[orgName2] = 0.0
                 pathVIRIDICJSON2 = pathDIRJSON+"/"+orgName2+".json"
@@ -1226,7 +1244,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
                         dicoMissing2.remove(orgName1)
                         dump_json(dicoMissing2, pathMISSINGJSON2)
                     except ValueError:
-                        pass 
+                        pass
             dicoMissing1 = []
             dump_json(dicoMissing1, pathMISSINGJSON1)
             dump_json(dicoSimMA1, pathVIRIDICJSON1)
@@ -1357,6 +1375,8 @@ def PhiSpy(pathIN: str, pathOUT: str, nbAdjacent: int = 3, minCtgLen: int = 5000
     |    boolPvogs  : use PVOGS hmm database (default=False)     |
     |    ext        : extension of input files (default=.gbk)    |
      ------------------------------------------------------------
+    |TOOLS: phispy                                               |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "filter_phage_assembly", [ext, ext+".gz"])
     if len(lstFiles) == 0:
@@ -1371,7 +1391,9 @@ def PhiSpy(pathIN: str, pathOUT: str, nbAdjacent: int = 3, minCtgLen: int = 5000
     if "." not in ext:
         ext = "."+ext
     # Gemini variables
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'phispy' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['phispy'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGBK in lstFiles:
@@ -1412,10 +1434,16 @@ def picmi_finder_gbk(pathIN: str, pathOUT: str, prefix: str, maxLen: int = 50000
     |    prefix : prefix of output files (required)              |
     |    maxLen : maximum PICMI length (default=50000)           |
      ------------------------------------------------------------
+    |TOOLS: diamond, hmmsearch                                   |
+     ------------------------------------------------------------
     '''
     # Global
     pathTMP = geminiset.pathTMP
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'diamond' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['diamond'])
+    if 'hmmsearch' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['hmmsearch'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     # Paths
     pathGBK = path_converter(pathIN)
@@ -1659,10 +1687,16 @@ def picmi_finder_databankseq(pathIN: str, pathOUT: str, maxLen: int = 50000) -> 
     |    pathOUT: path of output folder (required)               |
     |    maxLen : maximum PICMI length (default=50000)           |
      ------------------------------------------------------------
+    |TOOLS: diamond, hmmsearch                                   |
+     ------------------------------------------------------------
     '''
     # Global
     pathTMP = geminiset.pathTMP
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'diamond' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['diamond'])
+    if 'hmmsearch' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['hmmsearch'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     # Paths
     pathSEQ = path_converter(pathIN)

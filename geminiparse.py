@@ -371,7 +371,7 @@ def fasta_stats(pathIN: str, pathOUT: str = "None", boolSort: bool = True, ext: 
     if boolSort is True:
         dicoSize = dict(sorted(dicoSize.items(), key=lambda item: item[0]))
         dicoNbCtg = dict(sorted(dicoNbCtg.items(), key=lambda item: item[0]))
-    df = pd.DataFrame({'Org':list(dicoNbCtg.keys()), 'NbCtg':list(dicoNbCtg.values()), 'Size':list(dicoSize.values())})
+    df = pd.DataFrame({'Org': list(dicoNbCtg.keys()), 'NbCtg': list(dicoNbCtg.values()), 'Size': list(dicoSize.values())})
     if pathOUT == "None":
         printcolor(df.to_string(index=False)+"\n")
     else:
@@ -593,11 +593,15 @@ def gbk_to_faa(pathIN: str, pathOUT: str, syntaxic: str = "prodigal", boolSplit:
     |    syntaxic : syntaxic tool for missing (default=prodigal) |
     |    boolSplit: create one output per contig (default=False) |
      ------------------------------------------------------------
+    |TOOLS: prodigal                                             |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathOUT = path_converter(pathOUT)
     dicoGBK = make_gbk_dict(pathIN)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'prodigal' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['prodigal'])
     org = list(dicoGBK.keys())[0]
     if boolSplit is False:
         OUT = open(pathOUT, 'w')
@@ -654,11 +658,15 @@ def gbk_to_ffn(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
     |    pathOUT : path of output FFN file (required)            |
     |    syntaxic: syntaxic missing annot tool (default=prodigal)|
      ------------------------------------------------------------
+    |TOOLS: prodigal                                             |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathOUT = path_converter(pathOUT)
     dicoGBK = make_gbk_dict(pathIN)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'prodigal' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['prodigal'])
     org = list(dicoGBK.keys())[0]
     OUT = open(pathOUT, 'w')
     for contig in dicoGBK[org]:
@@ -780,10 +788,14 @@ def gbk_to_all(pathIN: str, pathOUT: str, syntaxic: str = "prodigal") -> Tuple[s
     |    pathOUT: path of output folder (required)               |
     |    syntaxic: syntaxic missing annot tool (default=prodigal)|
      ------------------------------------------------------------
+    |TOOLS: prodigal                                             |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathOUT = path_converter(pathOUT)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'prodigal' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['prodigal'])
     os.makedirs(pathOUT, exist_ok=True)
     # Construct paths
     dicoGBK = list(make_gbk_dict(pathIN).values())[0]
@@ -1472,7 +1484,7 @@ def make_pvogs_desc_dict(pathIN: str = "None", pathJSON: str = "None") -> Tuple[
     '''
     pathIN = path_converter(pathIN)
     pathJSON = path_converter(pathJSON)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
     lstHypoSynonym = ["hypothetical", "putative predicted product", "hyphothetical", "hypotheical", "unknown", "uncharacterised"]
     lstNoRealDescr = ["vs.", "77orf", "ab1gp", "bbp", "bcepgomrgp", "bcepny", "hef", "pas", "phg", "pfwmp", "phi eta orf", "phi eta orf", "phi mu50b-like", "phi pv83 orf", "phi pvl orf", "phi pvl-like", "phi slt orf", "phi105", "phi92_gp", "phi-eta", "phipvl", "rb32orf", "rb69orf", "upf", "vhs", "vpf", "vr7orf"]
     lstRegexpNoRealDescr = ["^gp", r"^[0-9]\.*[0-9]*$", r"^putative protein [0-9]\.*[0-9]*$", "^ea*a*[0-9]+", r"^gene\s*[0-9]+", r"^orf\s*.*[0-9]+", r"^p[0-9]\.*[0-9]*$"]

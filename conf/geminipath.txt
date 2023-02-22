@@ -33,6 +33,7 @@ macsyfinder:<PATH EXECUTABLE>
 padloc:<PATH EXECUTABLE>
 mafft:<PATH EXECUTABLE>
 satellite_finder:<PATH DIR>
+convert:<PATH EXECUTABLE>
 # DATABASES
 terminase_hmm:<PATH HMM FILE>
 terminase_dmnd:<PATH DMND DB>

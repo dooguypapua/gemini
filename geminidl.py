@@ -161,6 +161,8 @@ def dl_genbank_bacteria(section: str, taxonomyID: int, pathOUT: str, chunkSize: 
     |    pathOUT   : path of output files (required)             |
     |    chunkSize : download chunk size (default=100)           |
      ------------------------------------------------------------
+    |TOOLS:python                                                |
+     ------------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
     if section not in ["refseq", "genbank"]:
@@ -171,7 +173,9 @@ def dl_genbank_bacteria(section: str, taxonomyID: int, pathOUT: str, chunkSize: 
     urlSUMMARY = "https: //ftp.ncbi.nlm.nih.gov/genomes/"+section+"/assembly_summary_"+section+".txt"
     pathSummary = pathOUT+"/assembly_summary_"+section+".txt"
     pathSummaryEtag = pathOUT+"/assembly_summary_"+section+".etag"
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'python' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['python'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     pathLOG = pathTMP+"/wget.log"

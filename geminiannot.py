@@ -62,9 +62,11 @@ def phanotate(pathIN: str, pathOUT: str, minLen: int = 0, fromPhageDb: bool = Fa
     |PARAMETERS                                                 |
     |    pathIN     : path of input files or folder (required)  |
     |    pathOUT    : path of output files (required)           |
-    |    minLen     : minimum ORF length (default=0)           |
+    |    minLen     : minimum ORF length (default=0)            |
     |    fromPhageDb: bool if call from phageBb (default=False) |
     |    ext        : extension of input files (default=.fna)   |
+     -----------------------------------------------------------
+    | TOOLS: phanotate                                          |
      -----------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
@@ -73,7 +75,9 @@ def phanotate(pathIN: str, pathOUT: str, minLen: int = 0, fromPhageDb: bool = Fa
         printcolor("[ERROR: phanotate]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'phanotate' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['phanotate'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     if not os.path.isdir(pathTMP):
@@ -161,6 +165,8 @@ def balrog(pathIN: str, pathOUT: str, topology: str, division: str, taxID: int =
     |    boolMmseqs : filter gene with mmseqs2 (default=True)   |
     |    ext        : extension of input files (default=.fna)   |
      -----------------------------------------------------------
+    | TOOLS: mmseqs                                             |
+     -----------------------------------------------------------
     |    mmseqs index must be done with system mmseqs version   |
     |taxonomyID: Caudo=28883, Myo=10662, Podo=10744, Sipho=10699|
     |            V.chagasii=170679, V.crassostreae=246167       |
@@ -178,7 +184,9 @@ def balrog(pathIN: str, pathOUT: str, topology: str, division: str, taxID: int =
         printcolor("[ERROR: make_gbk_from_fasta]\nDivision must be 'BCT' for bacteria or 'PHG' for phage\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'mmseqs' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['mmseqs'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     if not os.path.isdir(pathTMP):
@@ -731,6 +739,8 @@ def trnascan_se(pathIN: str, pathOUT: str, model: str = "-B", ext: str = ".fna")
     |    model  : model -E,-B,-A,-M <model>,-O,-G (default=-B)   |
     |    ext    : extension of input files (default=.fna)        |
      ------------------------------------------------------------
+    | TOOLS: trnascanse                                          |
+     -----------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "trnascan_se", [ext])
@@ -738,7 +748,9 @@ def trnascan_se(pathIN: str, pathOUT: str, model: str = "-B", ext: str = ".fna")
         printcolor("[ERROR: trnascan_se]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'trnascanse' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['trnascanse'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     printcolor("♊ tRNAscan-SE"+"\n")
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
@@ -776,6 +788,8 @@ def pvogs(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str, str]:
     |    pathOUT: path of pVOGs hmmscan tblout file (required)   |
     |    ext    : extension of input files (default=.faa)        |
      ------------------------------------------------------------
+    | TOOLS: hmmsearch                                           |
+     -----------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "pvogs", [ext])
@@ -783,7 +797,9 @@ def pvogs(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str, str]:
         printcolor("[ERROR: pvogs]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'hmmsearch' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['hmmsearch'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     printcolor("♊ pVOGs"+"\n")
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
@@ -816,6 +832,8 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
     |    boolSeq: add sequences to output (default=false)        |
     |    ext    : extension of input files (default=.faa)        |
      ------------------------------------------------------------
+    | TOOLS: diamond                                             |
+     -----------------------------------------------------------
     '''
     pathDB = path_converter(pathDB)
     pathOUT = path_converter(pathOUT)
@@ -825,7 +843,9 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
         exit_gemini()
     if os.path.isdir(pathIN):
         os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'diamond' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['diamond'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathTMP = geminiset.pathTMP
     # Make db if not done
@@ -872,6 +892,8 @@ def interproscan(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str
     |    pathOUT: path of output JSON file (required)            |
     |    ext    : extension of input files (default=.faa)        |
      ------------------------------------------------------------
+    | TOOLS: interproscan                                        |
+     ------------------------------------------------------------
     | App: CDD-3.18, Coils-2.2.1, Gene3D-4.3.0, Hamap-2020_05    |
     |      MobiDBLite-2.0, PANTHER-15.0, Pfam-33.1               |
     |      Phobius-1.01, PIRSF-3.10, PIRSR-2021_02, PRINTS-42.0  |
@@ -886,7 +908,9 @@ def interproscan(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str
         printcolor("[ERROR: interproscan]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'interproscan' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['interproscan'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     strLstApp = "CDD, Hamap, PANTHER, Pfam, PIRSF, PIRSR, PRINTS, ProSiteProfiles, SFLD, SMART, SUPERFAMILY, TIGRFAM"
     spinner = yaspin(Spinners.aesthetic, text="♊ InterProScan", side="right")
@@ -934,6 +958,8 @@ def eggnog(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, ext: st
     |    covThr : %cover threshold (default=50)                  |
     |    ext    : extension of input files (default=.faa)        |
      ------------------------------------------------------------
+    | TOOLS: eggnog-mapper, eggnog-db                            |
+     ------------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "eggnog", [ext])
@@ -941,7 +967,11 @@ def eggnog(pathIN: str, pathOUT: str, idThr: int = 20, covThr: int = 50, ext: st
         printcolor("[ERROR: eggnog]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'eggnog-mapper' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['eggnog-mapper'])
+    if 'eggnog-db' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['eggnog-db'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     spinner = yaspin(Spinners.aesthetic, text="♊ EggNOG", side="right")
     spinner.start()
@@ -980,6 +1010,8 @@ def recombinase(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
     |    pathOUT: path of hmmscan tblout file (required)         |
     |    ext    : extension of input files (default=.faa)        |
      ------------------------------------------------------------
+    | TOOLS: hmmsearch                                           |
+     ------------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "recombinase", [ext])
@@ -987,7 +1019,9 @@ def recombinase(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
         printcolor("[ERROR: recombinase]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'hmmsearch' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['hmmsearch'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     printcolor("♊ Recombinase"+"\n")
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
@@ -1020,6 +1054,8 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
     |    plmodelV: PADLOC model version (default=1.4.0)          |
     |    ext     : extension of input files (default=.faa)       |
      ------------------------------------------------------------
+    | TOOLS: macsyfinder, padloc                                 |
+     ------------------------------------------------------------
     dicoDF / dicoPL
         "perOrg" : {"org1": {"syst1": [[lt1],[lt2],[lt3]], "syst2": [[lt4],[lt5]]}}
         "perLT"  : {"org1": {"lt1": {"syst1": "geneName1"}, "lt1": {"syst1": "geneName1"}}}
@@ -1039,7 +1075,11 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
         printcolor("[ERROR: defense_system]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'macsyfinder' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['macsyfinder'])
+    if 'padloc' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['padloc'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     pathLOG = pathOUT+"/gemini.log"
     # ***** DefenseFinder ***** #
@@ -1218,6 +1258,8 @@ def satellite_finder(pathIN: str, pathOUT: str, modelSel: str = "ALL", ext: str 
     |    model   : SatelliteFinder model version (default=ALL)   |
     |    ext     : extension of input files (default=.faa)       |
      ------------------------------------------------------------
+    | TOOLS: satellite_finder                                    |
+     ------------------------------------------------------------
     model = ['ALL', 'cfPICI', 'PICI', 'P4', 'PLE']
     No "#" in fasta headers and required Macsyfinder v2.0
     '''
@@ -1227,7 +1269,9 @@ def satellite_finder(pathIN: str, pathOUT: str, modelSel: str = "ALL", ext: str 
         printcolor("[ERROR: satellite_finder]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     # Look for available models
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'satellite_finder' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['satellite_finder'])
     lstModels = [sub.replace(".xml", "") for sub in os.listdir(dicoGeminiPath['TOOLS']['satellite_finder']+"/models/SatelliteFinder/definitions/")]
     if modelSel not in lstModels+["ALL"]:
         printcolor("[ERROR: satellite_finder]\nInvalid model \""+modelSel+"\". Availables = "+str(lstModels+["ALL"])+"\n", 1, "212;64;89", "None", True)

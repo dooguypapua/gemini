@@ -315,9 +315,15 @@ def svg_dna_transform(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     |    pathIN     : path of input/output SVG file              |
     |    pathOUT    : path of output PNG file (required)         |
      ------------------------------------------------------------
+    |TOOLS: convert                                              |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathOUT = path_converter(pathOUT)
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'convert' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['convert'])
+
     # ***** DELETE background rectangle and middle line ***** #
     SVG = open(pathIN, 'r')
     lstLines = SVG.read().split("\n")
@@ -381,7 +387,7 @@ def svg_dna_transform(pathIN: str, pathOUT: str) -> Tuple[str, str]:
         lstToWrite.append(lstLines[i])
     # Convert to PNG
     svg2png(bytestring="\n".join(lstToWrite), write_to=pathOUT, dpi=300)
-    os.system("convert "+pathOUT+" -gravity South -background white -splice 0x1 -background black -splice 0x1 -trim +repage -chop 0x1" +
+    os.system(dicoGeminiPath['TOOLS']['convert']+" "+pathOUT+" -gravity South -background white -splice 0x1 -background black -splice 0x1 -trim +repage -chop 0x1" +
               " -gravity North -background white -splice 0x1 -background black -splice 0x1 -trim +repage -chop 0x1" +
               " -gravity East -background white -splice 5x0 -background black -splice 5x0 -trim +repage -chop 5x " +
               pathOUT.replace(".png", ".bak"))
@@ -467,9 +473,14 @@ def circos_plot(pathIN1: str, pathOUT: str, pathIN2: str = "None", pident: int =
     |    pident  : min %id for orthologuous (default=30)         |
     |    cov     : min %cov for orthologuous (default=80)        |
      ------------------------------------------------------------
+    |TOOLS: circos                                               |
+     ------------------------------------------------------------
     '''
     pathIN1 = path_converter(pathIN1)
     pathOUT = path_converter(pathOUT)
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'circos' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['circos'])
     if pathIN2 != "None":
         lstQueryFAAFiles, maxpathSize = get_input_files(pathIN2, "circos_plot", [".faa"])
 
@@ -726,8 +737,7 @@ def circos_plot(pathIN1: str, pathOUT: str, pathIN2: str = "None", pident: int =
 
     # ***** MAKE PLOT *****#
     print("circos -conf "+geminiset.pathTMP+"/circos.conf")
-    os.system("circos -conf "+geminiset.pathTMP+"/circos.conf")
-
+    os.system(dicoGeminiPath['TOOLS']['circos']+" -conf "+geminiset.pathTMP+"/circos.conf")
     print("\n".join(lstQueryFAAFiles))
 
 
@@ -743,8 +753,12 @@ def circos_align(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     |    pathIN : path of reference genbank file (required)      |
     |    pathOUT : path of output file (required)                |
      ------------------------------------------------------------
+    |TOOLS: circos                                               |
+     ------------------------------------------------------------
     '''
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'circos' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['circos'])
     pathIN = path_converter(pathIN)
     pathOUT = path_converter(pathOUT)
     lstFiles, maxpathSize = get_input_files(pathIN, "circos_align", [".fna", ".fasta"])
@@ -928,7 +942,7 @@ def circos_align(pathIN: str, pathOUT: str) -> Tuple[str, str]:
 
     # ***** MAKE PLOT *****#
     os.system("echo \"circos -conf "+geminiset.pathTMP+"/circos.conf\" > "+geminiset.pathTMP+"/circos.log")
-    os.system("circos -conf "+geminiset.pathTMP+"/circos.conf >> "+geminiset.pathTMP+"/circos.log 2>&1")
+    os.system(dicoGeminiPath['TOOLS']['circos']+" -conf "+geminiset.pathTMP+"/circos.conf >> "+geminiset.pathTMP+"/circos.log 2>&1")
     # Display sequence name order
     print("Order from outside to inside: ")
     for align in dicoFASTA:
@@ -950,11 +964,16 @@ def circos_rbh_plot(pathIN: str, pathJSON: str, pathOUT: str, maxCore: float = 0
     |    pathOUT  : path of output file (required)               |
     |    freq     : max core frequence to show (default=0.9)     |
      ------------------------------------------------------------
+    |TOOLS: circos                                               |
+     ------------------------------------------------------------
     '''
     pathIN = path_converter(pathIN)
     pathJSON = path_converter(pathJSON)
     pathOUT = path_converter(pathOUT)
     lstGBKFiles, maxpathSize = get_input_files(pathIN, "circos_rbh_plot", [".gbk", ".gbk.gz"])
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'circos' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['circos'])
 
     # ***** READ GBKs & KARYOTYPE ***** #
     printcolor("♊ Parse GBK"+"\n")
@@ -1125,4 +1144,4 @@ def circos_rbh_plot(pathIN: str, pathJSON: str, pathOUT: str, maxCore: float = 0
 
     # ***** MAKE PLOT *****#
     print("circos -conf "+geminiset.pathTMP+"/circos.conf")
-    os.system("circos -conf "+geminiset.pathTMP+"/circos.conf")
+    os.system(dicoGeminiPath['TOOLS']['circos']+" -conf "+geminiset.pathTMP+"/circos.conf")

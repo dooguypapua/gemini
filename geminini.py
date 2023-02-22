@@ -178,12 +178,19 @@ def build_gemini_dico(lstArgv):
 # ***** Retrieve tools path ***** #
 def get_gemini_path():
     dicoGeminiPath = {}
+    dicoGeminiModule = {}
     slurmBool, cpu, memMax, memMin = get_sys_info()
     if slurmBool is True:
+        # Paths
         if os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipathslurm.txt"):
             pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipathslurm.txt"
         else:
             pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/geminipathslurm.txt"
+        # Modules
+        pathGeminiModuleTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/slurm_module.txt"
+        lstLines = read_file(pathGeminiModuleTXT, yaspinBool=False)
+        for line in lstLines:
+            dicoGeminiModule[line.split(":")[0]] = line.split(":")[1]
     else:
         if os.path.isfile(os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipath.txt"):
             pathGeminiPathTXT = os.path.dirname(os.path.abspath(__file__))+"/conf/mygeminipath.txt"
@@ -200,7 +207,7 @@ def get_gemini_path():
         for line in categoryLine:
             if line != "" and line[0] != "#":
                 dicoGeminiPath[categoryName][line.split(":")[0]] = line.split(":")[1]
-    return dicoGeminiPath
+    return dicoGeminiPath, dicoGeminiModule
 
 
 # ***** Retrieve system info ***** #
@@ -744,7 +751,7 @@ def infofct(fctName):
 
 # ***** Show tools and databases version ***** #
 def infoversion(pathOUT: str = None):
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
     lstDoubleDashVersion = ["python", "rscript", "transeq", "diamond", "spades", "phanotate", "interproscan",
                             "eggnog-mapper", "iqtree2", "mash", "fastani", "wordcount", "seqret", "ppanggolin",
                             "circos", "snippy", "phispy", "macsyfinder", "padloc", "mafft"]

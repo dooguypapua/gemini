@@ -39,12 +39,18 @@ def phage_assembly(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     |    pathIN  : path of input files or folder (required)      |
     |    pathOUT : path of output files (required)               |
      ------------------------------------------------------------
+    |TOOLS: trimmomatic, spades                                  |
+     ------------------------------------------------------------
     '''
     lstFiles, maxpathSize = get_input_files(pathIN, "phage_assembly", [".fastq.gz", ".fastq", ".fq.gz", ".fq"])
     if len(lstFiles) == 0:
         printcolor("[ERROR: phage_assembly]\nAny input files found\n", 1, "212;64;89", "None", True)
         exit_gemini()
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'trimmomatic' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['trimmomatic'])
+    if 'spades' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['spades'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     if pathOUT == "":
         printcolor("[ERROR: phage_assembly]\nMissing '-o'pathOUT\n", 1, "212;64;89", "None", True)
@@ -103,8 +109,10 @@ def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: 
     |    pathIN : path of input files or folder (required)       |
     |    pathOUT: path of output files (required)                |
     |    minLen : minimum contig length (default=100)            |
-    |    minCov : minimum contig coverage (default=2)           |
+    |    minCov : minimum contig coverage (default=2)            |
     |    ext    : extension of input files (default=.fasta)      |
+     ------------------------------------------------------------
+    |TOOLS: blastn                                               |
      ------------------------------------------------------------
     '''
     pathOUT = path_converter(pathOUT)
@@ -114,7 +122,9 @@ def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: 
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
     tabulateTable = []
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'blastn' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['blastn'])
     printcolor("♊ Filter assembly"+"\n")
     pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathAssembly in lstFiles:
@@ -186,7 +196,7 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
     if len(lstQuery) == 0:
         printcolor("[ERROR: replicon_distribution]\nAny reference files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
-    dicoGeminiPath = get_gemini_path()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
     # Variables
     maxpathSize = max(maxpathSize1, maxpathSize2)
     setRefRepliconPath = set()
