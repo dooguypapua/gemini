@@ -182,6 +182,15 @@ pip install -r requirements.txt
 ##### Edit default gemini variables
 ```diff
 nano geminiset.py
+
+fctName = ""
+title = ""
+slurmBool = ""
+cpu = ""
+memMax = ""
+memMin = ""
+pathTMP = ""
+slurmLib = []
 ```
 
 ##### Edit required data and tools locations
