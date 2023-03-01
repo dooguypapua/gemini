@@ -644,22 +644,24 @@ def kmerize(seq, k):
 
 # ***** Print color ***** #
 def printcolor(text: str, style: str = None, rgbFG: str = None, rgbBG: str = None, colorBool: bool = False):
-    # decodeText = codecs.decode(text, "unicode_escape")
-    if colorBool is True:
-        if rgbBG != "None":
-            print("\x1b["+str(style)+";38;2;"+rgbFG+";48;2;"+rgbBG+"m"+text+"\x1b[0m", end='')
+    # Disable if stdout is redirect to a file
+    if sys.stdout.isatty():
+        # decodeText = codecs.decode(text, "unicode_escape")
+        if colorBool is True:
+            if rgbBG != "None":
+                print("\x1b["+str(style)+";38;2;"+rgbFG+";48;2;"+rgbBG+"m"+text+"\x1b[0m", end='')
+            else:
+                print("\x1b["+str(style)+";38;2;"+rgbFG+"m"+text+"\x1b[0m", end='')
         else:
-            print("\x1b["+str(style)+";38;2;"+rgbFG+"m"+text+"\x1b[0m", end='')
-    else:
-        print(text, end='')
-    # Terminal title
-    if "ERROR" in text or "⛔" in text:
-        title(text="⛔", pbar=None)
-    elif "♊" in text:
-        formatText = ""
-        for word in text.replace("♊ ", "").replace("\n", "").split(" "):
-            formatText += word.capitalize()
-        title(text=formatText, pbar=None)
+            print(text, end='')
+        # Terminal title
+        if "ERROR" in text or "⛔" in text:
+            title(text="⛔", pbar=None)
+        elif "♊" in text:
+            formatText = ""
+            for word in text.replace("♊ ", "").replace("\n", "").split(" "):
+                formatText += word.capitalize()
+            title(text=formatText, pbar=None)
 
 
 # ***** gemini title ***** #
