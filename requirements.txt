@@ -1,4 +1,4 @@
-ast
+blosc2
 biopython
 cairosvg
 dna_features_viewer

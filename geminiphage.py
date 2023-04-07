@@ -1628,8 +1628,8 @@ def picmi_finder_gbk(pathIN: str, pathOUT: str, prefix: str, maxLen: int = 50000
                                                 secondRepeatStart = len(splitRepeat[1])+len(splitRepeat[0])+len(repeatSeq)+1
                                                 secondRepeatEnd = secondRepeatStart+len(repeatSeq)-1
                                                 GFF = open(pathPICMIGFF, "a")
-                                                GFF.write("picmi\tGV\tCDS\t"+str(firstRepeatStart)+"\t"+str(firstRepeatEnd)+"\t.\t+\t0\tlocus_tag = repeat1;product = hypothetical protein\n")
-                                                GFF.write("picmi\tGV\tCDS\t"+str(secondRepeatStart)+"\t"+str(secondRepeatEnd)+"\t.\t+\t0\tlocus_tag = repeat2;product = hypothetical protein\n")
+                                                GFF.write("picmi\tGV\tCDS\t"+str(firstRepeatStart)+"\t"+str(firstRepeatEnd)+"\t.\t+\t0\tlocus_tag=repeat1;product=hypothetical protein\n")
+                                                GFF.write("picmi\tGV\tCDS\t"+str(secondRepeatStart)+"\t"+str(secondRepeatEnd)+"\t.\t+\t0\tlocus_tag=repeat2;product=hypothetical protein\n")
                                                 GFF.close()
                                                 # Write to JSON
                                                 if dicoNumToPos[fisNum]['strand'] > 0:

@@ -1,3 +1,5 @@
+#!/usr/bin/Rscript
+
 ## Libraries----------------------------------------------------------------
 suppressPackageStartupMessages(
     {
@@ -16,7 +18,7 @@ library(fastcluster, quietly = TRUE, warn.conflicts = FALSE, verbose = FALSE)
 library(parallelDist, quietly = TRUE, warn.conflicts = FALSE, verbose = FALSE)
 library(furrr, quietly = TRUE, warn.conflicts = FALSE, verbose = FALSE)
 library(future, quietly = TRUE, warn.conflicts = FALSE, verbose = FALSE)
-    })
+    }) 
 ## Initialize project-------------------------------------------------------
 input0 <- as.character(commandArgs(trailingOnly = TRUE))
 in1 <- str_which(input0, "blastres=")
@@ -205,7 +207,8 @@ blastn_DF_g <- blastn_DF %>%
 rm(blastn_DF)
 plan(multisession)
 print("Analysis")
-options(future.globals.maxSize= 256 * 1024 * 1024^2)
+# options(future.globals.maxSize= 256 * 1024 * 1024^2)
+options(future.globals.maxSize = 1073741824)
 outp_ls <- future_map2(.x = blastn_DF_g$data, .y = blastn_DF_g$qlen, .f = nident_fun)
 blastn_DF_g[, "q_nident"] <- lapply(outp_ls, "[[", 1) %>%
   unlist()
@@ -214,7 +217,8 @@ blastn_DF_g[, "q_aligned"] <- lapply(outp_ls, "[[", 2) %>%
 blastn_DF_g <- blastn_DF_g %>%
   mutate(q_fract_aligned = round(q_aligned/qlen, digits = 2))
 rm(outp_ls)
-options(future.globals.maxSize= 256 * 1024 * 1024^2)
+# options(future.globals.maxSize= 256 * 1024 * 1024^2)
+options(future.globals.maxSize = 1073741824)
 ret_ls <- future_map2(.x = blastn_DF_g$qseqid, .y = blastn_DF_g$sseqid, .f = s_nident_fun, DF = blastn_DF_g)
 blastn_DF_g[, "s_nident"] <- lapply(ret_ls, "[", 1) %>%
   unlist

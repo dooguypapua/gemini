@@ -457,11 +457,12 @@ def make_gbk_dict(pathIN: str, pathJSON: str = "None", boolSort: bool = True, bo
                         formatorgName = formatorgName.replace(" ", "_").replace("/", "_").replace(" = ", "_").replace("(", "_").replace(")", "").replace(":", "_").replace("[", "_").replace("]", "").replace(";", "").replace("\'", "")
                         dicoGBK[orgName][record.id]["dicoSource"]["orgName"] = formatorgName
                         # DBXREF
-                        for db_xref in feature.qualifiers["db_xref"]:
-                            name = db_xref.split(":")[0]
-                            value = db_xref.split(":")[1]
-                            if name == "taxon":
-                                dicoGBK[orgName][record.id]["dicoSource"]['taxon'] = int(value)
+                        if "db_xref" in feature.qualifiers:
+                            for db_xref in feature.qualifiers["db_xref"]:
+                                name = db_xref.split(":")[0]
+                                value = db_xref.split(":")[1]
+                                if name == "taxon":
+                                    dicoGBK[orgName][record.id]["dicoSource"]['taxon'] = int(value)
                         if "host" in feature.qualifiers:
                             dicoGBK[orgName][record.id]["host"] = feature.qualifiers["host"][0]
                     elif feature.type not in lstExcludeGBKtype and (boolPseudo is True or 'pseudo' not in feature.qualifiers):
@@ -883,7 +884,7 @@ def gbk_to_gff(pathIN: str, pathOUT: str) -> Tuple[str, str]:
             else:
                 product = dicoGBK[org][contig]['dicoLT'][lt]['product']
             line = contig+"\tGV\tCDS\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['start'])+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['end']) + \
-                "\t.\t"+frame+"\t0\tlocus_tag = "+lt+";product = "+product+"\n"
+                "\t.\t"+frame+"\t0\tlocus_tag="+lt+";product="+product+"\n"
             OUT.write(line)
     OUT.close()
 
@@ -1136,7 +1137,8 @@ def make_gbk_from_fasta(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: str, 
                     dicoFindLocation[res] = -1
                 if len(dicoFindLocation) == 0:
                     printcolor("[ERROR: make_gbk_from_fasta]\nUnable to find gene \""+geneLT+"\"\n", 1, "212;64;89", "None", True)
-                    exit_gemini()
+                    continue
+                    # exit_gemini()
                 elif len(dicoFindLocation) == 1:
                     start = list(dicoFindLocation.keys())[0]
                     end = start+len(seq)
