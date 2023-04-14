@@ -750,7 +750,7 @@ def circos_align(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     |             Circular circos plot for alignment             |
     |------------------------------------------------------------|
     |PARAMETERS                                                  |
-    |    pathIN : path of reference genbank file (required)      |
+    |    pathIN : path of fasta folder (required)                |
     |    pathOUT : path of output file (required)                |
      ------------------------------------------------------------
     |TOOLS: circos                                               |

@@ -1107,8 +1107,10 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
                     " --models-dir "+dicoGeminiPath['DATABASES']['defense-finder-models']+" --models "+dfmodelV+"/"+model+" all" + \
                     " --out-dir "+geminiset.pathTMP+"/"+model+" --coverage-profile "+str(covProfile) + \
                     " --w "+str(cpu)+" --exchangeable-weight 1"+accWeight+" >> "+pathLOG+" 2>&1"
-                os.system(cmdMacsyfinder)
+                print(cmdMacsyfinder)
+                # os.system(cmdMacsyfinder)
                 cpt += 1
+            exit("ioio")
             # DefenseFinder post treatment scripts
             bs = get_best_solution(geminiset.pathTMP)
             export_defense_finder_genes(bs, pathOUT, orgName, dfmodelV)
