@@ -466,7 +466,7 @@ def make_gbk_dict(pathIN: str, pathJSON: str = "None", boolSort: bool = True, bo
                         if "host" in feature.qualifiers:
                             dicoGBK[orgName][record.id]["host"] = feature.qualifiers["host"][0]
                         if "lab_host" in feature.qualifiers:
-                            dicoGBK[orgName][record.id]["lab_host"] = feature.qualifiers["lab_host"][0]                            
+                            dicoGBK[orgName][record.id]["lab_host"] = feature.qualifiers["lab_host"][0]
                     elif feature.type not in lstExcludeGBKtype and (boolPseudo is True or 'pseudo' not in feature.qualifiers):
                         try:
                             locustag = feature.qualifiers["locus_tag"][0]

@@ -30,7 +30,7 @@ from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import Alignment
 import geminiset
 from geminini import fct_checker, get_input_files, printcolor, path_converter, load_json, get_gemini_path
-from geminini import random_hex_color, linear_gradient, title, exit_gemini, cat_lstfiles, to_ranges
+from geminini import random_hex_color, linear_gradient, title, exit_gemini, cat_lstfiles, to_ranges, read_file
 from geminicluster import mmseqs_rbh
 from geminiparse import make_gff_dict, make_gbk_dict, gbk_to_faa, make_fasta_dict
 
@@ -110,6 +110,98 @@ def gff_to_linear_geneplot(pathIN: str, pathOUT: str, pathLT: str = "None", leng
         else:
             seqLen = endRegion-startRegion
         record = GraphicRecord(sequence_length=seqLen+int(seqLen/10), features=features, first_index=startRegion-100)
+        ax, _ = record.plot(figure_width=50)
+        ax.figure.savefig(pathPNG, dpi=300)
+        ax.figure.savefig(pathSVG)
+        plt.close('all')
+        pbar.update(1)
+        title("Plotting", pbar)
+    pbar.close()
+
+
+@fct_checker
+def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str, pathSUBCORE: str = "None", ext: str = ".gff") -> Tuple[str, str, str, str, str]:
+    '''
+     ------------------------------------------------------------
+    |                  GFF3 TO LINEAR GENE PLOT                  |
+    |------------------------------------------------------------|
+    |           Create linear gene plot from GFF3 file           |
+    |------------------------------------------------------------|
+    |PARAMETERS                                                  |
+    |    pathIN      : path of input files or folder (required)  |
+    |    pathCLUSTER : path of JSON rbh cluster (required)       |
+    |    pathOUT     : path of output files (required)           |
+    |    pathSUBCORE : sub-core organism list file (default=None)|
+    |    ext         : extension of input files (default=.gff)   |
+     ------------------------------------------------------------
+    '''
+    lstFiles, maxpathSize = get_input_files(pathIN, "gff_to_linear_geneplot_with_rbh", [ext])
+    if len(lstFiles) == 0:
+        printcolor("[ERROR: gff_to_linear_geneplot_with_rbh]\nAny input files found\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    pathCLUSTER = path_converter(pathCLUSTER)
+    pathOUT = path_converter(pathOUT)
+    if pathSUBCORE != "None":
+        pathSUBCORE = path_converter(pathSUBCORE)
+        setSubCoreOrg = set(read_file(pathSUBCORE))
+    os.makedirs(pathOUT, exist_ok=True)
+    # Make dicoLTcolor based on RBH clusters
+    printcolor("♊ Cluster colors"+"\n")
+    dicoLTcolor = {}
+    dicoCLUSTER = load_json(pathCLUSTER)
+    for cluster in dicoCLUSTER:
+        setOrg = set()  # To avoid paralogous
+        for header in dicoCLUSTER[cluster]:
+            lt = header.split(" [")[0].split("|")[0]
+            org = header.split(" [")[1].replace("]", "")
+            setOrg.add(org)
+        # Singleton gene > light grey
+        if len(setOrg) == 1:
+            color = "#ececec"
+        # Sub-core gene > light red
+        elif set(setOrg) == setSubCoreOrg:
+            color = "#ff8080"
+        # Core gene > dark red
+        elif len(setOrg) == len(lstFiles):
+            color = "#aa0000"
+        # Accessory gene > dark grey
+        else:
+            color = "#b3b3b3"
+        # Apply to all LT
+        for header in dicoCLUSTER[cluster]:
+            lt = header.split(" [")[0].split("|")[0]
+            dicoLTcolor[lt] = color
+    # Search longest genome
+    dicoAllGFF = {}
+    printcolor("♊ Max length"+"\n")
+    maxSeqLen = 0
+    for pathGFF in lstFiles:
+        file = os.path.basename(pathGFF)
+        orgName = file.replace(ext, "").replace("."+ext, "")
+        # ***** PARSE GFF ***** #
+        dicoAllGFF[orgName] = make_gff_dict(pathIN=pathGFF, ext=ext)[orgName]
+        maxSeqLen = max(maxSeqLen, dicoAllGFF[orgName]['length'])
+    # Browse GFF3
+    printcolor("♊ Plotting"+"\n")
+    pbar = tqdm(total=int(len(lstFiles)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    for orgName in dicoAllGFF:
+        pathPNG = pathOUT+"/"+orgName+".png"
+        pathSVG = pathOUT+"/"+orgName+".svg"
+        pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
+        features = []
+        # ***** BROWSE GENES ***** #
+        for geneType in dicoAllGFF[orgName]:
+            if geneType != 'length':
+                for geneEntry in dicoAllGFF[orgName][geneType]:
+                    color = "#2a7fff"  # default blue color if not found in cluster (for warning)
+                    if geneType == "tRNA":  # green
+                        color = "#37c8ab"
+                    elif 'locus_tag' in geneEntry['attributes'] and geneEntry['attributes']['locus_tag'] in dicoLTcolor:
+                        color = dicoLTcolor[geneEntry['attributes']['locus_tag']]
+                    geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0)
+                    features.append(geneFeature)
+        # ***** PLOT GENES ***** #
+        record = GraphicRecord(sequence_length=maxSeqLen, features=features, first_index=-100)
         ax, _ = record.plot(figure_width=50)
         ax.figure.savefig(pathPNG, dpi=300)
         ax.figure.savefig(pathSVG)

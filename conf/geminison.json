@@ -647,6 +647,19 @@
                                    },
                         "pathTMP":false
                        },
+  "gff_to_linear_geneplot_with_rbh": {
+                        "descr": "Create linear gene plot from GFF3 file with RBH features",
+                        "tag":"plot", "version":"1.0",
+                        "title":"gff2plotrbh",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathCLUSTER":{"tag":"-cluster","value":"", "type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "pathSUBCORE":{"tag":"-i2","value":"None", "type":"str"},
+                                   "ext":{"tag":"-ext","value":".gff", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
   "gff_to_linear_group_geneplot": {
                         "descr": "Create linear gene plot from GFF3 file and merge per group",
                         "tag":"plot", "version":"1.0",
