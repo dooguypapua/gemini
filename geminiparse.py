@@ -877,6 +877,7 @@ def gbk_to_gff(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     for contig in dicoGBK[org]:
         OUT.write("##sequence-region "+contig+" 1 "+str(len(dicoGBK[org][contig]['seq']))+"\n")
         for lt in dicoGBK[org][contig]['dicoLT']:
+            dicoGBK[org][contig]['dicoLT'][lt]['type']
             if dicoGBK[org][contig]['dicoLT'][lt]['strand'] == 1:
                 frame = "+"
             else:
@@ -885,7 +886,7 @@ def gbk_to_gff(pathIN: str, pathOUT: str) -> Tuple[str, str]:
                 product = "hypothetical protein"
             else:
                 product = dicoGBK[org][contig]['dicoLT'][lt]['product']
-            line = contig+"\tGV\tCDS\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['start'])+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['end']) + \
+            line = contig+"\tGV\t"+dicoGBK[org][contig]['dicoLT'][lt]['type']+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['start'])+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['end']) + \
                 "\t.\t"+frame+"\t0\tlocus_tag="+lt+";product="+product+"\n"
             OUT.write(line)
     OUT.close()

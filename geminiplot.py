@@ -149,24 +149,25 @@ def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str,
     printcolor("♊ Cluster colors"+"\n")
     dicoLTcolor = {}
     dicoCLUSTER = load_json(pathCLUSTER)
+    HEX_gradient, RBG_gradient = linear_gradient(start_hex="#e6e6e6", finish_hex="#333333", n=18)
     for cluster in dicoCLUSTER:
         setOrg = set()  # To avoid paralogous
         for header in dicoCLUSTER[cluster]:
             lt = header.split(" [")[0].split("|")[0]
             org = header.split(" [")[1].replace("]", "")
             setOrg.add(org)
-        # Singleton gene > light grey
+        # Singleton gene > blue
         if len(setOrg) == 1:
-            color = "#ececec"
+            color = "#0000ff"
         # Sub-core gene > light red
-        elif set(setOrg) == setSubCoreOrg:
-            color = "#ff8080"
+        elif pathSUBCORE != "None" and set(setOrg) == setSubCoreOrg:
+            color = "#ff5555"
         # Core gene > dark red
         elif len(setOrg) == len(lstFiles):
             color = "#aa0000"
-        # Accessory gene > dark grey
+        # Accessory gene
         else:
-            color = "#b3b3b3"
+            color = HEX_gradient[len(setOrg)-2]
         # Apply to all LT
         for header in dicoCLUSTER[cluster]:
             lt = header.split(" [")[0].split("|")[0]
@@ -184,9 +185,11 @@ def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str,
     # Browse GFF3
     printcolor("♊ Plotting"+"\n")
     pbar = tqdm(total=int(len(lstFiles)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    setSVGfiles = set()
     for orgName in dicoAllGFF:
         pathPNG = pathOUT+"/"+orgName+".png"
         pathSVG = pathOUT+"/"+orgName+".svg"
+        setSVGfiles.add(pathSVG)
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
         features = []
         # ***** BROWSE GENES ***** #
@@ -195,19 +198,51 @@ def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str,
                 for geneEntry in dicoAllGFF[orgName][geneType]:
                     color = "#2a7fff"  # default blue color if not found in cluster (for warning)
                     if geneType == "tRNA":  # green
-                        color = "#37c8ab"
+                        color = "#2ca05a"
                     elif 'locus_tag' in geneEntry['attributes'] and geneEntry['attributes']['locus_tag'] in dicoLTcolor:
                         color = dicoLTcolor[geneEntry['attributes']['locus_tag']]
                     geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0)
                     features.append(geneFeature)
         # ***** PLOT GENES ***** #
         record = GraphicRecord(sequence_length=maxSeqLen, features=features, first_index=-100)
-        ax, _ = record.plot(figure_width=50)
+        ax, _ = record.plot(figure_width=50, )
         ax.figure.savefig(pathPNG, dpi=300)
         ax.figure.savefig(pathSVG)
         plt.close('all')
         pbar.update(1)
         title("Plotting", pbar)
+    pbar.close()
+    # ***** Reformat SVG output  ***** # (selectable color)
+    printcolor("♊ Reformat SVG"+"\n")
+    pbar = tqdm(total=len(setSVGfiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    for pathSVG in setSVGfiles:
+        pbar.set_description_str(os.path.basename(pathSVG)+" ".rjust(maxpathSize-len(os.path.basename(pathSVG))))
+        # Read initial SVG
+        SVG = open(pathSVG, 'r')
+        dataSVG = SVG.read()
+        splitG = dataSVG.split("<g")
+        SVG.close()
+        dicoPatchToColor = {}
+        for partG in splitG:
+            if "id=\"patch_" in partG:
+                splitLine = partG.split("\n")
+                patchID = ""
+                color = ""
+                for line in splitLine:
+                    if "id=\"patch_" in line:
+                        patchID = line.split("\"")[1]
+                    if "style=\"fill:" in line:
+                        color = line.split(":")[1].split(";")[0].replace("\"", "")
+                dicoPatchToColor[patchID] = color
+        # Apply modifications
+        SVG = open(pathSVG, 'w')
+        for patchID in dicoPatchToColor:
+            dataSVG = dataSVG.replace("<g id=\""+patchID+"\">", "<g id=\""+patchID+"\"\nstyle=\"fill:"+dicoPatchToColor[patchID]+"\">")
+            dataSVG = dataSVG.replace(dicoPatchToColor[patchID], dicoPatchToColor[patchID]+";fill-opacity:1")
+        SVG.write(dataSVG)
+        SVG.close()
+        pbar.update(1)
+        title("Reformat", pbar)
     pbar.close()
 
 
