@@ -18,9 +18,11 @@ import re
 import os
 import shutil
 import xlsxwriter
+import xml.etree.ElementTree as ET
 from tqdm import tqdm
 from typing import Tuple
 from yaspin import yaspin
+from xvfbwrapper import Xvfb
 from yaspin.spinners import Spinners
 import matplotlib.pyplot as plt
 from collections import OrderedDict
@@ -181,8 +183,13 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
                 dicoProtToCluster[org] = {lt: cluster}
         # Define cluster color and type
         if distinctColor is True:
-            color = random_hex_color()
-            clusterType = cluster
+            # Singleton gene > white
+            if len(setOrg) == 1:
+                color = "#ffffff"
+                clusterType = "singleton"
+            else:
+                color = random_hex_color()
+                clusterType = cluster
         else:
             # Singleton gene > blue
             if len(setOrg) == 1:
@@ -222,7 +229,6 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
     pbar = tqdm(total=int(len(lstFiles)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     setSVGfiles = set()
     for orgName in dicoAllGFF:
-        # if not "6E35" in orgName and not "KVP40" in orgName: continue
         pathPNG = pathOUT+"/PNG/"+orgName+".png"
         pathSVG = pathOUT+"/SVG/"+orgName+".svg"
         setSVGfiles.add(pathSVG)
@@ -234,8 +240,8 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
                 for geneEntry in dicoAllGFF[orgName][geneType]:
                     if geneType == "tRNA":  # green
                         color = "#2ca05a"
-                    elif 'locus_tag' in geneEntry['attributes'] and geneEntry['attributes']['locus_tag'] in dicoLTcolor:
-                        color = dicoLTcolor[geneEntry['attributes']['locus_tag']]
+                    elif 'locus_tag' in geneEntry['attributes'] and geneEntry['attributes']['locus_tag'].replace(" ", "") in dicoLTcolor:
+                        color = dicoLTcolor[geneEntry['attributes']['locus_tag'].replace(" ", "")]
                     else:
                         printcolor("[ERROR: rbh_linear_plot]\nGFF entry error for \""+str(geneEntry)+"\"\n", 1, "212;64;89", "None", True)
                         exit_gemini()
@@ -250,7 +256,7 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
         pbar.update(1)
         title("Plotting", pbar)
     pbar.close()
-    # ***** Reformat SVG output  ***** # (selectable color)
+    # ***** Reformat SVG output  ***** # (selectable color / Delete blank, line and axis / valign)
     printcolor("♊ Reformat SVG"+"\n")
     pbar = tqdm(total=len(setSVGfiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathSVG in setSVGfiles:
@@ -279,6 +285,26 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
             dataSVG = dataSVG.replace(dicoPatchToColor[patchID], dicoPatchToColor[patchID]+";fill-opacity:1")
         SVG.write(dataSVG)
         SVG.close()
+        # Delete blank, line and axis
+        tree = ET.parse(pathSVG)
+        root = tree.getroot()
+        lst_block_id = ["patch_1", "line2d_1", "matplotlib.axis_1"]
+        for block_id in lst_block_id:
+            element_to_remove = root.find(".//*[@id='" + block_id + "']")
+            if element_to_remove is not None:
+                parent_element = None
+                for elem in root.iter():
+                    if element_to_remove in elem:
+                        parent_element = elem
+                        break
+                if parent_element is not None:
+                    parent_element.remove(element_to_remove)
+        tree.write(pathSVG)
+        # Align all genes    
+        with Xvfb() as xvfb: # Start the virtual framebuffer for inkscape gui dependent verb
+            os.system("inkscape --verb=EditSelectAll --verb=SelectionUnGroup --verb=EditSelectAll --verb=SelectionUnGroup \
+                       --verb=AlignVerticalCenter --verb=EditSelectAll --verb=SelectionGroup \
+                       --verb=FileSave --verb=FileQuit "+pathSVG)
         pbar.update(1)
         title("Reformat", pbar)
     pbar.close()
