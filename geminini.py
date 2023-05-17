@@ -34,6 +34,7 @@ import torch
 import torch.nn.functional as F
 import geminiset
 from datetime import datetime
+from collections import OrderedDict
 from tqdm import tqdm
 from yaspin import yaspin
 from yaspin.spinners import Spinners
@@ -384,6 +385,22 @@ def my_encode(obj):
 
 def my_decode(obj):
     return pickle.loads(blosc2.decompress2(bytes(obj)))
+
+
+# ***** Insert in a dictionnary at given position ***** #
+def shift_dico_pos(dico, insertValue, pos):
+    lstKeys = list(dico.keys())
+    newDico = OrderedDict()
+    cpt = 0
+    for i in range(len(lstKeys)):
+        if cpt == pos:
+            newDico[i] = insertValue
+        if cpt >= pos:
+            newDico[i+1] = dico[lstKeys[i]]
+        else:
+            newDico[lstKeys[i]] = dico[lstKeys[i]]
+        cpt += 1
+    return newDico
 
 
 '''
@@ -893,3 +910,14 @@ def linear_gradient(start_hex, finish_hex="#FFFFFF", n=10):
         RBG_list.append(curr_vector)
         HEX_list.append(RGB_to_hex(curr_vector))
     return HEX_list, RBG_list
+
+
+def requires_white_text(hex_color, threshold=382.5):
+    # Remove '#' if present
+    hex_color = hex_color.lstrip('#')
+    # Convert hex color to RGB
+    rgb = tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    # Calculate sum of RGB values
+    rgb_sum = sum(rgb)
+    # Check if sum is below threshold (default threshold is 382.5)
+    return rgb_sum < 382.5

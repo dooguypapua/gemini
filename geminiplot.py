@@ -17,11 +17,13 @@ import sys
 import re
 import os
 import shutil
+import xlsxwriter
 from tqdm import tqdm
 from typing import Tuple
 from yaspin import yaspin
 from yaspin.spinners import Spinners
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from svgpathtools import svg2paths
 from cairosvg import svg2png
@@ -29,8 +31,9 @@ from openpyxl import Workbook, load_workbook, styles
 from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import Alignment
 import geminiset
-from geminini import fct_checker, get_input_files, printcolor, path_converter, load_json, get_gemini_path
-from geminini import random_hex_color, linear_gradient, title, exit_gemini, cat_lstfiles, to_ranges, read_file
+from geminini import fct_checker, get_input_files, printcolor, path_converter, load_json
+from geminini import random_hex_color, linear_gradient, title, exit_gemini, cat_lstfiles, to_ranges
+from geminini import requires_white_text, shift_dico_pos, read_file, get_gemini_path
 from geminicluster import mmseqs_rbh
 from geminiparse import make_gff_dict, make_gbk_dict, gbk_to_faa, make_fasta_dict
 
@@ -120,24 +123,26 @@ def gff_to_linear_geneplot(pathIN: str, pathOUT: str, pathLT: str = "None", leng
 
 
 @fct_checker
-def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str, pathSUBCORE: str = "None", ext: str = ".gff") -> Tuple[str, str, str, str, str]:
+def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: bool = False, pathSUBCORE: str = "None", ext: str = ".gff") -> Tuple[str, str, str, bool, str, str]:
     '''
      ------------------------------------------------------------
-    |                  GFF3 TO LINEAR GENE PLOT                  |
+    |              RBH CLUSTERS TO LINEAR GENE PLOTS             |
     |------------------------------------------------------------|
-    |           Create linear gene plot from GFF3 file           |
+    |      Create linear gene plots from mutliples GFF3 file     |
+    |             and colorized based on rbh cluster             |
     |------------------------------------------------------------|
     |PARAMETERS                                                  |
-    |    pathIN      : path of input files or folder (required)  |
-    |    pathCLUSTER : path of JSON rbh cluster (required)       |
-    |    pathOUT     : path of output files (required)           |
-    |    pathSUBCORE : sub-core organism list file (default=None)|
-    |    ext         : extension of input files (default=.gff)   |
+    |    pathIN       : path of input files or folder (required) |
+    |    pathCLUSTER  : path of JSON rbh cluster (required)      |
+    |    pathOUT      : path of output files (required)          |
+    |    distinctColor: distinct families colors (default=False) |
+    |    pathSUBCORE  : subcore organism list file (default=None)|
+    |    ext          : extension of input files (default=.gff)  |
      ------------------------------------------------------------
     '''
-    lstFiles, maxpathSize = get_input_files(pathIN, "gff_to_linear_geneplot_with_rbh", [ext])
+    lstFiles, maxpathSize = get_input_files(pathIN, "rbh_linear_plot", [ext])
     if len(lstFiles) == 0:
-        printcolor("[ERROR: gff_to_linear_geneplot_with_rbh]\nAny input files found\n", 1, "212;64;89", "None", True)
+        printcolor("[ERROR: rbh_linear_plot]\nAny input files found\n", 1, "212;64;89", "None", True)
         exit_gemini()
     pathCLUSTER = path_converter(pathCLUSTER)
     pathOUT = path_converter(pathOUT)
@@ -145,29 +150,59 @@ def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str,
         pathSUBCORE = path_converter(pathSUBCORE)
         setSubCoreOrg = set(read_file(pathSUBCORE))
     os.makedirs(pathOUT, exist_ok=True)
+    os.makedirs(pathOUT+"/PNG", exist_ok=True)
+    os.makedirs(pathOUT+"/SVG", exist_ok=True)
     # Make dicoLTcolor based on RBH clusters
     printcolor("♊ Cluster colors"+"\n")
     dicoLTcolor = {}
     dicoCLUSTER = load_json(pathCLUSTER)
-    HEX_gradient, RBG_gradient = linear_gradient(start_hex="#e6e6e6", finish_hex="#333333", n=18)
+    dicoProtToCluster = {}
+    dicoClusterToOrg = {}
+    dicoClusterColor = {}
+    dicoClusterType = {}
+    setColor = set()
+    setAvailableOrg = set()
+    # If distinct color for each gene family use random_hex_color
+    # Else simply use a gradient rare to frequent gene
+    if distinctColor is False:
+        HEX_gradient, RBG_gradient = linear_gradient(start_hex="#e6e6e6", finish_hex="#333333", n=len(lstFiles))
     for cluster in dicoCLUSTER:
+        dicoClusterToOrg[cluster] = {}
         setOrg = set()  # To avoid paralogous
         for header in dicoCLUSTER[cluster]:
             lt = header.split(" [")[0].split("|")[0]
             org = header.split(" [")[1].replace("]", "")
             setOrg.add(org)
-        # Singleton gene > blue
-        if len(setOrg) == 1:
-            color = "#0000ff"
-        # Sub-core gene > light red
-        elif pathSUBCORE != "None" and set(setOrg) == setSubCoreOrg:
-            color = "#ff5555"
-        # Core gene > dark red
-        elif len(setOrg) == len(lstFiles):
-            color = "#aa0000"
-        # Accessory gene
+            setAvailableOrg.add(org)
+            dicoClusterToOrg[cluster][org] = lt
+            try:
+                dicoProtToCluster[org][lt] = cluster
+            except KeyError:
+                dicoProtToCluster[org] = {lt: cluster}
+        # Define cluster color and type
+        if distinctColor is True:
+            color = random_hex_color()
+            clusterType = cluster
         else:
-            color = HEX_gradient[len(setOrg)-2]
+            # Singleton gene > blue
+            if len(setOrg) == 1:
+                color = "#0000ff"
+                clusterType = "singleton"
+            # Sub-core gene > light red
+            elif pathSUBCORE != "None" and set(setOrg) == setSubCoreOrg:
+                color = "#ff5555"
+                clusterType = "subcore"
+            # Core gene > dark red
+            elif len(setOrg) == len(lstFiles):
+                color = "#aa0000"
+                clusterType = "core"
+            # Accessory gene
+            else:
+                color = HEX_gradient[len(setOrg)-2]
+                clusterType = "accessory ("+str(len(setOrg))+")"
+        dicoClusterColor[cluster] = color
+        dicoClusterType[cluster] = clusterType
+        setColor.add(color)
         # Apply to all LT
         for header in dicoCLUSTER[cluster]:
             lt = header.split(" [")[0].split("|")[0]
@@ -187,8 +222,9 @@ def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str,
     pbar = tqdm(total=int(len(lstFiles)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     setSVGfiles = set()
     for orgName in dicoAllGFF:
-        pathPNG = pathOUT+"/"+orgName+".png"
-        pathSVG = pathOUT+"/"+orgName+".svg"
+        # if not "6E35" in orgName and not "KVP40" in orgName: continue
+        pathPNG = pathOUT+"/PNG/"+orgName+".png"
+        pathSVG = pathOUT+"/SVG/"+orgName+".svg"
         setSVGfiles.add(pathSVG)
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
         features = []
@@ -196,11 +232,13 @@ def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str,
         for geneType in dicoAllGFF[orgName]:
             if geneType != 'length':
                 for geneEntry in dicoAllGFF[orgName][geneType]:
-                    color = "#2a7fff"  # default blue color if not found in cluster (for warning)
                     if geneType == "tRNA":  # green
                         color = "#2ca05a"
                     elif 'locus_tag' in geneEntry['attributes'] and geneEntry['attributes']['locus_tag'] in dicoLTcolor:
                         color = dicoLTcolor[geneEntry['attributes']['locus_tag']]
+                    else:
+                        printcolor("[ERROR: rbh_linear_plot]\nGFF entry error for \""+str(geneEntry)+"\"\n", 1, "212;64;89", "None", True)
+                        exit_gemini()
                     geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0)
                     features.append(geneFeature)
         # ***** PLOT GENES ***** #
@@ -244,6 +282,83 @@ def gff_to_linear_geneplot_with_rbh(pathIN: str, pathCLUSTER: str, pathOUT: str,
         pbar.update(1)
         title("Reformat", pbar)
     pbar.close()
+    # ***** Ordering clusters  ***** #
+    printcolor("♊ Ordering clusters"+"\n")
+    dicoOrder = OrderedDict()
+    # Initialize dicoOrder with a first organism cluster list
+    for lt in sorted(dicoProtToCluster[list(setAvailableOrg)[0]].keys()):
+        dicoOrder[len(dicoOrder)] = dicoProtToCluster[list(setAvailableOrg)[0]][lt]
+    # Browse others organism cluster list
+    for orgName in list(setAvailableOrg)[1:]:
+        lastPos = 0
+        for lt in sorted(dicoProtToCluster[orgName].keys()):
+            cluster = dicoProtToCluster[orgName][lt]
+            lstOrderedClustered = list(dicoOrder.values())
+            found = False
+            for i in range(len(lstOrderedClustered)):
+                if lstOrderedClustered[i] == cluster:
+                    found = True
+                    break
+            if found is True:
+                lastPos = i
+            else:
+                lastPos += 1
+                dicoOrder = shift_dico_pos(dicoOrder, cluster, lastPos)
+    # ***** Ordering clusters  ***** # (required same orientation and same first gene)
+    printcolor("♊ Ordered clusters table"+"\n")
+    dicoWidth = {0: 0, 1: 0}
+    workbook = xlsxwriter.Workbook(pathOUT+"/ordered_clusters.xlsx")
+    worksheet = workbook.add_worksheet()
+    # Header and row format (row bgcolor correspond to plot colors)
+    headerFormat = workbook.add_format({'align': 'center', 'valign': 'bottom', 'border': 1, 'font_size': 11, 'bold': True})
+    headerFormatOrg = workbook.add_format({'align': 'center', 'valign': 'bottom', 'border': 1, 'font_size': 11, 'bold': True})
+    headerFormatOrg.set_rotation(90)
+    dicoRowFormat = {}
+    dicoHeaderClusterFormat = {}
+    for bgColor in setColor:
+        dicoHeaderClusterFormat[bgColor] = workbook.add_format({'align': 'center', 'valign': 'bottom', 'border': 1, 'font_size': 11, 'bold': True, 'bg_color': bgColor})
+        dicoRowFormat[bgColor] = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'border': 1, 'font_size': 8, 'bg_color': bgColor})
+        if requires_white_text(bgColor):
+            dicoHeaderClusterFormat[bgColor].set_font_color('#FFFFFF')
+            dicoRowFormat[bgColor].set_font_color('#FFFFFF')
+        else:
+            dicoHeaderClusterFormat[bgColor].set_font_color('#000000')
+            dicoRowFormat[bgColor].set_font_color('#000000')
+    # Write header
+    worksheet.write(0, 0, "Cluster", headerFormat)
+    worksheet.write(0, 1, "Type", headerFormat)
+    col = 2
+    for orgName in setAvailableOrg:
+        worksheet.write(0, col, orgName, headerFormatOrg)
+        col += 1
+    row = 1
+    # Write row
+    for order in dicoOrder:
+        cluster = dicoOrder[order]
+        rowColor = dicoClusterColor[cluster]
+        headerFormat = dicoHeaderClusterFormat[rowColor]
+        rowFormat = dicoRowFormat[rowColor]
+        worksheet.write(row, 0, cluster, headerFormat)
+        dicoWidth[0] = max(dicoWidth[0], len(cluster))
+        worksheet.write(row, 1, dicoClusterType[cluster], headerFormat)
+        dicoWidth[1] = max(dicoWidth[1], len(dicoClusterType[cluster]))
+        col = 2
+        for orgName in setAvailableOrg:
+            if orgName in dicoClusterToOrg[cluster]:
+                cellValue = dicoClusterToOrg[cluster][orgName]
+            else:
+                cellValue = "Nan"
+            worksheet.write(row, col, cellValue, rowFormat)
+            try:
+                dicoWidth[col] = max(dicoWidth[col], len(str(cellValue)))
+            except KeyError:
+                dicoWidth[col] = len(str(cellValue))
+            col += 1
+        row += 1
+    # Adjust row height and column width
+    for col in dicoWidth:
+        worksheet.set_column(col, col, dicoWidth[col])
+    workbook.close()
 
 
 @fct_checker

@@ -877,7 +877,6 @@ def gbk_to_gff(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     for contig in dicoGBK[org]:
         OUT.write("##sequence-region "+contig+" 1 "+str(len(dicoGBK[org][contig]['seq']))+"\n")
         for lt in dicoGBK[org][contig]['dicoLT']:
-            dicoGBK[org][contig]['dicoLT'][lt]['type']
             if dicoGBK[org][contig]['dicoLT'][lt]['strand'] == 1:
                 frame = "+"
             else:
