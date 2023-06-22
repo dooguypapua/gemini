@@ -45,7 +45,7 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
     |PARAMETERS                                                  |
     |    pathIN    : path of input fna files or folder (required)|
     |    pathOUT   : path of output sketch folder (required)     |
-    |    sketchSize: fastaANI fragments length (default=10000)   |
+    |    sketchSize: fragments length (default=10000)            |
     |    ext       : extension of input files (default=.fna)     |
      ------------------------------------------------------------
     |TOOLS: mash                                                 |

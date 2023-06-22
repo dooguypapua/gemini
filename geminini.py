@@ -70,6 +70,7 @@ def exit_gemini():
     exit("\n")
 
 
+
 # ***** Load JSON file ***** #
 def load_json(pathJSON):
     try:

@@ -172,7 +172,7 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
         dicoClusterToOrg[cluster] = {}
         setOrg = set()  # To avoid paralogous
         for header in dicoCLUSTER[cluster]:
-            lt = header.split(" [")[0].split("|")[0]
+            lt = header.split(" [")[0].split("|")[0].split(" ")[0]
             org = header.split(" [")[1].replace("]", "")
             setOrg.add(org)
             setAvailableOrg.add(org)
@@ -187,6 +187,10 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
             if len(setOrg) == 1:
                 color = "#ffffff"
                 clusterType = "singleton"
+            # Core gene > dark red
+            elif len(setOrg) == len(lstFiles):
+                color = "#aa0000"
+                clusterType = "core"
             else:
                 color = random_hex_color()
                 clusterType = cluster
@@ -212,7 +216,7 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
         setColor.add(color)
         # Apply to all LT
         for header in dicoCLUSTER[cluster]:
-            lt = header.split(" [")[0].split("|")[0]
+            lt = header.split(" [")[0].split("|")[0].split(" ")[0]
             dicoLTcolor[lt] = color
     # Search longest genome
     dicoAllGFF = {}
@@ -242,6 +246,8 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
                         color = "#2ca05a"
                     elif 'locus_tag' in geneEntry['attributes'] and geneEntry['attributes']['locus_tag'].replace(" ", "") in dicoLTcolor:
                         color = dicoLTcolor[geneEntry['attributes']['locus_tag'].replace(" ", "")]
+                    elif 'protein_id' in geneEntry['attributes'] and geneEntry['attributes']['protein_id'].replace(" ", "") in dicoLTcolor:
+                        color = dicoLTcolor[geneEntry['attributes']['protein_id'].replace(" ", "")]
                     else:
                         printcolor("[ERROR: rbh_linear_plot]\nGFF entry error for \""+str(geneEntry)+"\"\n", 1, "212;64;89", "None", True)
                         exit_gemini()

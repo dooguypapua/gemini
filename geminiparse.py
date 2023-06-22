@@ -492,6 +492,14 @@ def make_gbk_dict(pathIN: str, pathJSON: str = "None", boolSort: bool = True, bo
                             dicoGBK[orgName][record.id]['dicoLT'][locustag]['protein_id'] = feature.qualifiers["protein_id"][0]
                         except KeyError:
                             dicoGBK[orgName][record.id]['dicoLT'][locustag]['protein_id'] = None
+                        try:
+                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['EC_number'] = feature.qualifiers["EC_number"][0]
+                        except KeyError:
+                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['EC_number'] = None
+                        try:
+                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['gene'] = feature.qualifiers["gene"][0]
+                        except KeyError:
+                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['gene'] = None
                         if feature.strand == 1:
                             dicoGBK[orgName][record.id]['dicoLT'][locustag]['geneSeq'] = str(record.seq[feature.location.nofuzzy_start: feature.location.nofuzzy_end])
                         else:
@@ -885,8 +893,12 @@ def gbk_to_gff(pathIN: str, pathOUT: str) -> Tuple[str, str]:
                 product = "hypothetical protein"
             else:
                 product = dicoGBK[org][contig]['dicoLT'][lt]['product']
+            if dicoGBK[org][contig]['dicoLT'][lt]['protein_id'] is None:
+                protein_id = "None"
+            else:
+                protein_id = dicoGBK[org][contig]['dicoLT'][lt]['protein_id']
             line = contig+"\tGV\t"+dicoGBK[org][contig]['dicoLT'][lt]['type']+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['start'])+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['end']) + \
-                "\t.\t"+frame+"\t0\tlocus_tag="+lt+";product="+product+"\n"
+                "\t.\t"+frame+"\t0\tlocus_tag="+lt+";product="+product+";protein_id="+protein_id+"\n"
             OUT.write(line)
     OUT.close()
 

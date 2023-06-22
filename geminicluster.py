@@ -241,7 +241,8 @@ def make_rbhcluster_dict(pathIN: str, pathIN2: str, pathJSON: str = "None", idTh
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
         dicoFAA = make_fasta_dict(pathFAA)
         for header in dicoFAA:
-            lt = header.split(" [")[0]
+            # lt = header.split(" [")[0]
+            lt = header.split(" ")[0]
             dicoLTtoOrg[lt] = orgName
             setAllheader.add(header)
         pbar.update(1)
@@ -256,7 +257,7 @@ def make_rbhcluster_dict(pathIN: str, pathIN2: str, pathJSON: str = "None", idTh
         setAllOrgLT = set()
         dicoTMP = make_fasta_dict(dicoRBHtoFAA[pathRBH])
         for key in dicoTMP:
-            setAllOrgLT.add(key.split(" [")[0]+" ["+orgName+"]")
+            setAllOrgLT.add(key.split(" ")[0]+" ["+orgName+"]")
         if os.path.getsize(pathRBH) != 0:
             # Read mmseqs RBH file
             MMSEQS = open(pathRBH, 'r')
