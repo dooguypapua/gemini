@@ -135,7 +135,6 @@ def mmseqs_cluster(pathIN: str, pathJSON: str, idThrClust: int = 80, covThrClust
     spinner.start()
     title("cluster", None)
     cmdRBH = dicoGeminiPath['TOOLS']['mmseqs']+" cluster "+pathTMPdirDB+" "+pathTMPres+" "+geminiset.pathTMP+" -c "+str(covThrClust/100)+" --cov-mode 0 --min-seq-id "+str(idThrClust/100)+" -v 0 --max-seqs 10000 --add-self-matches 1 -s 7.5 --threads "+str(cpu)
-    print(cmdRBH)
     os.system(cmdRBH)
     spinner.stop()
     printcolor("♊ cluster"+"\n")
