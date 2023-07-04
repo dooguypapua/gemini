@@ -540,6 +540,19 @@
                                    },
                         "pathTMP":true
                        },
+  "mmseqs_cluster":        {
+                        "descr": "MMSEQS clustering to JSON",
+                        "tag":"cluster", "version":"1.0",
+                        "title":"rbh",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "idThrClust":{"tag":"-pid","value":80, "type":"int"},
+                                   "covThrClust":{"tag":"-cov","value":80, "type":"int"},
+                                   "ext":{"tag":"-ext","value":".faa", "type":"str"}
+                                   },
+                        "pathTMP":true
+                       },            
   "mmseqs_rbh":        {
                         "descr": "MMSEQS easyrbh: find reciprocal best hit",
                         "tag":"cluster", "version":"1.0",

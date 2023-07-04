@@ -22,7 +22,7 @@ from yaspin.spinners import Spinners
 from tqdm import tqdm
 from typing import Tuple
 from geminini import printcolor, path_converter, get_gemini_path, get_sys_info, dump_json, load_json, exit_gemini
-from geminini import fct_checker, get_input_files, launch_threads, read_group, linear_gradient, title
+from geminini import fct_checker, get_input_files, launch_threads, read_group, linear_gradient, title, read_file
 from geminiparse import make_fasta_dict, gbk_to_fna, make_gbk_dict
 
 
@@ -65,6 +65,129 @@ def mmseqs_easycluster(pathIN: str, pathOUT: str, idThr: int = 30, maxLRthr: int
         os.system(cmdMmseqs)
         os.remove(pathMMSEQS+"_rep_seq.fasta")
         os.remove(pathMMSEQS+"_all_seqs.fasta")
+
+
+@fct_checker
+def mmseqs_cluster(pathIN: str, pathJSON: str, idThrClust: int = 80, covThrClust: int = 80, ext: str = ".faa") -> Tuple[str, str, int, int, str]:
+    '''
+     ------------------------------------------------------------
+    |                     MMSEQS clustering                      |
+    |------------------------------------------------------------|
+    |                  MMSEQS clustering to JSON                 |
+    |                (createdb + rbh + createtsv)                |
+    |------------------------------------------------------------|
+    |PARAMETERS                                                  |
+    |    pathIN     : path of input files or folder (required)   |
+    |    pathJSON   : path of output JSON file (required)        |
+    |    idThrClust : %identity clustering threshold (default=80)|
+    |    covThrClust: %coverage clustering threshold (default=80)|
+    |    ext        : extension of input files (default=.faa)    |
+     ------------------------------------------------------------
+    |TOOLS: mmseqs                                               |
+     ------------------------------------------------------------
+    '''
+    pathJSON = path_converter(pathJSON)
+    lstFiles, maxpathSize = get_input_files(pathIN, "mmseqs_cluster", [ext])
+    if len(lstFiles) == 0:
+        printcolor("[ERROR: mmseqs_cluster]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    if len(lstFiles) == 1:
+        printcolor("[ERROR: mmseqs_cluster]\nMMseqs require more than one FASTA file\n", 1, "212;64;89", "None", True)
+        exit_gemini()
+    dicoGeminiPath, dicoGeminiModule = get_gemini_path()
+    if 'mmseqs' in dicoGeminiModule:
+        os.system("module load "+dicoGeminiModule['mmseqs'])
+    slurmBool, cpu, memMax, memMin = get_sys_info()
+    # ***** Format FASTA if [org_name] is not found in fasta ***** #
+    pathTMPdirFASTA = geminiset.pathTMP+"/fasta"
+    os.makedirs(pathTMPdirFASTA, exist_ok=True)
+    for pathFile in lstFiles:
+        orgName = os.path.basename(pathFile).replace(ext, "").replace("."+ext, "")
+        dicoFASTA = make_fasta_dict(pathFile)
+        pathTMPFASTA = pathTMPdirFASTA+"/"+orgName+".fasta"
+        TMPFASTA = open(pathTMPFASTA, 'w')
+        for key in dicoFASTA:
+            header = key.split(" [")[0]+" ["+orgName+"]"
+            TMPFASTA.write(">"+header+"\n"+dicoFASTA[key]+"\n")
+        TMPFASTA.close()
+    # Paths
+    pathTMPdirDB = geminiset.pathTMP+"/mmseqsdb"
+    pathTMPres = geminiset.pathTMP+"/mmseqsres"
+    pathTMPout = geminiset.pathTMP+"/mmseqsout.tsv"
+    # ***** Create mmseqs database ***** #
+    spinner = yaspin(Spinners.aesthetic, text="♊ createdb", side="right")
+    spinner.start()
+    title("createdb", None)
+    cmdCreateDB = dicoGeminiPath['TOOLS']['mmseqs']+" createdb "+pathTMPdirFASTA+"/* "+pathTMPdirDB+" -v 0 --dbtype 1"
+    os.system(cmdCreateDB)
+    spinner.stop()
+    printcolor("♊ createdb"+"\n")
+    # ***** Index mmseqs database ***** #
+    spinner = yaspin(Spinners.aesthetic, text="♊ createindex", side="right")
+    spinner.start()
+    title("createindex", None)
+    cmdCreateIndex = dicoGeminiPath['TOOLS']['mmseqs']+" createindex "+pathTMPdirDB+" "+geminiset.pathTMP+" -v 0"
+    os.system(cmdCreateIndex)
+    spinner.stop()
+    printcolor("♊ createindex"+"\n")
+    # ***** Launch mmseqs ***** #
+    spinner = yaspin(Spinners.aesthetic, text="♊ cluster", side="right")
+    spinner.start()
+    title("cluster", None)
+    cmdRBH = dicoGeminiPath['TOOLS']['mmseqs']+" cluster "+pathTMPdirDB+" "+pathTMPres+" "+geminiset.pathTMP+" -c "+str(covThrClust/100)+" --cov-mode 0 --min-seq-id "+str(idThrClust/100)+" -v 0 --max-seqs 10000 --add-self-matches 1 -s 7.5 --threads "+str(cpu)
+    print(cmdRBH)
+    os.system(cmdRBH)
+    spinner.stop()
+    printcolor("♊ cluster"+"\n")
+    spinner = yaspin(Spinners.aesthetic, text="♊ createtsv", side="right")
+    spinner.start()
+    title("createtsv", None)
+    cmdCREATETSV = dicoGeminiPath['TOOLS']['mmseqs']+" createtsv "+pathTMPdirDB+" "+pathTMPdirDB+" "+pathTMPres+" "+pathTMPout+" --full-header 1 -v 0 --threads "+str(cpu)
+    os.system(cmdCREATETSV)
+    spinner.stop()
+    printcolor("♊ createtsv"+"\n")
+    # ***** Create clusters JSON file ***** #
+    dicoCLUSTER = {}
+    dicoLTtoCluster = {}
+    # Read mmseqs RBH file
+    spinner = yaspin(Spinners.aesthetic, text="♊ Read rbh results", side="right")
+    spinner.start()
+    lstLines = read_file(pathTMPout, yaspinBool=False)[:-1]
+    spinner.stop()
+    printcolor("♊ Read rbh results"+"\n")
+    # Parse and assign cluster
+    spinner = yaspin(Spinners.aesthetic, text="♊ Clustering", side="right")
+    spinner.start()
+    for line in lstLines:
+        splitLine = line.replace("\"", "").split("\t")
+        query = splitLine[0]
+        target = splitLine[1]
+        if query in dicoLTtoCluster and target in dicoLTtoCluster:
+            continue
+        elif query in dicoLTtoCluster:
+            clusterNum = dicoLTtoCluster[query]
+            dicoCLUSTER[clusterNum].add(target)
+            dicoLTtoCluster[target] = clusterNum
+        elif target in dicoLTtoCluster:
+            clusterNum = dicoLTtoCluster[target]
+            dicoCLUSTER[clusterNum].add(query)
+            dicoLTtoCluster[query] = clusterNum
+        else:
+            clusterNum = "cluster"+str(len(dicoCLUSTER)+1).zfill(4)
+            dicoCLUSTER[clusterNum] = set([query, target])
+            dicoLTtoCluster[query] = clusterNum
+            dicoLTtoCluster[target] = clusterNum
+    spinner.stop()
+    printcolor("♊ Clustering"+"\n")
+    # Convert set to list before dump
+    for clusterNum in dicoCLUSTER.keys():
+        dicoCLUSTER[clusterNum] = list(dicoCLUSTER[clusterNum])
+    # Dump and return dictionnary
+    if pathJSON != "None":
+        dump_json(dicoCLUSTER, pathJSON)
+    else:
+        return dicoCLUSTER
+    exit()
 
 
 @fct_checker

@@ -306,8 +306,8 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
                 if parent_element is not None:
                     parent_element.remove(element_to_remove)
         tree.write(pathSVG)
-        # Align all genes    
-        with Xvfb() as xvfb: # Start the virtual framebuffer for inkscape gui dependent verb
+        # Align all genes
+        with Xvfb() as xvfb:  # Start the virtual framebuffer for inkscape gui dependent verb
             os.system("inkscape --verb=EditSelectAll --verb=SelectionUnGroup --verb=EditSelectAll --verb=SelectionUnGroup \
                        --verb=AlignVerticalCenter --verb=EditSelectAll --verb=SelectionGroup \
                        --verb=FileSave --verb=FileQuit "+pathSVG)
