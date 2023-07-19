@@ -99,17 +99,20 @@ def mmseqs_cluster(pathIN: str, pathJSON: str, idThrClust: int = 80, covThrClust
         os.system("module load "+dicoGeminiModule['mmseqs'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     # ***** Format FASTA if [org_name] is not found in fasta ***** #
-    pathTMPdirFASTA = geminiset.pathTMP+"/fasta"
-    os.makedirs(pathTMPdirFASTA, exist_ok=True)
+    printcolor("♊ formatdb"+"\n")
+    pbar = tqdm(total=len(lstFiles), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pathTMPFASTA = geminiset.pathTMP+"/all_sequences.fasta"
+    TMPFASTA = open(pathTMPFASTA, 'w')
     for pathFile in lstFiles:
         orgName = os.path.basename(pathFile).replace(ext, "").replace("."+ext, "")
         dicoFASTA = make_fasta_dict(pathFile)
-        pathTMPFASTA = pathTMPdirFASTA+"/"+orgName+".fasta"
-        TMPFASTA = open(pathTMPFASTA, 'w')
         for key in dicoFASTA:
             header = key.split(" [")[0]+" ["+orgName+"]"
             TMPFASTA.write(">"+header+"\n"+dicoFASTA[key]+"\n")
-        TMPFASTA.close()
+        pbar.update(1)
+        title("formatdb", pbar)
+    TMPFASTA.close()
+    pbar.close()
     # Paths
     pathTMPdirDB = geminiset.pathTMP+"/mmseqsdb"
     pathTMPres = geminiset.pathTMP+"/mmseqsres"
@@ -118,7 +121,7 @@ def mmseqs_cluster(pathIN: str, pathJSON: str, idThrClust: int = 80, covThrClust
     spinner = yaspin(Spinners.aesthetic, text="♊ createdb", side="right")
     spinner.start()
     title("createdb", None)
-    cmdCreateDB = dicoGeminiPath['TOOLS']['mmseqs']+" createdb "+pathTMPdirFASTA+"/* "+pathTMPdirDB+" -v 0 --dbtype 1"
+    cmdCreateDB = dicoGeminiPath['TOOLS']['mmseqs']+" createdb "+pathTMPFASTA+" "+pathTMPdirDB+" -v 0 --dbtype 1"
     os.system(cmdCreateDB)
     spinner.stop()
     printcolor("♊ createdb"+"\n")
