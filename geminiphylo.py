@@ -86,7 +86,7 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
     else:
         dicoMATRIX = {}
     lstDistOut = os.listdir(pathOUTDIST)
-    pbar = tqdm(total=len(lstDistOut), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstDistOut), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for distOut in lstDistOut:
         orgName = distOut.replace(".tsv", "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -107,7 +107,7 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
     dump_json(dicoMATRIX, PATHJSON)
     # ***** SKETCH genomes ***** #
     printcolor("♊ Sketch genomes"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFNA in lstFiles:
         orgName = os.path.basename(pathFNA).replace(ext, "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -121,7 +121,7 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
     # ***** INIT distance ***** #
     printcolor("♊ Init distance"+"\n")
     dicoThread = {}
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFNA1 in lstFiles:
         orgName1 = os.path.basename(pathFNA1).replace(ext, "")
         pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
@@ -155,7 +155,7 @@ def mash_matrix(pathIN: str, pathOUT: str, sketchSize: int = 10000, ext: str = "
         # ***** CREATE matrix ***** #
         printcolor("♊ Update Matrix"+"\n")
         lstDistOut = os.listdir(pathOUTDIST)
-        pbar = tqdm(total=len(lstDistOut), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstDistOut), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for distOut in lstDistOut:
             orgName = distOut.replace(".tsv", "")
             pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -279,7 +279,7 @@ def fastani_db(pathIN: str, pathIN2: str, pathJSON: str, fragLen: int = 3000, ex
     # ***** PARSE fastANI files ***** # (orgHit<tab>ani)
     printcolor("♊ Parse fastANI files"+"\n")
     dicoANI = {}
-    pbar = tqdm(total=len(lstFiles2), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles2), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFASTANI in lstFiles2:
         orgName1 = os.path.basename(pathFASTANI).replace(".txt", "")
         pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
@@ -321,7 +321,7 @@ def fastani_db(pathIN: str, pathIN2: str, pathJSON: str, fragLen: int = 3000, ex
         printcolor("♊ Launch missing fastANI"+"\n")
         # ***** Parse new results ***** #
         printcolor("♊ Read new results"+"\n")
-        pbar = tqdm(total=len(dicoThread), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        pbar = tqdm(total=len(dicoThread), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
         for file in os.listdir(pathTMP):
             if "#####" in file:
                 pathFILE = pathTMP+"/"+file
@@ -454,7 +454,7 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
     printcolor("♊ Read sequences"+"\n")
     dicoLTtoOrg = {}
     dicoLTtoGeneSeq = {}
-    pbar = tqdm(total=len(lstFilesFFN), ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFilesFFN), dynamic_ncols=True, ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for fileFFN in lstFilesFFN:
         orgName = os.path.basename(fileFFN).replace(ext1, "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize1-len(orgName)))
@@ -479,7 +479,7 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
         MMSEQS = open(pathOUT+"/"+outgroup+".rbh", 'r')
         lstLines = MMSEQS.read().split("\n")[: -1]
         MMSEQS.close()
-        pbar = tqdm(total=len(lstLines), ncols=50+maxpathSize2, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        pbar = tqdm(total=len(lstLines), dynamic_ncols=True, ncols=50+maxpathSize2, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
         # Parse and assign cluster
         for line in lstLines:
             splitLine = line.split("\t")
@@ -539,7 +539,7 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
     printcolor("⏩ Found "+str(len(dicoCORE))+" core genes"+"\n")
     # ***** Align core genes ***** #
     printcolor("♊ Align core genes"+"\n")
-    pbar = tqdm(total=len(dicoCORE), ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoCORE), dynamic_ncols=True, ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for outLT in dicoCORE:
         pbar.set_description_str(outLT+" ".rjust(maxpathSize1-len(outLT)))
         # Make gene FASTA
@@ -559,7 +559,7 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
     pbar.close()
     # ***** Make individual core gene tree ***** #
     printcolor("♊ Make genes trees"+"\n")
-    pbar = tqdm(total=len(dicoCORE), ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoCORE), dynamic_ncols=True, ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for outLT in dicoCORE:
         pbar.set_description_str(outLT+" ".rjust(maxpathSize1-len(outLT)))
         pathCoreGeneALIGN = pathOUTalign+"/"+outLT+"_align.ffn"
@@ -575,7 +575,7 @@ def best_gene_tree_topology(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: s
     circularStyle.mode = "c"
     circularStyle.scale = 20
     cptBestTree = 0
-    pbar = tqdm(total=len(dicoCORE), ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoCORE), dynamic_ncols=True, ncols=50+maxpathSize1, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for outLT in dicoCORE:
         pbar.set_description_str(outLT+" ".rjust(maxpathSize1-len(outLT)))
         pathCoreGeneTREE = pathOUTtree+"/"+outLT+"_GTR_fasttree.nwk"
@@ -665,7 +665,7 @@ def specific_kmers(pathIN: str, pathIN2: str, pathOUT: str, kmerLen: int = 25, e
     pathOUTprimers = pathOUT+"primers.txt"
     # ***** MAKE Kmers ***** #
     printcolor("♊ Make Kmers"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstFiles:
         orgName = os.path.basename(pathFile).replace(ext, "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -679,7 +679,7 @@ def specific_kmers(pathIN: str, pathIN2: str, pathOUT: str, kmerLen: int = 25, e
     # ***** SELECTED ORGANISM KMERS ***** #
     printcolor("♊ Selected organism Kmers"+"\n")
     dicoKmers = {}
-    pbar = tqdm(total=len(setSelectedOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(setSelectedOrg), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstFiles:
         orgName = os.path.basename(pathFile).replace(ext, "")
         if orgName in setSelectedOrg:
@@ -699,7 +699,7 @@ def specific_kmers(pathIN: str, pathIN2: str, pathOUT: str, kmerLen: int = 25, e
     pbar.close()
     # ***** SELECTED ORGANISM COMMON KMERS ***** #
     printcolor("♊ Common Kmers"+"\n")
-    pbar = tqdm(total=len(setSelectedOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(setSelectedOrg), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     pivotOrg = list(setSelectedOrg)[0]
     setIntersectKmers = dicoKmers[pivotOrg]
     for orgName in setSelectedOrg:
@@ -711,7 +711,7 @@ def specific_kmers(pathIN: str, pathIN2: str, pathOUT: str, kmerLen: int = 25, e
     printcolor("⏩ Found "+str(len(setIntersectKmers))+" common Kmers"+"\n")
     # ***** ANALYSE Kmers ***** #
     printcolor("♊ Specific Kmers"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstFiles:
         if "Vibrio" not in pathFile:
             continue
@@ -738,7 +738,7 @@ def specific_kmers(pathIN: str, pathIN2: str, pathOUT: str, kmerLen: int = 25, e
     printcolor("⏩ Found "+str(len(setIntersectKmers))+" common & specific Kmers"+"\n")
     # ***** SEARCH primers ***** #
     printcolor("♊ Get primers"+"\n")
-    pbar = tqdm(total=len(setIntersectKmers), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(setIntersectKmers), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     OUT = open(pathOUTprimers, 'w')
     for kmer1 in setIntersectKmers:
         for kmer2 in setIntersectKmers:
@@ -796,7 +796,7 @@ def core_prot_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80,
     mmseqs_rbh(pathIN=pathIN, pathOUT=pathOUT+"/rbh", ref="None", idThrClust=idThr, covThrClust=covThr, boolNucl=True, ext=".faa")
     # ***** RETRIEVE PROTEIN SEQUENCE ***** #
     printcolor("♊ Get proteins"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoLTtoOrg = {}
     dicoLTtoSeq = {}
     lstOrgName = []
@@ -817,7 +817,7 @@ def core_prot_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80,
     pbar.close()
     # ***** MAKE RBH CLUSTERS ***** #
     printcolor("♊ RBH clustering"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoCluster = {}
     for rbhFile in os.listdir(pathOUT+"/rbh"):
         pbar.set_description_str(rbhFile.replace(".rbh", "")+" ".rjust(maxpathSize-len(rbhFile.replace(".rbh", ""))))
@@ -847,7 +847,7 @@ def core_prot_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int = 80,
     printcolor("⏩ Found "+str(len(dicoCore))+" core genes"+"\n")
     # ***** ALIGN CORE PROTEINS ***** #
     printcolor("♊ Align core proteins"+"\n")
-    pbar = tqdm(total=len(dicoCore), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoCore), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     lstAlignFiles = []
     for coreProtNum in dicoCore:
         orgName = os.path.basename(pathFile).replace(ext, "")
@@ -936,7 +936,7 @@ def individual_core_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int
         printcolor("♊ Get genes"+"\n")
     else:
         printcolor("♊ Get proteins"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoLTtoOrg = {}
     dicoLTtoSeq = {}
     lstOrgName = []
@@ -974,7 +974,7 @@ def individual_core_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int
         printcolor("⏩ Found "+str(len(dicoCore))+" core proteins"+"\n")
         printcolor("♊ Align core proteins"+"\n")
     # ***** ALIGN CORE GENES/PROTEINS ***** #
-    pbar = tqdm(total=len(dicoCore), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoCore), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     lstAlignFiles = []
     for coreNum in dicoCore:
         if boolNucl is True:
@@ -1014,7 +1014,7 @@ def individual_core_tree(pathIN: str, pathOUT: str, idThr: int = 30, covThr: int
     # ***** MAKE TREES ***** #
     # indiviual trees
     printcolor("♊ Make trees"+"\n")
-    pbar = tqdm(total=len(dicoCore), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoCore), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     lstAlignFiles = []
     for coreNum in dicoCore:
         # Launch
@@ -1089,7 +1089,7 @@ def protein_similarity_matrix(pathIN: str, pathOUT: str, locusTag: str, idThr: i
         exit_gemini()
     # ***** GET SEQUENCES *****""
     printcolor("♊ Get sequences"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     QUERY = open(pathQueryFASTA, 'w')
     SUBJECT = open(pathSubjectFASTA, 'w')
     dicoSeq = {}
@@ -1307,7 +1307,7 @@ def panacota_flexible_tree(pathIN: str, pathOUT: str, filterOrg: str = "None") -
             maxOrgSize = max(maxOrgSize, len(orgName))
     # ***** BROWSE all genes FASTA ***** #
     printcolor("♊ Get genes"+"\n")
-    pbar = tqdm(total=len(lstGenesFiles), ncols=50+maxOrgSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstGenesFiles), dynamic_ncols=True, ncols=50+maxOrgSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for genesFile in lstGenesFiles:
         orgName = genesFile.replace(".gen", "")
         pbar.set_description_str(orgName+" ".rjust(maxOrgSize-len(orgName)))
@@ -1339,7 +1339,7 @@ def panacota_flexible_tree(pathIN: str, pathOUT: str, filterOrg: str = "None") -
                     dicoPan[numPan][orgName] = [lt]
     # ***** WRITE FLEXIBLE genes file ***** #
     printcolor("♊ Get flexibles"+"\n")
-    pbar = tqdm(total=len(dicoPan), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoPan), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     lstFASTA = []
     lstPanNumCore = []
     for numPan in dicoPan:
@@ -1359,7 +1359,7 @@ def panacota_flexible_tree(pathIN: str, pathOUT: str, filterOrg: str = "None") -
     pbar.close()
     # ***** ALIGN FLEXIBLE genes ***** #
     printcolor("♊ Align flexibles"+"\n")
-    pbar = tqdm(total=len(lstFASTA), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFASTA), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     lstALIGN = []
     for pathFASTA in lstFASTA:
         pbar.set_description_str(os.path.basename(pathFASTA).replace(".fasta", ""))
@@ -1389,7 +1389,7 @@ def panacota_flexible_tree(pathIN: str, pathOUT: str, filterOrg: str = "None") -
     printcolor("♊ Init dict"+"\n")
     # ***** COMPUTE flexible genes similarity ***** #
     printcolor("♊ Flexibles similarity"+"\n")
-    pbar = tqdm(total=len(lstALIGN), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstALIGN), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathALIGN in lstALIGN:
         numPan = int(os.path.basename(pathALIGN).replace("_align.fasta", "").replace("pan_gene_", ""))
         formatNumPan = str(numPan).zfill(len(str(len(dicoPan))))
@@ -1479,7 +1479,7 @@ def snippy(pathIN: str, pathOUT: str, ext: str = ".gbk") -> Tuple[str, str, str]
     # ***** CONVERT gbk to contigs ***** #
     printcolor("♊ GBK to FNA"+"\n")
     lstFNAfiles = []
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGBK in lstFiles:
         orgName = os.path.basename(pathGBK).replace(ext, "").replace(".gz", "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -1492,7 +1492,7 @@ def snippy(pathIN: str, pathOUT: str, ext: str = ".gbk") -> Tuple[str, str, str]
     # ***** LAUNCH Snippy ***** #
     printcolor("♊ Launch"+"\n")
     lstSnippyOUT = []
-    pbar = tqdm(total=len(lstFiles)*(len(lstFiles)-1), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles)*(len(lstFiles)-1), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGBK in lstFiles:
         # decompress if required
         if pathGBK[-3:] == ".gz":
@@ -1519,7 +1519,7 @@ def snippy(pathIN: str, pathOUT: str, ext: str = ".gbk") -> Tuple[str, str, str]
     # ***** PARSE Snippy ***** #
     printcolor("♊ Parse"+"\n")
     dicoSNIPPY = {}
-    pbar = tqdm(total=len(lstSnippyOUT), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstSnippyOUT), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathOUT in lstSnippyOUT:
         pbar.set_description_str(os.path.basename(pathOUT).replace(".tab", "").rjust(maxpathSize-len(os.path.basename(pathOUT).replace(".tab", ""))))
         orgName1 = os.path.basename(pathOUT).split("_vs_")[0].replace("snippy_", "")
@@ -1624,7 +1624,7 @@ def wgrr_matrix(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
     PATHXLSX = pathOUT+"/wGRR.xlsx"
     # ***** REFORMAT FASTA ***** #
     printcolor("♊ Reformat FASTA"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstFiles:
         orgName = os.path.basename(pathFile).replace(ext, "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -1642,7 +1642,7 @@ def wgrr_matrix(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
     mmseqs_rbh(pathIN=geminiset.pathTMP, pathOUT=pathOUT, ref="None", idThrClust=20, covThrClust=50, boolNucl=False, ext=".faa")
     # ***** GET Number of proteins per file ***** #
     printcolor("♊ Count proteins"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoNbProt = {}
     for pathFile in lstFiles:
         orgName = os.path.basename(pathFile).replace(ext, "")
@@ -1654,7 +1654,7 @@ def wgrr_matrix(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
     pbar.close()
     # ***** GET percentage identity between all best hits (evalue<10-5) ***** #
     printcolor("♊ Get RBH pident"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoRBH = {}
     for pathFile in lstFiles:
         orgName = os.path.basename(pathFile).replace(ext, "")
@@ -1680,7 +1680,7 @@ def wgrr_matrix(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
     pbar.close()
     # ***** COMPUTE wGRR *****#
     printcolor("♊ Compute wGRR"+"\n")
-    pbar = tqdm(total=len(dicoRBH), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoRBH), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoWGRR = {}
     for orgName1 in dicoRBH:
         pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))

@@ -52,7 +52,7 @@ def get_distant_file(url, path, pbar):
 # ***** GET DISTANT FILE WITH PROGRESSBAR ***** #
 def get_distant_file_tqdm(url, path, filesize, chunksize):
     try:
-        with requests.get(url, stream=True) as r, open(path, "wb") as f, tqdm(unit="B", unit_scale=True, leave=False, unit_divisor=1024, total=filesize, ncols=75, file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{rate_fmt}{postfix}]") as progress:
+        with requests.get(url, stream=True) as r, open(path, "wb") as f, tqdm(unit="B", unit_scale=True, leave=False, unit_divisor=1024, total=filesize, dynamic_ncols=True, ncols=75, file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{rate_fmt}{postfix}]") as progress:
             for chunk in r.iter_content(chunk_size=chunksize):
                 # download the file chunk by chunk
                 datasize = f.write(chunk)
@@ -216,7 +216,7 @@ def dl_genbank_bacteria(section: str, taxonomyID: int, pathOUT: str, chunkSize: 
     dicoSummary = {}
     lstMissing = []
     with open(pathSummary) as infile:
-        pbar = tqdm(total=nbLines, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Parsing {percentage: 3.0f}%|{bar}|")
+        pbar = tqdm(total=nbLines, dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Parsing {percentage: 3.0f}%|{bar}|")
         for line in infile:
             if line[0] != "#":
                 splitLine = line[: -1].split("\t")
@@ -258,7 +258,7 @@ def dl_genbank_bacteria(section: str, taxonomyID: int, pathOUT: str, chunkSize: 
     lstDLerror = []
     # Chunks missing genomes
     chunkedLstMissing = [lstMissing[i: i+chunkSize] for i in range(0, len(lstMissing), chunkSize)]
-    pbar = tqdm(total=len(lstMissing), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(lstMissing), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for subLstMissing in chunkedLstMissing:
         TMP = open(pathTMP+"/chunks.txt", 'w')
         for gcaAccession in subLstMissing:
@@ -285,7 +285,7 @@ def dl_genbank_bacteria(section: str, taxonomyID: int, pathOUT: str, chunkSize: 
     pbar.close()
     if len(lstDLerror):
         printcolor("⛔ Download error for "+",".join(lstDLerror)+"\n")
-    pbar = tqdm(total=len(lstMissing[: 2]), ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstMissing[: 2]), dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for gcaAccession in lstMissing[: 2]:
         pbar.set_description_str(gcaAccession)
         pathGBK = pathOUT+"/"+gcaAccession+".gbk.gz"

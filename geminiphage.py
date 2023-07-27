@@ -368,7 +368,7 @@ def phage_annotation(pathIN: str, pathOUT: str, boolEMBL: bool = False, enaProje
             EMBLOUT.close()
     # # ***** CREATE GFF3 files ***** #
     # printcolor("♊ Create GFF3"+"\n")
-    # pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    # pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     # for pathFNA in lstFiles:
     #     orgName = os.path.basename(pathFNA).replace(ext, "").replace("."+ext, "")
     #     pathGFF = pathOUT+"/"+orgName+".gff"
@@ -597,7 +597,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
         lstLines = TMPSUMMARY.read().split("\n")
         TMPSUMMARY.close()
         SUMMARY = open(pathGBKsummaryTXT, 'w')
-        pbar = tqdm(total=len(lstLines), ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Filtering {percentage: 3.0f}%|{bar}|")
+        pbar = tqdm(total=len(lstLines), dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Filtering {percentage: 3.0f}%|{bar}|")
         # Init NCBITaxa
         ncbi = NCBITaxa()
         for line in lstLines:
@@ -638,7 +638,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     SUMMARY = open(pathGBKsummaryTXT, 'r')
     lstLines = SUMMARY.read().split("\n")
     SUMMARY.close()
-    pbar = tqdm(total=len(lstLines), ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Parsing {percentage: 3.0f}%|{bar}|")
+    pbar = tqdm(total=len(lstLines), dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Parsing {percentage: 3.0f}%|{bar}|")
     for line in lstLines:
         if line != "" and line[0] != "#":
             splitLine = line.split("\t")
@@ -688,7 +688,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     lstLines = ENA.read().split("\n")[: -1]
     ENA.close()
     # Parse
-    pbar = tqdm(total=len(lstLines), ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Parsing {percentage: 3.0f}%|{bar}|")
+    pbar = tqdm(total=len(lstLines), dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="   Parsing {percentage: 3.0f}%|{bar}|")
     for line in lstLines:
         splitLine = line.split("\t")
         gca = splitLine[0]
@@ -747,7 +747,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     for org in dicoDB:
         nbGCA += len(dicoDB[org])
     printcolor("♊ Retrieve FNA files"+"\n")
-    pbar = tqdm(total=nbGCA, ncols=50+maxOrgNameSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=nbGCA, dynamic_ncols=True, ncols=50+maxOrgNameSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     cptNewFNA = 0
     cptNewGBK = 0
     lstFailedFNA = []
@@ -808,7 +808,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     printcolor("♊ Filter low quality genome"+"\n")
     lstFNA = os.listdir(pathOUT+"/FNA")
     lstFiltered = []
-    pbar = tqdm(total=len(lstFNA), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFNA), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for fna in lstFNA:
         if fna not in lstFailedFNA:
             if "GCA" in fna:
@@ -886,7 +886,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     printcolor("♊ Concatenate filtered FNA"+"\n")
     if cptNewFNA != 0 or not os.path.isfile(pathCONCATFNA) or os.path.getsize(pathCONCATFNA) == 0:
         lstFNA = os.listdir(pathOUT+"/FNA_filtered")
-        pbar = tqdm(total=len(lstFNA), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFNA), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         CONCAT = open(pathCONCATFNA, 'w')
         for fna in lstFNA:
             if "GCA" in fna:
@@ -909,7 +909,7 @@ def phageDB(pathIN: str, pathOUT: str, checkvHQ: float = 75.0) -> Tuple[str, str
     printcolor("♊ Concatenate all FAA"+"\n")
     if cptNewFNA != 0 or not os.path.isfile(pathCONCATFAA) or os.path.getsize(pathCONCATFAA) == 0 or not os.path.isfile(pathMAPPINGPROT) or os.path.getsize(pathMAPPINGPROT) == 0:
         lstFAA = os.listdir(pathOUT+"/FAA")
-        pbar = tqdm(total=len(lstFAA), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFAA), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         CONCAT = open(pathCONCATFAA, 'w')
         MAPPING = open(pathMAPPINGPROT, 'w')
         MAPPING.write("protein_id, contig_id, keywords\n")
@@ -1045,7 +1045,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
         lstFiles = []
         maxpathSize = 15
         lst_genome = os.listdir(pathIN)
-        pbar = tqdm(total=len(lst_genome), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        pbar = tqdm(total=len(lst_genome), dynamic_ncols=True, dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
         for folder in lst_genome:
             if os.path.isfile(pathIN+"/"+folder+"/"+folder+"_genomic.fna.gz"):
                 lstFiles.append(pathIN+"/"+folder+"/"+folder+"_genomic.fna.gz")
@@ -1091,7 +1091,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     printcolor("⏩ Found "+str(len(setAllOrg))+" phages"+"\n")
     # ***** CHECK MISSING DISTANCES ***** #
     printcolor("♊ Check JSON"+"\n")
-    pbar = tqdm(total=len(setAllOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(setAllOrg), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     cptMissing = 0
     for orgName in setAllOrg:
         if ref == "None" or orgName == ref:
@@ -1115,7 +1115,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
         printcolor("⏩ Missing: "+str(cptMissing)+"/"+str(len(setAllOrg)-1)+" distances"+"\n")
     # ***** REFORMAT INPUT FASTA ***** # (only organism name in header and merge contigs with 100N)
     printcolor("♊ Reformat FASTA"+"\n")
-    pbar = tqdm(total=len(setAllOrg), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(setAllOrg), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for orgName in setAllOrg:
         if boolFromDB:
             pathInitialFASTA = pathIN+"/"+orgName+"/"+orgName+"_genomic.fna.gz"
@@ -1149,8 +1149,13 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
         title("Reformat", pbar)
     pbar.close()
     # ***** LAUNCH MISSING BLASTN ***** #
-    printcolor("♊ Launch blastN"+"\n")
-    pbar = tqdm(total=len(setAllOrg), ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    if ref != "None":
+        spinner = yaspin(Spinners.aesthetic, text="♊ Launch VIRIDIC", side="right")
+        spinner.start()
+        dicoThread = {}
+    else:
+        printcolor("♊ Launch blastN"+"\n")
+        pbar = tqdm(total=len(setAllOrg), dynamic_ncols=True, ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for orgName1 in setAllOrg:
         pathReformatFASTA1 = pathTMPFASTA+"/"+orgName1+".fasta"
         pathORGBLAST = pathDIRBLASTN+"/"+orgName1
@@ -1160,7 +1165,8 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
         else:
             pbar.set_description_str(orgName1+" ".rjust(maxpathSize-len(orgName1)))
         # Construct blastN threads for current organism
-        dicoThread = {}
+        if ref == "None":
+            dicoThread = {}
         for orgName2 in setAllOrg:
             pathReformatFASTA2 = pathTMPFASTA+"/"+orgName2+".fasta"
             pathBLASTOUT = pathORGBLAST+"/"+orgName2+".out"
@@ -1170,15 +1176,20 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
             if orgName1 != orgName2 and (ref == "None" or orgName1 == ref or orgName2 == ref) and not os.path.isfile(pathBLASTOUT):
                 dicoThread[orgName2] = {"cmd": cmdBLASTN, "returnstatut": None, "returnlines": []}
         # Launch blastN threads
-        if len(dicoThread) > 0:
-            launch_threads(dicoThread, "blastn", cpu, pathTMP)
-        pbar.update(1)
-        title("blastN", pbar)
-    pbar.close()
+        if ref == "None":
+            if len(dicoThread) > 0:
+                launch_threads(dicoThread, "blastn", cpu, pathTMP)
+            pbar.update(1)
+            title("blastN", pbar)
+    if ref != "None" and len(dicoThread) > 0:
+        launch_threads(dicoThread, "blastn", cpu, pathTMP)
+        spinner.stop()
+    else:
+        pbar.close()
     # ***** LAUNCH VIRIDIC ***** #
     if ref == "None":
         printcolor("♊ Launch VIRIDIC"+"\n")
-        pbar = tqdm(total=len(setAllOrg), ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(setAllOrg), dynamic_ncols=True, ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     else:
         spinner = yaspin(Spinners.aesthetic, text="♊ Launch VIRIDIC", side="right")
         spinner.start()
@@ -1259,7 +1270,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     # ***** FAMILY, GENUS and SPECIES assignment ***** #
     if ref == "None":
         printcolor("♊ Genus/Specie assignment"+"\n")
-        pbar = tqdm(total=len(setAllOrg), ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(setAllOrg), dynamic_ncols=True, ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     else:
         spinner = yaspin(Spinners.aesthetic, text="♊ Genus/Specie assignment", side="right")
         spinner.start()
@@ -1395,7 +1406,7 @@ def PhiSpy(pathIN: str, pathOUT: str, nbAdjacent: int = 3, minCtgLen: int = 5000
     if 'phispy' in dicoGeminiModule:
         os.system("module load "+dicoGeminiModule['phispy'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGBK in lstFiles:
         orgName = os.path.basename(pathGBK).replace(ext, "").replace(".gz", "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -1724,7 +1735,7 @@ def picmi_finder_databankseq(pathIN: str, pathOUT: str, maxLen: int = 50000) -> 
     dicoGBK = list(make_gbk_dict(pathSEQ).values())[0]
     spinner.stop()
     printcolor("♊ Read SEQ file"+"\n")
-    pbar = tqdm(total=len(dicoGBK), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoGBK), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for record in dicoGBK:
         pbar.set_description_str(record)
         orgName = dicoGBK[record]['dicoSource']['orgName']+"_"+record

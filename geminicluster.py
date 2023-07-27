@@ -100,7 +100,7 @@ def mmseqs_cluster(pathIN: str, pathJSON: str, idThrClust: int = 80, covThrClust
     slurmBool, cpu, memMax, memMin = get_sys_info()
     # ***** Format FASTA if [org_name] is not found in fasta ***** #
     printcolor("♊ formatdb"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     pathTMPFASTA = geminiset.pathTMP+"/all_sequences.fasta"
     TMPFASTA = open(pathTMPFASTA, 'w')
     for pathFile in lstFiles:
@@ -243,7 +243,7 @@ def mmseqs_rbh(pathIN: str, pathOUT: str, ref: str = "None", idThrClust: int = 8
         os.makedirs(pathTMPres, exist_ok=True)
         # ***** Create all required mmseqs db files ***** #
         printcolor("♊ createdb"+"\n")
-        pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for pathFile in lstFiles:
             file = os.path.basename(pathFile)
             orgName = file.replace(ext, "").replace("."+ext, "")
@@ -259,7 +259,7 @@ def mmseqs_rbh(pathIN: str, pathOUT: str, ref: str = "None", idThrClust: int = 8
         # ***** Launch mmseqs rbh and convertalis ***** # [multithread]
         if ref == "None":
             printcolor("♊ rbh"+"\n")
-            pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+            pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         else:
             spinner = yaspin(Spinners.aesthetic, text="♊ rbh", side="right")
             spinner.start()
@@ -359,7 +359,7 @@ def make_rbhcluster_dict(pathIN: str, pathIN2: str, pathJSON: str = "None", idTh
                 dicoRBHtoFAA[pathRBH] = pathFAA
                 break
     printcolor("♊ LT to Org"+"\n")
-    pbar = tqdm(total=len(lstFiles2), ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles2), dynamic_ncols=True, ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles2:
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext2, "").replace("."+ext2, "")
@@ -374,7 +374,7 @@ def make_rbhcluster_dict(pathIN: str, pathIN2: str, pathJSON: str = "None", idTh
         title("LT to org", pbar)
     pbar.close()
     printcolor("♊ Clustering"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathRBH in lstFiles:
         file = os.path.basename(pathRBH)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -487,7 +487,7 @@ def make_group_core_align(pathIN: str, pathJSON: str, pathGROUP: str, pathOUT: s
             dicoProt.update(make_fasta_dict(pathFile))
             maxpathSize = max(len(os.path.basename(file).replace(extP, "")), maxpathSize)
     # ***** Read Cluster ***** #
-    pbar = tqdm(total=len(dicoGroup)*len(dicoCLUSTER), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(dicoGroup)*len(dicoCLUSTER), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for group in dicoGroup:
         dicoAlignCoreGene = {}
         dicoAlignCoreProt = {}
@@ -781,7 +781,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
     printcolor("♊ Mash"+"\n")
     if not os.path.isfile(pathMashOUT) or os.path.getsize(pathMashOUT) == 0:
         # Make FNA
-        pbar = tqdm(total=len(lstFiles2), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFiles2), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         TMPLIST = open(geminiset.pathTMP+"/mash_genome.txt", 'w')
         for pathGBK in lstFiles2:
             orgName = os.path.basename(pathGBK).replace(".gbff", "").replace(".gbk", "").replace(".gb", "").replace(".gz", "").replace("_genomic", "")
@@ -799,7 +799,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
     printcolor("♊ Contigs stats"+"\n")
     if not os.path.isfile(pathFilterContigJSON) or os.path.getsize(pathFilterContigJSON) == 0:
         dicoFilterContig = {}
-        pbar = tqdm(total=len(lstFiles2), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFiles2), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for pathGBK in lstFiles2:
             orgName = os.path.basename(pathGBK).replace(".gbff", "").replace(".gbk", "").replace(".gb", "").replace(".gz", "").replace("_genomic", "")
             pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
@@ -885,7 +885,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
     # ***** CREATE CORE FAA FILES ***** #
     # Retrieve all proteins sequence
     printcolor("♊ Read proteins"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoProteins = {}
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
@@ -897,7 +897,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
     pbar.close()
     # Create individual core protein fasta
     printcolor("♊ Protein FASTAs"+"\n")
-    pbar = tqdm(total=len(lstCoreProt), ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(lstCoreProt), dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for prot in lstCoreProt:
         ltRef = prot.split("|")[0]
         pathFAA = pathDirFASTAOUT+"/"+ltRef+".faa"
@@ -917,7 +917,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
     pbar.close()
     # ***** ALIGN INDIVIDUAL CORE ***** #
     printcolor("♊ Protein Alignments"+"\n")
-    pbar = tqdm(total=len(lstCoreProt), ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(lstCoreProt), dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for prot in lstCoreProt:
         ltRef = prot.split("|")[0]
         pathFAA = pathDirFASTAOUT+"/"+ltRef+".faa"
@@ -935,7 +935,7 @@ def make_vibrio_core(pathIN: str, pathIN2: str, pathOUT: str, ref: str, idThrClu
     if not os.path.isfile(pathCoreFAA) or os.path.getsize(pathCoreFAA) == 0:
         # Read all alignment
         dicoCoreAlign = {}
-        pbar = tqdm(total=len(lstCoreProt), ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        pbar = tqdm(total=len(lstCoreProt), dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
         for prot in lstCoreProt:
             ltRef = prot.split("|")[0]
             pathALIGN = pathDirFASTAOUT+"/"+ltRef+".align"

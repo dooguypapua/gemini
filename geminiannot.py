@@ -104,9 +104,9 @@ def phanotate(pathIN: str, pathOUT: str, minLen: int = 0, fromPhageDb: bool = Fa
     # Reformat phanotate FFN
     printcolor("♊ Reformat"+"\n")
     if fromPhageDb is True:
-        pbar = tqdm(total=len(lstFiles), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     else:
-        pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFNA in lstNewFile:
         file = os.path.basename(pathFNA)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -251,7 +251,7 @@ def balrog(pathIN: str, pathOUT: str, topology: str, division: str, taxID: int =
     contig_gene_coord_list = []
     contig_gene_strand_list = []
     printcolor("♊ Find genes"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=75+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstFiles:
         orgName = os.path.basename(pathFile).replace(ext, "").replace("."+ext, "")
         pathFFN = pathOUT+"/"+orgName+".ffn"
@@ -613,7 +613,7 @@ def balrog(pathIN: str, pathOUT: str, topology: str, division: str, taxID: int =
     pbar.close()
     # ***** Write output GFF & FFN & FAA ***** #
     printcolor("♊ Output"+"\n")
-    pbar = tqdm(total=len(contig_name_list), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(contig_name_list), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for i in range(len(contig_name_list)):
         for j in range(len(contig_name_list[i])):
             contigName = contig_name_list[i][j]
@@ -683,9 +683,9 @@ def transeq(pathIN: str, pathOUT: str, boolOrgName: bool = True, fromPhageDb: bo
     os.makedirs(pathOUT, exist_ok=True)
     printcolor("♊ Transeq"+"\n")
     if fromPhageDb is True:
-        pbar = tqdm(total=len(lstFiles), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     else:
-        pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFFN in lstFiles:
         file = os.path.basename(pathFFN)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -753,7 +753,7 @@ def trnascan_se(pathIN: str, pathOUT: str, model: str = "-B", ext: str = ".fna")
         os.system("module load "+dicoGeminiModule['trnascanse'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     printcolor("♊ tRNAscan-SE"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFNA in lstFiles:
         file = os.path.basename(pathFNA)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -802,7 +802,7 @@ def pvogs(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str, str]:
         os.system("module load "+dicoGeminiModule['hmmsearch'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     printcolor("♊ pVOGs"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -861,7 +861,7 @@ def diamond_p(pathIN: str, pathDB: str, pathOUT: str, boolSeq: bool = False, ext
         outfmt = "6 qseqid stitle pident length qlen qstart qend slen sstart send evalue full_sseq"
     else:
         outfmt = "6 qseqid stitle pident length qlen qstart qend slen sstart send evalue"
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -1024,7 +1024,7 @@ def recombinase(pathIN: str, pathOUT: str, ext: str = ".faa") -> Tuple[str, str,
         os.system("module load "+dicoGeminiModule['hmmsearch'])
     slurmBool, cpu, memMax, memMin = get_sys_info()
     printcolor("♊ Recombinase"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -1085,7 +1085,7 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
     # ***** DefenseFinder ***** #
     printcolor("♊ DefenseFinder"+"\n")
     lstModels = os.listdir(dicoGeminiPath['DATABASES']['defense-finder-models']+"/"+dfmodelV+"/definitions")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -1125,7 +1125,7 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
     pbar.close()
     # ***** PADLOC ***** #
     printcolor("♊ PADLOC"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -1291,7 +1291,7 @@ def satellite_finder(pathIN: str, pathOUT: str, modelSel: str = "ALL", ext: str 
         lstSelectedModels = [modelSel]
     for model in lstSelectedModels:
         dicoResults[model] = {'header': "", 'lines': ""}
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
         orgName = file.replace(ext, "").replace("."+ext, "")

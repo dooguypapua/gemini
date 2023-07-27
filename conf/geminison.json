@@ -668,7 +668,7 @@
                                    "pathIN":{"tag":"-i","value":"","type":"str"},
                                    "pathCLUSTER":{"tag":"-cluster","value":"", "type":"str"},
                                    "pathOUT":{"tag":"-o","value":"", "type":"str"},
-                                   "distinctColor":{"tag":"-distinctcolor","value":"False", "type":"bool"},
+                                   "distinctColor":{"tag":"-distinctcolor","value":false, "type":"bool"},
                                    "pathSUBCORE":{"tag":"-i2","value":"None", "type":"str"},
                                    "ext":{"tag":"-ext","value":".gff", "type":"str"}
                                    },

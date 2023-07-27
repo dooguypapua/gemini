@@ -776,7 +776,7 @@ def infoversion(pathOUT: str = None):
                             "circos", "snippy", "phispy", "macsyfinder", "padloc", "mafft"]
     toWrite = "# TOOLS\n"
     printcolor("♊ Check tools/db versions"+"\n")
-    pbar = tqdm(total=len(dicoGeminiPath["TOOLS"])+len(dicoGeminiPath["DATABASES"]), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(dicoGeminiPath["TOOLS"])+len(dicoGeminiPath["DATABASES"]), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for toolName in sorted(dicoGeminiPath["TOOLS"]):
         toolPath = dicoGeminiPath["TOOLS"][toolName]
         # --version

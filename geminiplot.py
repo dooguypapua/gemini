@@ -74,7 +74,7 @@ def gff_to_linear_geneplot(pathIN: str, pathOUT: str, pathLT: str = "None", leng
                 setLT.add(line)
     # Browse GFF3
     printcolor("♊ Plotting"+"\n")
-    pbar = tqdm(total=int(len(lstFiles)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=int(len(lstFiles)), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGFF in lstFiles:
         file = os.path.basename(pathGFF)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -97,7 +97,7 @@ def gff_to_linear_geneplot(pathIN: str, pathOUT: str, pathLT: str = "None", leng
                     else:
                         continue
                     if 'locus_tag' in geneEntry['attributes']:
-                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0)
+                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0, label=geneEntry['attributes']['locus_tag'])
                     else:
                         geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0)
                     if pathLT == "None":
@@ -230,7 +230,7 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
         maxSeqLen = max(maxSeqLen, dicoAllGFF[orgName]['length'])
     # Browse GFF3
     printcolor("♊ Plotting"+"\n")
-    pbar = tqdm(total=int(len(lstFiles)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=int(len(lstFiles)), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     setSVGfiles = set()
     for orgName in dicoAllGFF:
         pathPNG = pathOUT+"/PNG/"+orgName+".png"
@@ -264,7 +264,7 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
     pbar.close()
     # ***** Reformat SVG output  ***** # (selectable color / Delete blank, line and axis / valign)
     printcolor("♊ Reformat SVG"+"\n")
-    pbar = tqdm(total=len(setSVGfiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(setSVGfiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathSVG in setSVGfiles:
         pbar.set_description_str(os.path.basename(pathSVG)+" ".rjust(maxpathSize-len(os.path.basename(pathSVG))))
         # Read initial SVG
@@ -486,7 +486,7 @@ def gff_to_linear_group_geneplot(pathIN: str, pathCLUSTER: str, pathGROUP: str, 
     # ***** BROWSE input GFF files ***** #
     dicoGroupToOrgPlot = {}
     printcolor("♊ GraphicRecords"+"\n")
-    pbar = tqdm(total=int(len(lstFiles)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=int(len(lstFiles)), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGFF in lstFiles:
         file = os.path.basename(pathGFF)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -517,7 +517,7 @@ def gff_to_linear_group_geneplot(pathIN: str, pathCLUSTER: str, pathGROUP: str, 
     pbar.close()
     # ***** Unify group plot ***** #
     printcolor("♊ Unify plots"+"\n")
-    pbar = tqdm(total=int(len(dicoGroupToOrgPlot)), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=int(len(dicoGroupToOrgPlot)), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     dicoGroupPNG = {}
     setSVGfiles = set()
     for group in dicoGroupToOrg:
@@ -545,7 +545,7 @@ def gff_to_linear_group_geneplot(pathIN: str, pathCLUSTER: str, pathGROUP: str, 
     pbar.close()
     # ***** Reformat SVG output  ***** # (selectable color)
     printcolor("♊ Reformat SVG"+"\n")
-    pbar = tqdm(total=len(setSVGfiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(setSVGfiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathSVG in setSVGfiles:
         pbar.set_description_str(os.path.basename(pathSVG)+" ".rjust(maxpathSize-len(os.path.basename(pathSVG))))
         # Read initial SVG
@@ -703,7 +703,7 @@ def xlsx_to_heatmap(pathIN: str, pathOUT: str, colorStart: str = "FFFFFF", color
     # Browse input XLSX
     printcolor("♊ Heatmap creation"+"\n")
     cptRow = 0
-    pbar = tqdm(total=wsIN.max_row, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=wsIN.max_row, dynamic_ncols=True, ncols=50, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for rowIN in wsIN.rows:
         rowOUT = []
         cptCol = 0

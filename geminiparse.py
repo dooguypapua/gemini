@@ -85,7 +85,7 @@ def make_uniprotmapping_dict(pathIN: str, setRefseqAcc: set = "None", pathJSON: 
     else:
         dicoUniprotMapping = {}
         lstLines = read_file(pathIN)
-        pbar = tqdm(total=len(lstLines), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        pbar = tqdm(total=len(lstLines), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
         for line in lstLines:
             splitLine = line.split("\t")
             geneName = splitLine[2].split(" ")[0]
@@ -198,7 +198,7 @@ def search_in_fasta(pathIN: str, searchTerm: str, pathOUT: str = "", boolDoublon
     splitSearchTerm = searchTerm.split(",")
     dicoSearch = {}
     printcolor("♊ Search in FASTA"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     setSeq = set()
     for pathFASTA in lstFiles:
         filename = os.path.basename(pathFASTA)
@@ -546,7 +546,7 @@ def make_gff_dict(pathIN: str, pathJSON: str = "None", ext: str = ".gff") -> Tup
             orgName = file.replace(ext, "")
             dicoGFF[orgName] = {}
             GFF = open(pathGFF, 'r')
-            lstLines = GFF.read().split("\n")
+            lstLines = GFF.read().split("##FASTA")[0].split("\n")
             GFF.close()
             for line in lstLines:
                 if line != "":
@@ -747,7 +747,7 @@ def gbk_to_annotFAA(pathIN: str, pathOUT: str) -> Tuple[str, str]:
         printcolor("[ERROR: gbk_to_annotFAA]\nAny input files found, check extension\n", 1, "212;64;89", "None", True)
         exit_gemini()
     os.makedirs(pathOUT, exist_ok=True)
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGBK in lstFiles:
         file = os.path.basename(pathGBK)
         for ext in [".gbff", ".gb", ".gbk", ".gbff.gz", ".gb.gz", ".gbk.gz", ".seq"]:
@@ -931,7 +931,7 @@ def gff_to_table(pathIN: str, pathOUT: str, format: str = ".xlsx", maxWidth: int
         printcolor("[ERROR: gff_to_table]\nInvalid output format, must be \".tsv\" or \".xlsx\"\n", 1, "212;64;89", "None", True)
         exit_gemini()
     printcolor("♊ GFF to table"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathGFF in lstFiles:
         file = os.path.basename(pathGFF)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -1102,7 +1102,7 @@ def make_gbk_from_fasta(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: str, 
         dicoTRNA = {}
     lstGBKfiles = []
     if boolProgress is True:
-        pbar = tqdm(total=len(dicoFFN), ncols=75, leave=True, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        pbar = tqdm(total=len(dicoFFN), dynamic_ncols=True, ncols=75, leave=True, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for contig in dicoFNA:
         contigName = contig.split(" ")[0].split("|")[0]
         if len(dicoFNA) > 1:
@@ -1516,7 +1516,7 @@ def make_pvogs_desc_dict(pathIN: str = "None", pathJSON: str = "None") -> Tuple[
         dicoPVOGS = load_json(pathJSON)
     else:
         dicoPVOGS = {}
-        pbar = tqdm(total=len(setResultsPvogs), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+        pbar = tqdm(total=len(setResultsPvogs), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
         for pvogsID in setResultsPvogs:
             pbar.set_description_str(pvogsID)
             pathTable = dicoGeminiPath['DATABASES']['pvogs_table']+"/"+pvogsID+".txt"
@@ -1714,7 +1714,7 @@ def reformat_panacota(pathIN: str) -> Tuple[str]:
     # Rename all files containing PanACoTA identifiers
     printcolor("♊ Rename Files"+"\n")
     cptFileRename = 0
-    pbar = tqdm(total=len(lstFiles), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for filepath in lstFiles:
         for key in dicoIDtoOrgName:
             if key in filepath:
@@ -1732,7 +1732,7 @@ def reformat_panacota(pathIN: str) -> Tuple[str]:
         for file in file:
             lstFiles.append(os.path.join(root, file))
     cptFileReplace = 0
-    pbar = tqdm(total=len(lstFiles), ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=75, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
     for filepath in lstFiles:
         if filepath != pathLSTINFO:
             SRC = open(filepath, 'r')

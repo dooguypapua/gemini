@@ -59,7 +59,7 @@ def phage_assembly(pathIN: str, pathOUT: str) -> Tuple[str, str]:
     os.makedirs(pathOUT, exist_ok=True)
     trimmomatic_param = "LEADING: 3 TRAILING: 3 SLIDINGWINDOW: 4:15 MINLEN: 36"
     spades_param = "--careful --cov-cutoff auto -k 21, 33, 55, 77 -m 10"
-    pbar = tqdm(total=int(len(lstFiles)/2), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=int(len(lstFiles)/2), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFASTQ in lstFiles:
         file = os.path.basename(pathFASTQ)
         if "_R1" in file:
@@ -126,7 +126,7 @@ def filter_phage_assembly(pathIN: str, pathOUT: str, minLen: int = 100, minCov: 
     if 'blastn' in dicoGeminiModule:
         os.system("module load "+dicoGeminiModule['blastn'])
     printcolor("♊ Filter assembly"+"\n")
-    pbar = tqdm(total=len(lstFiles), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathAssembly in lstFiles:
         file = os.path.basename(pathAssembly)
         orgName = file.replace(ext, "").replace("."+ext, "")
@@ -205,7 +205,7 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
     blastoutfmt = "6 delim=; qseqid sseqid sstart send bitscore slen"
     # Split reference replicons in distinct FASTA files (required header ">repliconType [orgName]")
     printcolor("♊ Split replicons"+"\n")
-    pbar = tqdm(total=len(lstRef), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstRef), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstRef:
         fileName = os.path.basename(pathFile).replace(extREF, "").replace("."+extREF, "")
         pbar.set_description_str(fileName+" ".rjust(maxpathSize-len(fileName)))
@@ -243,7 +243,7 @@ def replicon_distribution(pathIN: str, pathREF: str, pathOUT: str, idThr: int = 
     printcolor("♊ Blast replicons"+"\n")
     # Parse blast results
     printcolor("♊ Search replicons"+"\n")
-    pbar = tqdm(total=len(lstQuery), ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
+    pbar = tqdm(total=len(lstQuery), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFile in lstQuery:
         orgName = os.path.basename(pathFile).replace(extIN, "").replace("."+extIN, "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
