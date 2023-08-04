@@ -102,7 +102,7 @@ def dump_json(dico, pathJSON, indent=4):
 
 
 # ***** FileReader ***** #
-def read_file(file_path: str, excludeFirstKr: str = "#", yaspinBool: bool = True) -> []:
+def read_file(file_path: str, excludeFirstKr: str = "#", yaspinBool: bool = False) -> []:
     if not os.path.isfile(file_path):
         printcolor("\nFile not found \""+file_path+"\"\n", 1, "212;64;89", "None", True)
         exit_gemini()
@@ -859,12 +859,12 @@ def title(text: str, pbar: tqdm = None):
             formatText += word.capitalize()
     if pbar is not None:
         formatText += " ("+str(int(round(((pbar.format_dict['n']*100)/pbar.format_dict['total']), 0)))+"%)"
-    if len(formatText) > 56:
-        justifyText = "."+formatText[:56]+"."
-    elif (58-len(formatText)) % 2 == 0:
-        justifyText = ".".ljust(int((58-len(formatText))/2))+formatText+".".rjust(int((58-len(formatText))/2))
+    if len(formatText) > 46:
+        justifyText = "."+formatText[:46]+"."
+    elif (48-len(formatText)) % 2 == 0:
+        justifyText = ".".ljust(int((48-len(formatText))/2))+formatText+".".rjust(int((48-len(formatText))/2))
     else:
-        justifyText = ".".ljust(int(((58-len(formatText))/2)+1))+formatText+".".rjust(int((58-len(formatText))/2))
+        justifyText = ".".ljust(int(((48-len(formatText))/2)+1))+formatText+".".rjust(int((48-len(formatText))/2))
     print("\33]0;"+justifyText+"\a", end="", flush=True)
 
 

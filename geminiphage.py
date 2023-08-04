@@ -1045,7 +1045,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
         lstFiles = []
         maxpathSize = 15
         lst_genome = os.listdir(pathIN)
-        pbar = tqdm(total=len(lst_genome), dynamic_ncols=True, dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
+        pbar = tqdm(total=len(lst_genome), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt}")
         for folder in lst_genome:
             if os.path.isfile(pathIN+"/"+folder+"/"+folder+"_genomic.fna.gz"):
                 lstFiles.append(pathIN+"/"+folder+"/"+folder+"_genomic.fna.gz")
@@ -1150,8 +1150,9 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     pbar.close()
     # ***** LAUNCH MISSING BLASTN ***** #
     if ref != "None":
-        spinner = yaspin(Spinners.aesthetic, text="♊ Launch VIRIDIC", side="right")
+        spinner = yaspin(Spinners.aesthetic, text="♊ Launch blastN", side="right")
         spinner.start()
+        title("blastN")
         dicoThread = {}
     else:
         printcolor("♊ Launch blastN"+"\n")
@@ -1159,7 +1160,8 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
     for orgName1 in setAllOrg:
         pathReformatFASTA1 = pathTMPFASTA+"/"+orgName1+".fasta"
         pathORGBLAST = pathDIRBLASTN+"/"+orgName1
-        os.makedirs(pathORGBLAST, exist_ok=True)
+        if ref == "None" or orgName1 == ref:
+            os.makedirs(pathORGBLAST, exist_ok=True)
         if boolFromDB:
             pbar.set_description_str(orgName1[:15])
         else:

@@ -97,9 +97,9 @@ def gff_to_linear_geneplot(pathIN: str, pathOUT: str, pathLT: str = "None", leng
                     else:
                         continue
                     if 'locus_tag' in geneEntry['attributes']:
-                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0, label=geneEntry['attributes']['locus_tag'])
+                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=1)  # label=geneEntry['attributes']['locus_tag'].split("_")[1])
                     else:
-                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0)
+                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=1)
                     if pathLT == "None":
                         features.append(geneFeature)
                     elif geneEntry['attributes']['locus_tag'] in setLT:
@@ -307,7 +307,8 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
                     parent_element.remove(element_to_remove)
         tree.write(pathSVG)
         # Align all genes
-        with Xvfb() as xvfb:  # Start the virtual framebuffer for inkscape gui dependent verb
+        xvfb = Xvfb()
+        with xvfb:  # Start the virtual framebuffer for inkscape gui dependent verb
             os.system("inkscape --verb=EditSelectAll --verb=SelectionUnGroup --verb=EditSelectAll --verb=SelectionUnGroup \
                        --verb=AlignVerticalCenter --verb=EditSelectAll --verb=SelectionGroup \
                        --verb=FileSave --verb=FileQuit "+pathSVG)
