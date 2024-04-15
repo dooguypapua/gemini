@@ -185,6 +185,18 @@
                                    },
                         "pathTMP":true
                        },
+  "slice_genes_genbank":{
+                        "descr": "Slice a GBK file using 2 genes interval",
+                        "tag":"parser", "version":"1.0",
+                        "title":"slicegbk",
+                        "dicoArgs":{
+                                   "pathIN":{"tag":"-i","value":"","type":"str"},
+                                   "pathOUT":{"tag":"-o","value":"", "type":"str"},
+                                   "lt1":{"tag":"-lt1","value":"", "type":"str"},
+                                   "lt2":{"tag":"-lt2","value":"", "type":"str"}
+                                   },
+                        "pathTMP":false
+                       },
   "make_blast_dict":   {
                         "descr": "Parse blast output and create a dictionnary",
                         "tag":"parser", "version":"1.0",
@@ -403,8 +415,8 @@
                         "dicoArgs":{
                                    "pathIN":{"tag":"-i","value":"","type":"str"},
                                    "pathOUT":{"tag":"-o","value":"", "type":"str"},
-                                   "dfmodelV":{"tag":"-dfmodel","value":"1.1.0", "type":"str"},
-                                   "plmodelV":{"tag":"-plmodel","value":"1.4.0", "type":"str"},
+                                   "dfmodelV":{"tag":"-dfmodel","value":"1.2.3", "type":"str"},
+                                   "plmodelV":{"tag":"-plmodel","value":"2.0.0", "type":"str"},
                                    "ext":{"tag":"-ext","value":".faa", "type":"str"}
                                    },
                         "pathTMP":true

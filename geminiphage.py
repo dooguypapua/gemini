@@ -1176,6 +1176,7 @@ def myVIRIDIC(pathIN: str, pathOUT: str, ref: str = "None", thfam: float = 50.0,
                 " -outfmt \"6 qseqid sseqid evalue bitscore qlen slen qstart qend sstart send qseq sseq nident gaps\"" + \
                 " -evalue 1 -max_target_seqs 50000 -word_size 7 -reward 2 -penalty -3 -gapopen 5 -gapextend 2"
             if orgName1 != orgName2 and (ref == "None" or orgName1 == ref or orgName2 == ref) and not os.path.isfile(pathBLASTOUT):
+                os.makedirs(pathORGBLAST, exist_ok=True)
                 dicoThread[orgName2] = {"cmd": cmdBLASTN, "returnstatut": None, "returnlines": []}
         # Launch blastN threads
         if ref == "None":

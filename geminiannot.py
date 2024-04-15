@@ -25,6 +25,7 @@ import numpy as np
 import torch
 import warnings
 import glob
+import subprocess
 from typing import Tuple
 from pathlib import Path
 from yaspin import yaspin
@@ -1144,7 +1145,7 @@ def defense_system(pathIN: str, pathOUT: str, dfmodelV: str = "1.1.0", plmodelV:
             GFF.close()
             FAA.close()
             # Launch PADLOC
-            cmdPADLOC = dicoGeminiPath['TOOLS']['padloc']+" --cpu "+str(cpu)+" --data "+dicoGeminiPath['DATABASES']['padloc-db']+"/"+plmodelV + \
+            cmdPADLOC = "conda run -n padloc padloc --cpu "+str(cpu)+" --data "+dicoGeminiPath['DATABASES']['padloc-db']+"/"+plmodelV + \
                 " --faa "+geminiset.pathTMP+"/padloc.faa"+" --gff "+geminiset.pathTMP+"/padloc.gff --outdir "+geminiset.pathTMP+" >> "+pathLOG+" 2>&1"
             os.system(cmdPADLOC)
             pathTMPCSV = geminiset.pathTMP+"/padloc_padloc.csv"
@@ -1260,7 +1261,7 @@ def satellite_finder(pathIN: str, pathOUT: str, modelSel: str = "ALL", ext: str 
      ------------------------------------------------------------
     | TOOLS: satellite_finder                                    |
      ------------------------------------------------------------
-    model = ['ALL', 'cfPICI', 'PICI', 'P4', 'PLE']
+    model = ['ALL', 'PICMI', 'cfPICI', 'PICI', 'P4', 'PLE']
     No "#" in fasta headers and required Macsyfinder v2.0
     '''
     pathOUT = path_converter(pathOUT)
@@ -1292,40 +1293,44 @@ def satellite_finder(pathIN: str, pathOUT: str, modelSel: str = "ALL", ext: str 
     pbar = tqdm(total=len(lstFiles), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     for pathFAA in lstFiles:
         file = os.path.basename(pathFAA)
-        orgName = file.replace(ext, "").replace("."+ext, "")
+        orgName = file.replace(ext, "").replace("."+ext, "").replace("_protein", "")
         pbar.set_description_str(orgName+" ".rjust(maxpathSize-len(orgName)))
         pathTMPFAA = geminiset.pathTMP+"/"+orgName+".faa"
-        os.system("sed s/\"#\"/\" \"/g "+pathFAA+" > "+pathTMPFAA)
         # Launch macsyfinder for each model
         cpt = 1
         for model in lstSelectedModels:
             pbar.set_description_str(orgName+" ("+str(cpt)+"/"+str(len(lstSelectedModels))+")"+" ".rjust(maxpathSize-len(orgName)))
             pathModelOUT = pathOUT+"/raw/"+orgName+"____"+model+".tsv"
-            if not os.path.isfile(pathModelOUT):
+            if not os.path.isdir(pathOUT+"/"+orgName) and os.path.getsize(pathFAA) != 0:
+                os.system("sed s/\"#\"/\" \"/g "+pathFAA+" > "+pathTMPFAA)
+                # cmdSatelliteFinder = dicoGeminiPath['TOOLS']["python"]+" "+dicoGeminiPath['TOOLS']['satellite_finder'] + "/bin/satellite_finder.py" + \
+                #     " --models " + model + " --sequence-db " + pathTMPFAA + " --db-type ordered_replicon" + \
+                #     " --out-dir " + geminiset.pathTMP + "/" + model + " --worker " + str(cpu) + " --idx" + " >> " + pathLOG + " 2>&1"
                 cmdSatelliteFinder = dicoGeminiPath['TOOLS']["python"]+" "+dicoGeminiPath['TOOLS']['satellite_finder'] + "/bin/satellite_finder.py" + \
                     " --models " + model + " --sequence-db " + pathTMPFAA + " --db-type ordered_replicon" + \
-                    " --out-dir " + geminiset.pathTMP + "/" + model + " --worker " + str(cpu) + " --idx" + " >> " + pathLOG + " 2>&1"
+                    " --out-dir " + pathOUT + "/" + orgName + " --idx" + " >> " + pathLOG + " 2>&1"
                 os.system(cmdSatelliteFinder)
-                pathCSV = glob.glob(geminiset.pathTMP+"/"+model+"/*.csv")[0]
-                df = pandas.read_csv(pathCSV, escapechar='\n')
-                # Drop first column
-                df.drop(columns=df.columns[0], axis=1, inplace=True)
-                df.to_csv(pathModelOUT, sep='\t', encoding='utf-8', index=False)
-                shutil.rmtree(geminiset.pathTMP+"/"+model)
-            # Parse
-            lstLines = read_file(pathModelOUT)
-            dicoResults[model]['header'] = lstLines[0]
-            for line in lstLines[1:]:
-                dicoResults[model]['lines'] += line.replace("UserReplicon.", "").replace("UserReplicon_", "").replace("UserReplicon", orgName)+"\n"
-            cpt += 1
-        title("SatelliteFinder", pbar)
+        #         pathCSV = glob.glob(geminiset.pathTMP+"/"+model+"/*.tsv")[0]
+        #         df = pandas.read_csv(pathCSV, escapechar='\n')
+        #         # Drop first column
+        #         df.drop(columns=df.columns[0], axis=1, inplace=True)
+        #         df.to_csv(pathModelOUT, sep='\t', encoding='utf-8', index=False)
+        #         # shutil.rmtree(geminiset.pathTMP+"/"+model)
+        #     # Parse
+        #     lstLines = read_file(pathModelOUT)
+        #     dicoResults[model]['header'] = lstLines[0]
+        #     for line in lstLines[1:]:
+        #         dicoResults[model]['lines'] += line.replace("UserReplicon.", "").replace("UserReplicon_", "").replace("UserReplicon", orgName)+"\n"
+        #     cpt += 1
+        # title("SatelliteFinder", pbar)
         pbar.update(1)
     pbar.close()
-    # ***** Write final tsv ***** #
-    for model in lstSelectedModels:
-        if dicoResults[model]['lines'] != "":
-            pathTSVOUT = pathOUT+"/"+model+".tsv"
-            TSV = open(pathTSVOUT, 'w')
-            TSV.write(dicoResults[model]['header']+"\n")
-            TSV.write(dicoResults[model]['lines'])
-            TSV.close()
+    # # ***** Write final tsv ***** #
+    # for model in lstSelectedModels:
+    #     if dicoResults[model]['lines'] != "":
+    #         pathTSVOUT = pathOUT+"/"+model+".tsv"
+    #         TSV = open(pathTSVOUT, 'w')
+    #         TSV.write(dicoResults[model]['header']+"\n")
+    #         TSV.write(dicoResults[model]['lines'])
+    #         TSV.close()
+    exit()

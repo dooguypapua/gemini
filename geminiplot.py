@@ -91,21 +91,26 @@ def gff_to_linear_geneplot(pathIN: str, pathOUT: str, pathLT: str = "None", leng
             if geneType != 'length':
                 for geneEntry in dicoGFF[orgName][geneType]:
                     if geneType == "CDS":
-                        color = "#2a7fff"
+                        if geneEntry['strand'] == "+": color = "#2a7fff"
+                        else: color = "#dddfff"
+                        # if geneEntry['attributes']['locus_tag'] in ["VP6E351A_0009","VP6E351A_0101","VP6E351A_0201"]: color = "red"
                     elif geneType == "tRNA":
                         color = "#37c8ab"
                     else:
                         continue
                     if 'locus_tag' in geneEntry['attributes']:
-                        geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=1)  # label=geneEntry['attributes']['locus_tag'].split("_")[1])
+                        if geneType == "CDS":
+                            geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=1) #, label=geneEntry['attributes']['locus_tag'].split(" ")[0])
+                        else:
+                            geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=1, label=geneEntry['attributes']['product'].split("#")[0]+"-"+geneEntry['attributes']['product'].split("#")[2])                            
                     else:
                         geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=1)
-                    if pathLT == "None":
-                        features.append(geneFeature)
-                    elif geneEntry['attributes']['locus_tag'] in setLT:
-                        if startRegion == 0:
-                            startRegion = geneEntry['start']
-                        endRegion = geneEntry['end']
+                    # if pathLT == "None":
+                    #     features.append(geneFeature)
+                    # elif geneEntry['attributes']['locus_tag'] in setLT:
+                    #     if startRegion == 0:
+                    #         startRegion = geneEntry['start']
+                    #     endRegion = geneEntry['end']
                     features.append(geneFeature)
         # ***** PLOT GENES ***** #
         if length != -1:
@@ -142,6 +147,13 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
     |    ext          : extension of input files (default=.gff)  |
      ------------------------------------------------------------
     '''
+
+    dicoBlast = {0: {'VPD486_0300___Vibrio_phage_D486', 'VPK566_0300___Vibrio_phage_K566', 'P001501635_CDS_0417___Vibrio_phage_ValKK3', 'VPK571_0307___Vibrio_phage_K571', 'VPK491_0307___Vibrio_phage_K491', 'VPF86_0221___Vibrio_phage_F86', 'VPK575_0306___Vibrio_phage_K575', 'P004771355_CDS_0279___Vibrio_phage_Va3', 'VPD483_0307___Vibrio_phage_D483', 'VPD481_0303___Vibrio_phage_D481', 'VPD527_0303___Vibrio_phage_D527', 'P000843785_CDS_0262___Vibrio_phage_KVP40', 'VPD484_0300___Vibrio_phage_D484', 'P020809685_CDS_0251___Vibrio_phage_VS1', 'P022984185_CDS_0152___Vibrio_phage_XZ1', 'P024234235_CDS_0092___Vibrio_phage_PVA23', 'P000914495_CDS_0165___Vibrio_phage_VH7D', 'VPK567_0302___Vibrio_phage_K567', 'VPD525_0307___Vibrio_phage_D525', 'P000910195_CDS_0141___Vibrio_phage_nt-1', 'VP6E351A_0309___Vibrio_phage_6E35-1a', 'P003927315_CDS_0269___Vibrio_phage_1.081.O._10N.286.52.C2', 'VPD490_0307___Vibrio_phage_D490', 'P012361135_CDS_0334___Vibrio_phage_V09', 'P030927055_CDS_0077___Vibrio_phage_PC-Liy1', 'P002630725_CDS_0257___Vibrio_phage_phi-pp2', 'VPD485_0305___Vibrio_phage_D485', 'P024381305_CDS_0077___Vibrio_phage_PVA8', 'P009931825_CDS_0262___Vibrio_phage_VH1_2019', 'VPD482_0309___Vibrio_phage_D482', 'VPD491S_0303___Vibrio_phage_D491', 'P014337555_CDS_0321___Vibrio_phage_vB_ValM_R11Z', 'P027885675_CDS_0077___Vibrio_phage_vB_ValM_PVA8', 'P002757135_CDS_0141___Vibrio_phage_phi-ST2', 'P029686055_CDS_0383___Vibrio_phage_vB_VspM_VS2', 'VPD480_0303___Vibrio_phage_D480', 'P002757115_CDS_0420___Vibrio_phage_phi-Grn1', 'P014337545_CDS_0321___Vibrio_phage_vB_ValM_R10Z'}, 1: {'P003927315_CDS_0270___Vibrio_phage_1.081.O._10N.286.52.C2'}, 2: {'P002757135_CDS_0143___Vibrio_phage_phi-ST2', 'P014337545_CDS_0319___Vibrio_phage_vB_ValM_R10Z', 'P000914495_CDS_0167___Vibrio_phage_VH7D', 'P002757115_CDS_0422___Vibrio_phage_phi-Grn1', 'P022984185_CDS_0150___Vibrio_phage_XZ1', 'P004771355_CDS_0277___Vibrio_phage_Va3', 'P003927315_CDS_0277___Vibrio_phage_1.081.O._10N.286.52.C2', 'P014337555_CDS_0319___Vibrio_phage_vB_ValM_R11Z', 'P001501635_CDS_0415___Vibrio_phage_ValKK3', 'P003927315_CDS_0272___Vibrio_phage_1.081.O._10N.286.52.C2', 'P000910195_CDS_0133___Vibrio_phage_nt-1', 'P003927315_CDS_0271___Vibrio_phage_1.081.O._10N.286.52.C2', 'P024234235_CDS_0094___Vibrio_phage_PVA23'}, 3: {'P003927315_CDS_0273___Vibrio_phage_1.081.O._10N.286.52.C2'}, 4: {'P003927315_CDS_0274___Vibrio_phage_1.081.O._10N.286.52.C2'}, 5: {'P003927315_CDS_0275___Vibrio_phage_1.081.O._10N.286.52.C2'}, 6: {'P003927315_CDS_0276___Vibrio_phage_1.081.O._10N.286.52.C2', 'P000910195_CDS_0145___Vibrio_phage_nt-1'}, 7: {'P003927315_CDS_0278___Vibrio_phage_1.081.O._10N.286.52.C2'}, 8: {'P003927315_CDS_0279___Vibrio_phage_1.081.O._10N.286.52.C2'}, 9: {'P003927315_CDS_0280___Vibrio_phage_1.081.O._10N.286.52.C2'}, 10: {'P003927315_CDS_0281___Vibrio_phage_1.081.O._10N.286.52.C2'}, 11: {'P003927315_CDS_0282___Vibrio_phage_1.081.O._10N.286.52.C2'}, 12: {'VPD485_0314___Vibrio_phage_D485', 'P009931825_CDS_0269___Vibrio_phage_VH1_2019', 'P002630725_CDS_0264___Vibrio_phage_phi-pp2', 'VPD483_0326___Vibrio_phage_D483', 'P002630725_CDS_0265___Vibrio_phage_phi-pp2', 'VPK571_0316___Vibrio_phage_K571', 'P002757115_CDS_0424___Vibrio_phage_phi-Grn1', 'P014337555_CDS_0317___Vibrio_phage_vB_ValM_R11Z', 'P024381305_CDS_0092___Vibrio_phage_PVA8', 'VPD490_0325___Vibrio_phage_D490', 'VPD491S_0312___Vibrio_phage_D491', 'P012361135_CDS_0327___Vibrio_phage_V09', 'P009931825_CDS_0276___Vibrio_phage_VH1_2019', 'P027885675_CDS_0085___Vibrio_phage_vB_ValM_PVA8', 'P022984185_CDS_0148___Vibrio_phage_XZ1', 'P001501635_CDS_0413___Vibrio_phage_ValKK3', 'VPK491_0326___Vibrio_phage_K491', 'VPD481_0312___Vibrio_phage_D481', 'VPD484_0309___Vibrio_phage_D484', 'VPF86_0238___Vibrio_phage_F86', 'P014337545_CDS_0317___Vibrio_phage_vB_ValM_R10Z', 'VPD480_0322___Vibrio_phage_D480', 'VPD490_0316___Vibrio_phage_D490', 'P000914495_CDS_0169___Vibrio_phage_VH7D', 'P024234235_CDS_0096___Vibrio_phage_PVA23', 'VPD484_0319___Vibrio_phage_D484', 'P002757135_CDS_0145___Vibrio_phage_phi-ST2', 'VPD486_0309___Vibrio_phage_D486', 'VPD482_0327___Vibrio_phage_D482', 'VPK575_0315___Vibrio_phage_K575', 'VPD480_0312___Vibrio_phage_D480', 'P000910195_CDS_0134___Vibrio_phage_nt-1', 'VPK571_0326___Vibrio_phage_K571', 'P004771355_CDS_0275___Vibrio_phage_Va3', 'VPD527_0321___Vibrio_phage_D527', 'VPD527_0312___Vibrio_phage_D527', 'VPK491_0316___Vibrio_phage_K491', 'P002630725_CDS_0271___Vibrio_phage_phi-pp2', 'VPD485_0324___Vibrio_phage_D485', 'P000843785_CDS_0269___Vibrio_phage_KVP40', 'P030927055_CDS_0085___Vibrio_phage_PC-Liy1', 'P029686055_CDS_0396___Vibrio_phage_vB_VspM_VS2', 'VPK566_0315___Vibrio_phage_K566', 'P030927055_CDS_0092___Vibrio_phage_PC-Liy1', 'VPK567_0317___Vibrio_phage_K567', 'VP6E351A_0328___Vibrio_phage_6E35-1a', 'VPD481_0321___Vibrio_phage_D481', 'P029686055_CDS_0390___Vibrio_phage_vB_VspM_VS2', 'VPF86_0230___Vibrio_phage_F86', 'VP6E351A_0318___Vibrio_phage_6E35-1a', 'P024381305_CDS_0085___Vibrio_phage_PVA8', 'P027885675_CDS_0092___Vibrio_phage_vB_ValM_PVA8', 'VPD525_0327___Vibrio_phage_D525', 'VPD491S_0321___Vibrio_phage_D491', 'VPD482_0318___Vibrio_phage_D482', 'P020809685_CDS_0235___Vibrio_phage_VS1', 'VPD486_0318___Vibrio_phage_D486', 'VPD483_0316___Vibrio_phage_D483', 'P003927315_CDS_0283___Vibrio_phage_1.081.O._10N.286.52.C2', 'P012361135_CDS_0320___Vibrio_phage_V09', 'VPD525_0316___Vibrio_phage_D525', 'VPK575_0325___Vibrio_phage_K575', 'P000843785_CDS_0276___Vibrio_phage_KVP40', 'P020809685_CDS_0242___Vibrio_phage_VS1'}, 13: {'P022984185_CDS_0151___Vibrio_phage_XZ1', 'P027885675_CDS_0078___Vibrio_phage_vB_ValM_PVA8', 'P009931825_CDS_0263___Vibrio_phage_VH1_2019', 'P024381305_CDS_0078___Vibrio_phage_PVA8', 'P029686055_CDS_0384___Vibrio_phage_vB_VspM_VS2', 'VPD481_0304___Vibrio_phage_D481', 'VPD527_0304___Vibrio_phage_D527', 'P002757115_CDS_0421___Vibrio_phage_phi-Grn1', 'VPD490_0308___Vibrio_phage_D490', 'VP6E351A_0310___Vibrio_phage_6E35-1a', 'P012361135_CDS_0333___Vibrio_phage_V09', 'P000914495_CDS_0166___Vibrio_phage_VH7D', 'VPK491_0308___Vibrio_phage_K491', 'VPD484_0301___Vibrio_phage_D484', 'VPK566_0301___Vibrio_phage_K566', 'P014337555_CDS_0320___Vibrio_phage_vB_ValM_R11Z', 'VPD480_0304___Vibrio_phage_D480', 'P000910195_CDS_0132___Vibrio_phage_nt-1', 'VPD485_0306___Vibrio_phage_D485', 'VPK575_0307___Vibrio_phage_K575', 'P002757135_CDS_0142___Vibrio_phage_phi-ST2', 'P030927055_CDS_0078___Vibrio_phage_PC-Liy1', 'VPD525_0308___Vibrio_phage_D525', 'VPD486_0301___Vibrio_phage_D486', 'VPK571_0308___Vibrio_phage_K571', 'P014337545_CDS_0320___Vibrio_phage_vB_ValM_R10Z', 'P000843785_CDS_0263___Vibrio_phage_KVP40', 'P024234235_CDS_0093___Vibrio_phage_PVA23', 'VPF86_0222___Vibrio_phage_F86', 'P004771355_CDS_0278___Vibrio_phage_Va3', 'VPD491S_0304___Vibrio_phage_D491', 'P001501635_CDS_0416___Vibrio_phage_ValKK3', 'P020809685_CDS_0250___Vibrio_phage_VS1', 'VPK567_0303___Vibrio_phage_K567', 'VPD483_0308___Vibrio_phage_D483', 'VPD482_0310___Vibrio_phage_D482', 'P002630725_CDS_0258___Vibrio_phage_phi-pp2'}, 14: {'VPF86_0223___Vibrio_phage_F86'}, 15: {'VPF86_0224___Vibrio_phage_F86'}, 16: {'VPD480_0307___Vibrio_phage_D480', 'VPD482_0313___Vibrio_phage_D482', 'VPF86_0225___Vibrio_phage_F86', 'VPD481_0307___Vibrio_phage_D481', 'VPD527_0307___Vibrio_phage_D527', 'VPD486_0304___Vibrio_phage_D486', 'VPD484_0304___Vibrio_phage_D484', 'P029686055_CDS_0386___Vibrio_phage_vB_VspM_VS2', 'VPD485_0309___Vibrio_phage_D485', 'P009931825_CDS_0265___Vibrio_phage_VH1_2019', 'VPD525_0311___Vibrio_phage_D525', 'VPD490_0311___Vibrio_phage_D490', 'VPK571_0311___Vibrio_phage_K571', 'VPD483_0311___Vibrio_phage_D483', 'P002630725_CDS_0260___Vibrio_phage_phi-pp2', 'VPD491S_0307___Vibrio_phage_D491', 'P027885675_CDS_0081___Vibrio_phage_vB_ValM_PVA8', 'VPK491_0311___Vibrio_phage_K491', 'P000843785_CDS_0265___Vibrio_phage_KVP40', 'P012361135_CDS_0331___Vibrio_phage_V09', 'P020809685_CDS_0246___Vibrio_phage_VS1', 'P030927055_CDS_0081___Vibrio_phage_PC-Liy1', 'VP6E351A_0313___Vibrio_phage_6E35-1a', 'VPK575_0310___Vibrio_phage_K575', 'P024381305_CDS_0081___Vibrio_phage_PVA8'}, 17: {'VPD480_0308___Vibrio_phage_D480', 'P009931825_CDS_0266___Vibrio_phage_VH1_2019', 'VPK575_0311___Vibrio_phage_K575', 'VPD481_0308___Vibrio_phage_D481', 'P029686055_CDS_0387___Vibrio_phage_vB_VspM_VS2', 'P024381305_CDS_0082___Vibrio_phage_PVA8', 'P020809685_CDS_0245___Vibrio_phage_VS1', 'VPD484_0305___Vibrio_phage_D484', 'VPD525_0312___Vibrio_phage_D525', 'VPD490_0312___Vibrio_phage_D490', 'P000843785_CDS_0266___Vibrio_phage_KVP40', 'P030927055_CDS_0082___Vibrio_phage_PC-Liy1', 'VPD527_0308___Vibrio_phage_D527', 'VPK571_0312___Vibrio_phage_K571', 'P002630725_CDS_0261___Vibrio_phage_phi-pp2', 'P012361135_CDS_0330___Vibrio_phage_V09', 'VPD485_0310___Vibrio_phage_D485', 'VPD483_0312___Vibrio_phage_D483', 'VP6E351A_0314___Vibrio_phage_6E35-1a', 'VPF86_0226___Vibrio_phage_F86', 'VPK491_0312___Vibrio_phage_K491', 'VPD486_0305___Vibrio_phage_D486', 'P027885675_CDS_0082___Vibrio_phage_vB_ValM_PVA8', 'VPD491S_0308___Vibrio_phage_D491', 'VPD482_0314___Vibrio_phage_D482'}, 18: {'P012361135_CDS_0329___Vibrio_phage_V09', 'VPK571_0313___Vibrio_phage_K571', 'P009931825_CDS_0267___Vibrio_phage_VH1_2019', 'P029686055_CDS_0388___Vibrio_phage_vB_VspM_VS2', 'VPD527_0309___Vibrio_phage_D527', 'VPK491_0313___Vibrio_phage_K491', 'VPD484_0306___Vibrio_phage_D484', 'P000843785_CDS_0267___Vibrio_phage_KVP40', 'VPK575_0312___Vibrio_phage_K575', 'VPD485_0311___Vibrio_phage_D485', 'P002630725_CDS_0262___Vibrio_phage_phi-pp2', 'P024381305_CDS_0083___Vibrio_phage_PVA8', 'VPD491S_0309___Vibrio_phage_D491', 'VPD481_0309___Vibrio_phage_D481', 'VPD525_0313___Vibrio_phage_D525', 'VPD483_0313___Vibrio_phage_D483', 'P020809685_CDS_0244___Vibrio_phage_VS1', 'VPF86_0227___Vibrio_phage_F86', 'VPD480_0309___Vibrio_phage_D480', 'VPD482_0315___Vibrio_phage_D482', 'VPD490_0313___Vibrio_phage_D490', 'P030927055_CDS_0083___Vibrio_phage_PC-Liy1', 'VP6E351A_0315___Vibrio_phage_6E35-1a', 'P027885675_CDS_0083___Vibrio_phage_vB_ValM_PVA8', 'VPD486_0306___Vibrio_phage_D486'}, 19: {'P020809685_CDS_0243___Vibrio_phage_VS1', 'VPK491_0314___Vibrio_phage_K491', 'VPD525_0314___Vibrio_phage_D525', 'VPD486_0307___Vibrio_phage_D486', 'VPD485_0312___Vibrio_phage_D485', 'VPD481_0310___Vibrio_phage_D481', 'VPD490_0314___Vibrio_phage_D490', 'P012361135_CDS_0328___Vibrio_phage_V09', 'P024381305_CDS_0084___Vibrio_phage_PVA8', 'VPF86_0228___Vibrio_phage_F86', 'VP6E351A_0316___Vibrio_phage_6E35-1a', 'VPK575_0313___Vibrio_phage_K575', 'P000843785_CDS_0268___Vibrio_phage_KVP40', 'P009931825_CDS_0268___Vibrio_phage_VH1_2019', 'VPK571_0314___Vibrio_phage_K571', 'P030927055_CDS_0084___Vibrio_phage_PC-Liy1', 'P002630725_CDS_0263___Vibrio_phage_phi-pp2', 'VPD480_0310___Vibrio_phage_D480', 'VPD482_0316___Vibrio_phage_D482', 'VPD527_0310___Vibrio_phage_D527', 'VPD484_0307___Vibrio_phage_D484', 'VPD491S_0310___Vibrio_phage_D491', 'P027885675_CDS_0084___Vibrio_phage_vB_ValM_PVA8', 'P029686055_CDS_0389___Vibrio_phage_vB_VspM_VS2', 'VPD483_0314___Vibrio_phage_D483'}, 20: {'VPD490_0315___Vibrio_phage_D490', 'VPD485_0313___Vibrio_phage_D485', 'VPF86_0229___Vibrio_phage_F86', 'VPD486_0308___Vibrio_phage_D486', 'VPK571_0315___Vibrio_phage_K571', 'VPD491S_0311___Vibrio_phage_D491', 'VPD481_0311___Vibrio_phage_D481', 'VPK575_0314___Vibrio_phage_K575', 'VPD525_0315___Vibrio_phage_D525', 'VPD483_0315___Vibrio_phage_D483', 'VPK491_0315___Vibrio_phage_K491', 'VPD527_0311___Vibrio_phage_D527', 'VPD480_0311___Vibrio_phage_D480', 'VPD482_0317___Vibrio_phage_D482', 'VPD484_0308___Vibrio_phage_D484', 'VP6E351A_0317___Vibrio_phage_6E35-1a'}, 21: {'VPK491_0318___Vibrio_phage_K491', 'VPD490_0317___Vibrio_phage_D490', 'P000843785_CDS_0267___Vibrio_phage_KVP40', 'P012361135_CDS_0326___Vibrio_phage_V09', 'VPK491_0317___Vibrio_phage_K491', 'VPD485_0311___Vibrio_phage_D485', 'VPK575_0317___Vibrio_phage_K575', 'VPD486_0311___Vibrio_phage_D486', 'VPD525_0317___Vibrio_phage_D525', 'VPK567_0305___Vibrio_phage_K567', 'VPD483_0313___Vibrio_phage_D483', 'VPK566_0308___Vibrio_phage_K566', 'VPD490_0318___Vibrio_phage_D490', 'VPD480_0315___Vibrio_phage_D480', 'VPD482_0315___Vibrio_phage_D482', 'P020809685_CDS_0241___Vibrio_phage_VS1', 'VPF86_0232___Vibrio_phage_F86', 'P027885675_CDS_0083___Vibrio_phage_vB_ValM_PVA8', 'VPD486_0306___Vibrio_phage_D486', 'VPK567_0307___Vibrio_phage_K567', 'VP6E351A_0320___Vibrio_phage_6E35-1a', 'P012361135_CDS_0329___Vibrio_phage_V09', 'VPK567_0310___Vibrio_phage_K567', 'VPD491S_0313___Vibrio_phage_D491', 'VPK571_0313___Vibrio_phage_K571', 'VPK566_0303___Vibrio_phage_K566', 'VP6E351A_0319___Vibrio_phage_6E35-1a', 'VPF86_0231___Vibrio_phage_F86', 'VPD485_0315___Vibrio_phage_D485', 'VPD527_0313___Vibrio_phage_D527', 'VPK575_0312___Vibrio_phage_K575', 'VPD482_0320___Vibrio_phage_D482', 'P002630725_CDS_0262___Vibrio_phage_phi-pp2', 'P003927315_CDS_0276___Vibrio_phage_1.081.O._10N.286.52.C2', 'P027885675_CDS_0086___Vibrio_phage_vB_ValM_PVA8', 'P002630725_CDS_0267___Vibrio_phage_phi-pp2', 'P024381305_CDS_0083___Vibrio_phage_PVA8', 'VPD486_0310___Vibrio_phage_D486', 'VPD491S_0309___Vibrio_phage_D491', 'P030927055_CDS_0087___Vibrio_phage_PC-Liy1', 'VPD525_0313___Vibrio_phage_D525', 'P020809685_CDS_0244___Vibrio_phage_VS1', 'P009931825_CDS_0267___Vibrio_phage_VH1_2019', 'VPK575_0316___Vibrio_phage_K575', 'P009931825_CDS_0270___Vibrio_phage_VH1_2019', 'VPK566_0305___Vibrio_phage_K566', 'VPD491S_0314___Vibrio_phage_D491', 'P027885675_CDS_0087___Vibrio_phage_vB_ValM_PVA8', 'VPD484_0306___Vibrio_phage_D484', 'VPD525_0318___Vibrio_phage_D525', 'P012361135_CDS_0325___Vibrio_phage_V09', 'P029686055_CDS_0392___Vibrio_phage_vB_VspM_VS2', 'P024381305_CDS_0086___Vibrio_phage_PVA8', 'P000910195_CDS_0145___Vibrio_phage_nt-1', 'VPK566_0306___Vibrio_phage_K566', 'VPD483_0318___Vibrio_phage_D483', 'P000843785_CDS_0271___Vibrio_phage_KVP40', 'VPD480_0309___Vibrio_phage_D480', 'VPD527_0314___Vibrio_phage_D527', 'VPD483_0317___Vibrio_phage_D483', 'VPD481_0314___Vibrio_phage_D481', 'VPK571_0318___Vibrio_phage_K571', 'P030927055_CDS_0083___Vibrio_phage_PC-Liy1', 'P030927055_CDS_0086___Vibrio_phage_PC-Liy1', 'VP6E351A_0315___Vibrio_phage_6E35-1a', 'VPD481_0309___Vibrio_phage_D481', 'VPK567_0308___Vibrio_phage_K567', 'P002630725_CDS_0266___Vibrio_phage_phi-pp2', 'P029686055_CDS_0388___Vibrio_phage_vB_VspM_VS2', 'VPD527_0309___Vibrio_phage_D527', 'VPD480_0314___Vibrio_phage_D480', 'VPD482_0319___Vibrio_phage_D482', 'VPK571_0317___Vibrio_phage_K571', 'P020809685_CDS_0240___Vibrio_phage_VS1', 'VPK491_0313___Vibrio_phage_K491', 'VPD485_0316___Vibrio_phage_D485', 'P024381305_CDS_0087___Vibrio_phage_PVA8', 'VPD481_0313___Vibrio_phage_D481', 'VPD484_0310___Vibrio_phage_D484', 'P000843785_CDS_0270___Vibrio_phage_KVP40', 'P009931825_CDS_0271___Vibrio_phage_VH1_2019', 'P029686055_CDS_0391___Vibrio_phage_vB_VspM_VS2', 'VPD484_0311___Vibrio_phage_D484', 'VPD480_0313___Vibrio_phage_D480', 'VPF86_0227___Vibrio_phage_F86', 'VPD490_0313___Vibrio_phage_D490'}, 22: {'VPD525_0321___Vibrio_phage_D525', 'VPK575_0319___Vibrio_phage_K575', 'VPD491S_0316___Vibrio_phage_D491', 'VPD527_0316___Vibrio_phage_D527', 'VP6E351A_0322___Vibrio_phage_6E35-1a', 'VPD490_0320___Vibrio_phage_D490', 'VPF86_0233___Vibrio_phage_F86', 'VPK491_0320___Vibrio_phage_K491', 'VPD481_0316___Vibrio_phage_D481', 'VPD482_0322___Vibrio_phage_D482', 'VPD480_0317___Vibrio_phage_D480', 'VPD484_0314___Vibrio_phage_D484', 'VPD485_0318___Vibrio_phage_D485', 'VPK571_0320___Vibrio_phage_K571', 'VPD486_0313___Vibrio_phage_D486', 'VPD483_0320___Vibrio_phage_D483'}, 23: {'VPF86_0234___Vibrio_phage_F86', 'VPK571_0321___Vibrio_phage_K571', 'VPD525_0322___Vibrio_phage_D525', 'VPK491_0321___Vibrio_phage_K491', 'VPD483_0321___Vibrio_phage_D483', 'VPD491S_0317___Vibrio_phage_D491', 'VPK575_0320___Vibrio_phage_K575', 'VPD480_0318___Vibrio_phage_D480', 'VPD484_0315___Vibrio_phage_D484', 'VPD490_0321___Vibrio_phage_D490', 'VPD527_0317___Vibrio_phage_D527', 'VPD482_0323___Vibrio_phage_D482', 'VP6E351A_0323___Vibrio_phage_6E35-1a', 'VPD481_0317___Vibrio_phage_D481', 'VPD485_0319___Vibrio_phage_D485', 'VPD486_0314___Vibrio_phage_D486'}, 24: {'P000843785_CDS_0272___Vibrio_phage_KVP40', 'VPK491_0322___Vibrio_phage_K491', 'VPD482_0324___Vibrio_phage_D482', 'VPD527_0318___Vibrio_phage_D527', 'P012361135_CDS_0324___Vibrio_phage_V09', 'VPK571_0322___Vibrio_phage_K571', 'VPD490_0322___Vibrio_phage_D490', 'VPD491S_0318___Vibrio_phage_D491', 'P027885675_CDS_0088___Vibrio_phage_vB_ValM_PVA8', 'VPD480_0319___Vibrio_phage_D480', 'VPD484_0316___Vibrio_phage_D484', 'VPD481_0318___Vibrio_phage_D481', 'VPD525_0323___Vibrio_phage_D525', 'VPD485_0320___Vibrio_phage_D485', 'VPD486_0315___Vibrio_phage_D486', 'P030927055_CDS_0088___Vibrio_phage_PC-Liy1', 'P009931825_CDS_0272___Vibrio_phage_VH1_2019', 'P020809685_CDS_0239___Vibrio_phage_VS1', 'VPK575_0321___Vibrio_phage_K575', 'VP6E351A_0324___Vibrio_phage_6E35-1a', 'VPD483_0322___Vibrio_phage_D483', 'VPF86_0235___Vibrio_phage_F86', 'P024381305_CDS_0088___Vibrio_phage_PVA8', 'P002630725_CDS_0268___Vibrio_phage_phi-pp2', 'P029686055_CDS_0393___Vibrio_phage_vB_VspM_VS2'}, 25: {'VPF86_0236___Vibrio_phage_F86'}, 26: {'VPD485_0322___Vibrio_phage_D485', 'P012361135_CDS_0322___Vibrio_phage_V09', 'VPD491S_0320___Vibrio_phage_D491', 'VPK491_0324___Vibrio_phage_K491', 'P024381305_CDS_0090___Vibrio_phage_PVA8', 'VPD525_0325___Vibrio_phage_D525', 'VPD484_0318___Vibrio_phage_D484', 'VPK571_0324___Vibrio_phage_K571', 'VPD481_0320___Vibrio_phage_D481', 'P027885675_CDS_0090___Vibrio_phage_vB_ValM_PVA8', 'VPD486_0317___Vibrio_phage_D486', 'VPD483_0324___Vibrio_phage_D483', 'VPK575_0323___Vibrio_phage_K575', 'VP6E351A_0326___Vibrio_phage_6E35-1a', 'P030927055_CDS_0090___Vibrio_phage_PC-Liy1', 'VPD480_0321___Vibrio_phage_D480', 'VPD490_0324___Vibrio_phage_D490', 'P020809685_CDS_0237___Vibrio_phage_VS1', 'P000843785_CDS_0274___Vibrio_phage_KVP40', 'P009931825_CDS_0274___Vibrio_phage_VH1_2019', 'VPD482_0326___Vibrio_phage_D482', 'VPF86_0237___Vibrio_phage_F86', 'VPD527_0320___Vibrio_phage_D527', 'P002630725_CDS_0269___Vibrio_phage_phi-pp2', 'P029686055_CDS_0394___Vibrio_phage_vB_VspM_VS2'}, 27: {'VPK566_0302___Vibrio_phage_K566', 'VPK567_0304___Vibrio_phage_K567'}, 28: {'VPK566_0304___Vibrio_phage_K566', 'VPK567_0306___Vibrio_phage_K567'}, 29: {'VPK567_0309___Vibrio_phage_K567', 'P000910195_CDS_0147___Vibrio_phage_nt-1', 'VPK566_0307___Vibrio_phage_K566'}, 30: {'VPK567_0311___Vibrio_phage_K567', 'VPK566_0309___Vibrio_phage_K566'}, 31: {'VPK566_0310___Vibrio_phage_K566', 'VPK567_0312___Vibrio_phage_K567'}, 32: {'VPK567_0313___Vibrio_phage_K567', 'VPK566_0311___Vibrio_phage_K566'}, 33: {'VPK566_0312___Vibrio_phage_K566', 'VPK567_0314___Vibrio_phage_K567'}, 34: {'VPK567_0315___Vibrio_phage_K567', 'VPK566_0313___Vibrio_phage_K566'}, 35: {'VPK567_0316___Vibrio_phage_K567', 'VPK566_0314___Vibrio_phage_K566'}, 36: {'VPD480_0305___Vibrio_phage_D480', 'VPK571_0309___Vibrio_phage_K571', 'VPD481_0305___Vibrio_phage_D481', 'VPD484_0302___Vibrio_phage_D484', 'VPD486_0302___Vibrio_phage_D486', 'VPD490_0309___Vibrio_phage_D490', 'VPD527_0305___Vibrio_phage_D527', 'VPD491S_0305___Vibrio_phage_D491', 'VPD485_0307___Vibrio_phage_D485', 'VPD482_0311___Vibrio_phage_D482', 'VPD525_0309___Vibrio_phage_D525', 'VP6E351A_0311___Vibrio_phage_6E35-1a', 'VPK575_0308___Vibrio_phage_K575', 'VPK491_0309___Vibrio_phage_K491', 'VPD483_0309___Vibrio_phage_D483'}, 37: {'VPD491S_0306___Vibrio_phage_D491', 'VPD484_0303___Vibrio_phage_D484', 'VPD482_0312___Vibrio_phage_D482', 'VPD486_0303___Vibrio_phage_D486', 'VPD485_0308___Vibrio_phage_D485', 'VPD490_0310___Vibrio_phage_D490', 'VPD481_0306___Vibrio_phage_D481', 'VPD480_0306___Vibrio_phage_D480', 'VPD527_0306___Vibrio_phage_D527'}, 38: {'VPK575_0318___Vibrio_phage_K575', 'VPD490_0319___Vibrio_phage_D490', 'VPD484_0313___Vibrio_phage_D484', 'VPD491S_0315___Vibrio_phage_D491', 'VPD482_0321___Vibrio_phage_D482', 'VPK571_0319___Vibrio_phage_K571', 'VPD525_0320___Vibrio_phage_D525', 'VPD483_0319___Vibrio_phage_D483', 'VPD481_0315___Vibrio_phage_D481', 'VPD486_0312___Vibrio_phage_D486', 'VPD480_0316___Vibrio_phage_D480', 'VPD485_0317___Vibrio_phage_D485', 'VPD527_0315___Vibrio_phage_D527', 'VPK491_0319___Vibrio_phage_K491', 'VP6E351A_0321___Vibrio_phage_6E35-1a'}, 39: {'VPD484_0317___Vibrio_phage_D484', 'VPD486_0316___Vibrio_phage_D486', 'VPK491_0323___Vibrio_phage_K491', 'VPD483_0323___Vibrio_phage_D483', 'VPD525_0324___Vibrio_phage_D525', 'VPD527_0319___Vibrio_phage_D527', 'VPK571_0323___Vibrio_phage_K571', 'VPD491S_0319___Vibrio_phage_D491', 'VPD485_0321___Vibrio_phage_D485', 'VPD490_0323___Vibrio_phage_D490', 'VPD480_0320___Vibrio_phage_D480', 'VPD482_0325___Vibrio_phage_D482', 'VPK575_0322___Vibrio_phage_K575', 'VPD481_0319___Vibrio_phage_D481', 'VP6E351A_0325___Vibrio_phage_6E35-1a'}, 40: {'VP6E351A_0327___Vibrio_phage_6E35-1a', 'VPD483_0325___Vibrio_phage_D483', 'P020809685_CDS_0236___Vibrio_phage_VS1', 'P002630725_CDS_0270___Vibrio_phage_phi-pp2', 'VPD525_0326___Vibrio_phage_D525', 'VPK575_0324___Vibrio_phage_K575', 'VPK571_0325___Vibrio_phage_K571', 'VPK491_0325___Vibrio_phage_K491', 'VPD485_0323___Vibrio_phage_D485', 'P029686055_CDS_0395___Vibrio_phage_vB_VspM_VS2'}, 41: {'VPK575_0309___Vibrio_phage_K575', 'VPD483_0310___Vibrio_phage_D483', 'VP6E351A_0312___Vibrio_phage_6E35-1a', 'VPD525_0310___Vibrio_phage_D525', 'VPK571_0310___Vibrio_phage_K571', 'VPK491_0310___Vibrio_phage_K491'}, 42: {'VPD525_0319___Vibrio_phage_D525', 'VPD484_0312___Vibrio_phage_D484'}, 43: {'P000910195_CDS_0130___Vibrio_phage_nt-1'}, 44: {'P000910195_CDS_0131___Vibrio_phage_nt-1'}, 45: {'P000910195_CDS_0135___Vibrio_phage_nt-1'}, 46: {'P000910195_CDS_0136___Vibrio_phage_nt-1'}, 47: {'P000910195_CDS_0137___Vibrio_phage_nt-1'}, 48: {'P000910195_CDS_0138___Vibrio_phage_nt-1'}, 49: {'P000910195_CDS_0139___Vibrio_phage_nt-1'}, 50: {'P000910195_CDS_0140___Vibrio_phage_nt-1'}, 51: {'P000910195_CDS_0142___Vibrio_phage_nt-1'}, 52: {'P000910195_CDS_0143___Vibrio_phage_nt-1'}, 53: {'P000910195_CDS_0144___Vibrio_phage_nt-1'}, 54: {'P000910195_CDS_0146___Vibrio_phage_nt-1'}, 55: {'P030927055_CDS_0079___Vibrio_phage_PC-Liy1', 'P009931825_CDS_0264___Vibrio_phage_VH1_2019', 'P000843785_CDS_0264___Vibrio_phage_KVP40', 'P012361135_CDS_0332___Vibrio_phage_V09', 'P024381305_CDS_0079___Vibrio_phage_PVA8', 'P020809685_CDS_0249___Vibrio_phage_VS1', 'P002630725_CDS_0259___Vibrio_phage_phi-pp2', 'P027885675_CDS_0079___Vibrio_phage_vB_ValM_PVA8'}, 56: {'P020809685_CDS_0248___Vibrio_phage_VS1'}, 57: {'P020809685_CDS_0247___Vibrio_phage_VS1'}, 58: {'P020809685_CDS_0238___Vibrio_phage_VS1'}, 59: {'P029686055_CDS_0385___Vibrio_phage_vB_VspM_VS2', 'P009931825_CDS_0264___Vibrio_phage_VH1_2019', 'P000843785_CDS_0264___Vibrio_phage_KVP40', 'P012361135_CDS_0332___Vibrio_phage_V09', 'P002630725_CDS_0259___Vibrio_phage_phi-pp2'}, 60: {'P012361135_CDS_0323___Vibrio_phage_V09', 'P024381305_CDS_0089___Vibrio_phage_PVA8', 'P009931825_CDS_0273___Vibrio_phage_VH1_2019', 'P027885675_CDS_0089___Vibrio_phage_vB_ValM_PVA8', 'P000843785_CDS_0273___Vibrio_phage_KVP40', 'P030927055_CDS_0089___Vibrio_phage_PC-Liy1'}, 61: {'P012361135_CDS_0321___Vibrio_phage_V09', 'P027885675_CDS_0091___Vibrio_phage_vB_ValM_PVA8', 'P009931825_CDS_0275___Vibrio_phage_VH1_2019', 'P030927055_CDS_0091___Vibrio_phage_PC-Liy1', 'P000843785_CDS_0275___Vibrio_phage_KVP40', 'P024381305_CDS_0091___Vibrio_phage_PVA8'}, 62: {'P024381305_CDS_0080___Vibrio_phage_PVA8', 'P027885675_CDS_0080___Vibrio_phage_vB_ValM_PVA8', 'P030927055_CDS_0080___Vibrio_phage_PC-Liy1'}, 63: {'P000914495_CDS_0168___Vibrio_phage_VH7D', 'P002757115_CDS_0423___Vibrio_phage_phi-Grn1', 'P002757135_CDS_0144___Vibrio_phage_phi-ST2', 'P022984185_CDS_0149___Vibrio_phage_XZ1', 'P001501635_CDS_0414___Vibrio_phage_ValKK3', 'P004771355_CDS_0276___Vibrio_phage_Va3', 'P014337545_CDS_0318___Vibrio_phage_vB_ValM_R10Z', 'P014337555_CDS_0318___Vibrio_phage_vB_ValM_R11Z', 'P024234235_CDS_0095___Vibrio_phage_PVA23'}}
+    dicoMyColor = {}
+    for num in dicoBlast:
+        color = random_hex_color()
+        for elem in dicoBlast[num]:
+            dicoMyColor[elem.split("___")[0]] = color
     lstFiles, maxpathSize = get_input_files(pathIN, "rbh_linear_plot", [ext])
     if len(lstFiles) == 0:
         printcolor("[ERROR: rbh_linear_plot]\nAny input files found\n", 1, "212;64;89", "None", True)
@@ -149,8 +161,14 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
     pathCLUSTER = path_converter(pathCLUSTER)
     pathOUT = path_converter(pathOUT)
     if pathSUBCORE != "None":
+        dicoSubCore = {}
         pathSUBCORE = path_converter(pathSUBCORE)
-        setSubCoreOrg = set(read_file(pathSUBCORE))
+        for line in read_file(pathSUBCORE):
+            try:
+                dicoSubCore[line.split("\t")[0]]['set'].add(line.split("\t")[1])
+                dicoSubCore[line.split("\t")[0]]['color'] = line.split("\t")[2]
+            except KeyError:
+                dicoSubCore[line.split("\t")[0]] = {'set':set([line.split("\t")[1]]), 'color':line.split("\t")[2]}
     os.makedirs(pathOUT, exist_ok=True)
     os.makedirs(pathOUT+"/PNG", exist_ok=True)
     os.makedirs(pathOUT+"/SVG", exist_ok=True)
@@ -195,22 +213,29 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
                 color = random_hex_color()
                 clusterType = cluster
         else:
-            # Singleton gene > blue
-            if len(setOrg) == 1:
-                color = "#0000ff"
-                clusterType = "singleton"
-            # Sub-core gene > light red
-            elif pathSUBCORE != "None" and set(setOrg) == setSubCoreOrg:
-                color = "#ff5555"
-                clusterType = "subcore"
-            # Core gene > dark red
-            elif len(setOrg) == len(lstFiles):
-                color = "#aa0000"
-                clusterType = "core"
-            # Accessory gene
-            else:
-                color = HEX_gradient[len(setOrg)-2]
-                clusterType = "accessory ("+str(len(setOrg))+")"
+            # Sub-core gene
+            foundSubcore = False
+            if pathSUBCORE != "None":
+                for group in dicoSubCore:
+                    # if set(setOrg) == dicoSubCore[group]['set']:
+                    if len(setOrg-dicoSubCore[group]['set']) == 0 and len(setOrg)>=len(dicoSubCore[group]['set'])*0.9:
+                        color = dicoSubCore[group]['color']
+                        clusterType = "subcore"
+                        foundSubcore = True
+            if foundSubcore is False:
+                # Singleton gene > black
+                if len(setOrg) == 1:
+                    color = "#000000"
+                    clusterType = "singleton"
+                # Core gene > white
+                # elif len(setOrg) == len(lstFiles):
+                elif len(setOrg) >= len(lstFiles)*0.9:
+                    color = "#ffffff"
+                    clusterType = "core"
+                # Accessory gene > grey
+                else:
+                    color = "#b3b3b3"
+                    clusterType = "accessory ("+str(len(setOrg))+")"
         dicoClusterColor[cluster] = color
         dicoClusterType[cluster] = clusterType
         setColor.add(color)
@@ -228,10 +253,12 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
         # ***** PARSE GFF ***** #
         dicoAllGFF[orgName] = make_gff_dict(pathIN=pathGFF, ext=ext)[orgName]
         maxSeqLen = max(maxSeqLen, dicoAllGFF[orgName]['length'])
+    maxSeqLen = 17500
     # Browse GFF3
     printcolor("♊ Plotting"+"\n")
     pbar = tqdm(total=int(len(lstFiles)), dynamic_ncols=True, ncols=50+maxpathSize, leave=False, desc="", file=sys.stdout, bar_format="  {percentage: 3.0f}%|{bar}| {n_fmt}/{total_fmt} [{desc}]")
     setSVGfiles = set()
+
     for orgName in dicoAllGFF:
         pathPNG = pathOUT+"/PNG/"+orgName+".png"
         pathSVG = pathOUT+"/SVG/"+orgName+".svg"
@@ -240,17 +267,17 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
         features = []
         # ***** BROWSE GENES ***** #
         for geneType in dicoAllGFF[orgName]:
-            if geneType != 'length':
+            if geneType not in ['length','pseudogene']:
                 for geneEntry in dicoAllGFF[orgName][geneType]:
-                    if geneType == "tRNA":  # green
+                    if geneType == "tRNA" or "tRNA" in geneEntry['attributes']['locus_tag']:  # green
                         color = "#2ca05a"
                     elif 'locus_tag' in geneEntry['attributes'] and geneEntry['attributes']['locus_tag'].replace(" ", "") in dicoLTcolor:
                         color = dicoLTcolor[geneEntry['attributes']['locus_tag'].replace(" ", "")]
                     elif 'protein_id' in geneEntry['attributes'] and geneEntry['attributes']['protein_id'].replace(" ", "") in dicoLTcolor:
                         color = dicoLTcolor[geneEntry['attributes']['protein_id'].replace(" ", "")]
                     else:
-                        printcolor("[ERROR: rbh_linear_plot]\nGFF entry error for \""+str(geneEntry)+"\"\n", 1, "212;64;89", "None", True)
-                        exit_gemini()
+                        color = "#0000ff" # missing singleton
+                    color = dicoMyColor[geneEntry['attributes']['locus_tag'].replace(" ", "")]
                     geneFeature = GraphicFeature(start=geneEntry['start'], end=geneEntry['end'], strand=int(geneEntry['strand']+"1"), color=color, linewidth=0)
                     features.append(geneFeature)
         # ***** PLOT GENES ***** #
@@ -282,8 +309,9 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
                     if "id=\"patch_" in line:
                         patchID = line.split("\"")[1]
                     if "style=\"fill:" in line:
-                        color = line.split(":")[1].split(";")[0].replace("\"", "")
-                dicoPatchToColor[patchID] = color
+                        color = line.split(": ")[1].split(";")[0].split("\"")[0]
+                if color != "" and color[0] == "#":
+                    dicoPatchToColor[patchID] = color
         # Apply modifications
         SVG = open(pathSVG, 'w')
         for patchID in dicoPatchToColor:
@@ -291,8 +319,26 @@ def rbh_linear_plot(pathIN: str, pathCLUSTER: str, pathOUT: str, distinctColor: 
             dataSVG = dataSVG.replace(dicoPatchToColor[patchID], dicoPatchToColor[patchID]+";fill-opacity:1")
         SVG.write(dataSVG)
         SVG.close()
+
+
+# <g id="patch_3">
+#     <path d="M 1888.100538 130.552 
+# Q 1845.912206 130.552 1803.723874 130.552 
+# L 1803.723874 130.552 
+# Q 1799.523586 127.052 1795.323298 123.552 
+# Q 1799.523586 120.052 1803.723874 116.552 
+# L 1803.723874 116.552 
+# Q 1845.912206 116.552 1888.100538 116.552 
+# L 1888.100538 130.552 
+# z
+# " clip-path="url(#p958b9d9612)" style="fill: #3c3c3c"/>
+#    </g>
+
+
         # Delete blank, line and axis
-        tree = ET.parse(pathSVG)
+        try:
+            tree = ET.parse(pathSVG)
+        except: print("tree = ET.parse("+pathSVG+")") ; exit_gemini
         root = tree.getroot()
         lst_block_id = ["patch_1", "line2d_1", "matplotlib.axis_1"]
         for block_id in lst_block_id:

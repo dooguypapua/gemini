@@ -137,7 +137,7 @@ def mmseqs_cluster(pathIN: str, pathJSON: str, idThrClust: int = 80, covThrClust
     spinner = yaspin(Spinners.aesthetic, text="♊ cluster", side="right")
     spinner.start()
     title("cluster", None)
-    cmdRBH = dicoGeminiPath['TOOLS']['mmseqs']+" cluster "+pathTMPdirDB+" "+pathTMPres+" "+geminiset.pathTMP+" -c "+str(covThrClust/100)+" --cov-mode 0 --min-seq-id "+str(idThrClust/100)+" -v 0 --max-seqs 10000 --add-self-matches 1 -s 7.5 --threads "+str(cpu)
+    cmdRBH = dicoGeminiPath['TOOLS']['mmseqs']+" cluster "+pathTMPdirDB+" "+pathTMPres+" "+geminiset.pathTMP+" -c "+str(covThrClust/100)+" --cov-mode 0 --min-seq-id "+str(idThrClust/100)+" -v 0 --max-seqs "+str(len(lstFiles)*2)+" --add-self-matches 1 -s 7.5 --threads "+str(cpu)
     os.system(cmdRBH)
     spinner.stop()
     printcolor("♊ cluster"+"\n")
@@ -190,7 +190,6 @@ def mmseqs_cluster(pathIN: str, pathJSON: str, idThrClust: int = 80, covThrClust
     else:
         return dicoCLUSTER
     exit()
-
 
 @fct_checker
 def mmseqs_rbh(pathIN: str, pathOUT: str, ref: str = "None", idThrClust: int = 80, covThrClust: int = 80, boolNucl: bool = False, ext: str = ".faa") -> Tuple[str, str, str, int, int, bool, str]:

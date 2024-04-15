@@ -33,7 +33,8 @@ import glob
 import torch
 import torch.nn.functional as F
 import geminiset
-from datetime import datetime
+import time
+import datetime
 from collections import OrderedDict
 from tqdm import tqdm
 from yaspin import yaspin
@@ -45,6 +46,7 @@ from rich.console import Console
 from rich.syntax import Syntax
 from scipy.special import expit
 from operator import itemgetter
+from concurrent import futures
 
 
 '''
@@ -119,6 +121,15 @@ def read_file(file_path: str, excludeFirstKr: str = "#", yaspinBool: bool = Fals
     return lstLines
 
 
+# ***** Lien count estimation ***** #
+def turbo_wc(pathFILE: str, nbLineEstim: int = 10000):
+    headsize = int(subprocess.check_output("head -n "+str(nbLineEstim)+" "+pathFILE+" | awk '{ total += length } END { print total }'", shell=True, universal_newlines=True).strip())
+    lineSize = headsize / nbLineEstim
+    filesize = os.path.getsize(pathFILE)
+    wcEstimation = int(filesize / lineSize)
+    return wcEstimation
+
+
 # ***** Concatenate files ***** #
 def cat_lstfiles(lstFiles, pathOUT):
     lstExistingFiles = []
@@ -142,7 +153,7 @@ def build_gemini_dico(lstArgv):
             tmpDir = "/scratch2/sbr/dynamic/tmp"
         else:
             tmpDir = "/tmp"
-        value = tempfile.mkdtemp(prefix="gemini_"+fctName+"_", dir=tmpDir)
+        value = tempfile.mkdtemp(prefix="gemini_"+fctName+"_", dir=tempfile.gettempdir())
         dicoGemini[fctName]['pathTMP'] = value
     else:
         dicoGemini[fctName]['pathTMP'] = ""
@@ -485,6 +496,54 @@ def launch_threads(dicoThread, job_prefix, maxThread, pathTMP, spinner=None):
         if spinner is not None:
             spinner.stop()
         exit_gemini()
+
+
+# ***** Future multithread *****#
+def task_launch(task_id, dicoTask):
+    dicoTask[task_id]['status'] = "started"
+    dicoTask[task_id]['starttime'] = time.time()
+    try:
+        result = subprocess.run(dicoTask[task_id]['cmd'], shell=True, capture_output=True, text=True)
+        if result.returncode == 0:
+            dicoTask[task_id]['status'] = "completed"
+        else:
+            dicoTask[task_id]['status'] = "failed"
+            dicoTask[task_id]['error'] = f"{result.returncode}: {result.stderr}"
+    except Exception as e:
+        dicoTask[task_id]['status'] = "failed"
+        dicoTask[task_id]['error'] = e
+    # Time
+    dicoTask[task_id]['endtime'] = time.time()
+    delta = datetime.timedelta(seconds=dicoTask[task_id]['endtime']-dicoTask[task_id]['starttime'])
+    hours, remainder = divmod(delta.seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    dicoTask[task_id]['elapsetime'] = f"{hours:02d}h:{minutes:02d}m:{seconds:02d}s"
+    dicoTask[task_id]['starttime'] = time.strftime("%m/%d/%Y|%H:%M:%S", time.localtime(dicoTask[task_id]['starttime']))
+    dicoTask[task_id]['endtime'] = time.strftime("%m/%d/%Y|%H:%M:%S", time.localtime(dicoTask[task_id]['endtime']))
+
+def task_spooler(lstTask, prefix, cpu):
+    job_tag = prefix.lower().replace(" ", "_")
+    dicoTask = OrderedDict()
+    for i in range(1,len(lstTask)+1,1):
+        task_id = f"{job_tag}_{str(i).zfill(len(str(len(lstTask))))}"
+        dicoTask[task_id] = OrderedDict({'cmd':lstTask[i-1], 'status':"waiting", 'error':"", 'starttime':0, 'endtime':0, 'elapsetime':0})
+    if len(dicoTask) > 0:
+        pbar = tqdm(total=len(dicoTask),dynamic_ncols=False, ncols=100,leave=True,desc="",file=sys.stdout,bar_format=" "+prefix+" {percentage:3.0f}%|{bar}| {desc}")
+        pbar.set_description_str(f"{'0'.rjust(len(str(len(dicoTask))))}/{len(dicoTask)}")
+        with futures.ThreadPoolExecutor(max_workers=cpu) as executor:
+            future_to_task = {executor.submit(task_launch, task_id, dicoTask): task_id for task_id in dicoTask.keys()}
+            for future in futures.as_completed(future_to_task):
+                task_id = future_to_task[future]
+                try:
+                    result = future.result()
+                except Exception as e:
+                    dicoTask[task_id]['status'] = "failed"
+                    dicoTask[task_id]['error'] = e
+                pbar.update(1)
+                pbar.set_description_str(f"{str(pbar.n).rjust(len(str(len(dicoTask))))}/{len(dicoTask)}")
+        pbar.close()
+    return dicoTask
+
 
 
 '''

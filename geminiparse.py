@@ -485,8 +485,8 @@ def make_gbk_dict(pathIN: str, pathJSON: str = "None", boolSort: bool = True, bo
                             dicoGBK[orgName][record.id]['dicoLT'][locustag]['protSeq'] = str(feature.qualifiers["translation"][0])
                         except KeyError:
                             dicoGBK[orgName][record.id]['dicoLT'][locustag]['protSeq'] = None
-                        dicoGBK[orgName][record.id]['dicoLT'][locustag]['start'] = feature.location.nofuzzy_start
-                        dicoGBK[orgName][record.id]['dicoLT'][locustag]['end'] = feature.location.nofuzzy_end
+                        dicoGBK[orgName][record.id]['dicoLT'][locustag]['start'] = feature.location.start
+                        dicoGBK[orgName][record.id]['dicoLT'][locustag]['end'] = feature.location.end
                         dicoGBK[orgName][record.id]['dicoLT'][locustag]['strand'] = feature.strand
                         try:
                             dicoGBK[orgName][record.id]['dicoLT'][locustag]['protein_id'] = feature.qualifiers["protein_id"][0]
@@ -501,9 +501,9 @@ def make_gbk_dict(pathIN: str, pathJSON: str = "None", boolSort: bool = True, bo
                         except KeyError:
                             dicoGBK[orgName][record.id]['dicoLT'][locustag]['gene'] = None
                         if feature.strand == 1:
-                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['geneSeq'] = str(record.seq[feature.location.nofuzzy_start: feature.location.nofuzzy_end])
+                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['geneSeq'] = str(record.seq[feature.location.start: feature.location.end])
                         else:
-                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['geneSeq'] = str(record.seq[feature.location.nofuzzy_start: feature.location.nofuzzy_end].reverse_complement())
+                            dicoGBK[orgName][record.id]['dicoLT'][locustag]['geneSeq'] = str(record.seq[feature.location.start: feature.location.end].reverse_complement())
                         cptLT += 1
         if boolSort is True:
             if pathJSON != "None":
@@ -894,10 +894,14 @@ def gbk_to_gff(pathIN: str, pathOUT: str) -> Tuple[str, str]:
             else:
                 product = dicoGBK[org][contig]['dicoLT'][lt]['product']
             if dicoGBK[org][contig]['dicoLT'][lt]['protein_id'] is None:
-                protein_id = "None"
+                protein_id = None
             else:
                 protein_id = dicoGBK[org][contig]['dicoLT'][lt]['protein_id']
-            line = contig+"\tGV\t"+dicoGBK[org][contig]['dicoLT'][lt]['type']+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['start'])+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['end']) + \
+            if protein_id is None:
+                line = contig+"\tGV\t"+dicoGBK[org][contig]['dicoLT'][lt]['type']+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['start'])+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['end']) + \
+                "\t.\t"+frame+"\t0\tlocus_tag="+lt+";product="+product+"\n"
+            else:
+                line = contig+"\tGV\t"+dicoGBK[org][contig]['dicoLT'][lt]['type']+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['start'])+"\t"+str(dicoGBK[org][contig]['dicoLT'][lt]['end']) + \
                 "\t.\t"+frame+"\t0\tlocus_tag="+lt+";product="+product+";protein_id="+protein_id+"\n"
             OUT.write(line)
     OUT.close()
@@ -1188,7 +1192,7 @@ def make_gbk_from_fasta(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: str, 
                     orderTRNADicoQualifiers = OrderedDict([('locus_tag', [trnaLT]),
                                                            ('codon_start', ['1']),
                                                            ('note', ["tRNA "+dicoTRNA[contig][trna]['type']+" anticodon "+dicoTRNA[contig][trna]['codon']+" , score "+str(dicoTRNA[contig][trna]['score'])]),
-                                                           ('product', [dicoTRNA[contig][trna]['type']+" tRNA"])])
+                                                           ('product', [dicoTRNA[contig][trna]['type']+" tRNA ("+dicoTRNA[contig][trna]['codon']+")"])])
                     geneSeqFeature = SeqFeature(location=featureLocation, type="gene", strand=dicoTRNA[contig][trna]['strand'], id=trnaLT, qualifiers=orderGeneDicoQualifiers)
                     TRNASeqFeature = SeqFeature(location=featureLocation, type="tRNA", strand=dicoTRNA[contig][trna]['strand'], id=trnaLT, qualifiers=orderTRNADicoQualifiers)
                     dicoFeatures[dicoTRNA[contig][trna]['start']] = (geneSeqFeature, TRNASeqFeature)
@@ -1209,6 +1213,43 @@ def make_gbk_from_fasta(pathIN1: str, pathIN2: str, pathIN3: str, pathOUT: str, 
     # Merge Genbank
     if len(dicoFNA) > 1:
         cat_lstfiles(lstGBKfiles, pathOUT)
+
+
+@fct_checker
+def slice_genes_genbank(pathIN: str, pathOUT: str, lt1: str, lt2: str) -> Tuple[str, str, str, str]:
+    '''
+     ------------------------------------------------------------
+    |                  SLICE GBK BETWEEN 2 GENES                 |
+    |------------------------------------------------------------|
+    |          Slice a GBK file using 2 genes interval           |
+    |------------------------------------------------------------|
+    |PARAMETERS                                                  |
+    |    pathIN  : path of input GBK file (required)             |
+    |    pathOUT : path of output GBK file (required)            |
+    |    lt1     : first gene locus_tag (required)               |
+    |    lt2     : second gene locus_tag (required)              |
+     ------------------------------------------------------------
+    '''
+    pathIN = path_converter(pathIN)
+    pathOUT = path_converter(pathOUT)
+    genes = [lt1, lt2]
+    records = SeqIO.parse(pathIN, 'genbank')
+    for record in records:
+        loci = [feat for feat in record.features if feat.type == "CDS"]
+        try:
+            start = min([int(l.location.start) for l in loci if l.qualifiers['locus_tag'][0].split(" ")[0] in genes])
+            end = max([int(l.location.end) for l in loci if l.qualifiers['locus_tag'][0].split(" ")[0] in genes])
+        except ValueError:
+            sys.stderr.write('No indices returned for those loci, assume they don\'t feature in this record, moving on...\n.')
+            continue
+        try:
+            (start and end)
+            subrecord = record[start:end]
+            with open(pathOUT, "w") as f:
+                f.write(subrecord.format('genbank'))
+        except NameError:
+            sys.stderr.write('Didn\'t get any indices even though the genes seemed to match. Couldn\'t slice.\n')
+            pass
 
 
 '''
